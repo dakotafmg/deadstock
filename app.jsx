@@ -1,0 +1,111 @@
+/* global React, ReactDOM, Nav, Footer, Home, Product, useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakColor, TweakSelect */
+
+const { useState, useEffect } = React;
+
+// ============================================================
+// DEADSTOCK — App shell + router
+// ============================================================
+
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#D28400",
+  "displayFont": "instrument",
+  "showGrain": true,
+  "darkMode": false
+}/*EDITMODE-END*/;
+
+const FONT_OPTIONS = {
+  instrument: { family: '"Instrument Serif", "EB Garamond", Georgia, serif', label: "Instrument" },
+  bricolage:  { family: '"Bricolage Grotesque", "Helvetica Neue", sans-serif', label: "Bricolage" },
+  newsreader: { family: '"Newsreader", Georgia, serif', label: "Newsreader" },
+};
+
+function App() {
+  const [route, setRoute] = useState(() => {
+    const hash = window.location.hash.replace("#", "") || "home";
+    return ["home", "broadman", "wayfarer"].includes(hash) ? hash : "home";
+  });
+  const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  const onNavigate = (id) => {
+    if (id === "workshop") id = "home"; // workshop links to manifesto on home
+    if (id === "monarch") return; // soon
+    setRoute(id);
+    window.location.hash = id;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const onHash = () => {
+      const hash = window.location.hash.replace("#", "") || "home";
+      if (["home", "broadman", "wayfarer"].includes(hash)) setRoute(hash);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, []);
+
+  // Apply tweak vars
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty("--amber", tw.accent);
+    const dark = tw.darkMode;
+    root.style.setProperty("--cream", dark ? "#1a1a1a" : "#F2E6C9");
+    root.style.setProperty("--cream-2", dark ? "#212121" : "#E8DBB8");
+    root.style.setProperty("--black", dark ? "#F2E6C9" : "#121212");
+    root.style.setProperty("--walnut", dark ? "#D8C9A6" : "#3B2A1E");
+    root.style.setProperty("--tobacco", dark ? "#C49545" : "#7A4A20");
+    root.style.setProperty("--rule", dark ? "rgba(242,230,201,0.18)" : "rgba(18,18,18,0.18)");
+    root.style.setProperty("--rule-soft", dark ? "rgba(242,230,201,0.10)" : "rgba(18,18,18,0.10)");
+    const ff = FONT_OPTIONS[tw.displayFont] || FONT_OPTIONS.instrument;
+    root.style.setProperty("--serif", ff.family);
+    document.body.style.setProperty("--grain", tw.showGrain ? "0.35" : "0");
+    const grainEl = document.getElementById("grain-style");
+    if (grainEl) grainEl.textContent = `body::before { opacity: ${tw.showGrain ? 0.35 : 0} !important; }`;
+  }, [tw.accent, tw.displayFont, tw.showGrain, tw.darkMode]);
+
+  return (
+    <>
+      <Nav route={route} onNavigate={onNavigate} />
+      {route === "home" && <Home onNavigate={onNavigate} />}
+      {route === "broadman" && <Product id="broadman" onNavigate={onNavigate} />}
+      {route === "wayfarer" && <Product id="wayfarer" onNavigate={onNavigate} />}
+      <Footer onNavigate={onNavigate} />
+
+      <TweaksPanel title="Tweaks">
+        <TweakSection label="Brand">
+          <TweakColor
+            label="Accent"
+            value={tw.accent}
+            onChange={(v) => setTweak("accent", v)}
+            options={["#D28400", "#B33A1A", "#5B7A3E", "#3B5BAE"]}
+          />
+          <TweakRadio
+            label="Display font"
+            value={tw.displayFont}
+            onChange={(v) => setTweak("displayFont", v)}
+            options={Object.keys(FONT_OPTIONS)}
+          />
+        </TweakSection>
+        <TweakSection label="Atmosphere">
+          <TweakToggle
+            label="Paper grain"
+            value={tw.showGrain}
+            onChange={(v) => setTweak("showGrain", v)}
+          />
+          <TweakToggle
+            label="Workshop (dark)"
+            value={tw.darkMode}
+            onChange={(v) => setTweak("darkMode", v)}
+          />
+        </TweakSection>
+        <TweakSection label="Jump to" />
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("home")}>↳ Homepage</button>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("broadman")}>↳ The Broadman</button>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("wayfarer")}>↳ The Wayfarer</button>
+        </div>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
