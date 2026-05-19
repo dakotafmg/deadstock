@@ -62,44 +62,6 @@ function Footer({ onNavigate }) {
             Fortville, Indiana. Every instrument leaves with the maker's
             initials, a build sheet, and the bench it came from.
           </p>
-          <form
-            onSubmit={(e) => e.preventDefault()}
-            style={{
-              marginTop: 24,
-              display: "flex",
-              gap: 8,
-              maxWidth: 380,
-              borderBottom: "1px solid rgba(242,230,201,0.3)",
-              paddingBottom: 10,
-            }}
-          >
-            <input
-              type="email"
-              placeholder="The newsletter. One a month."
-              style={{
-                flex: 1,
-                background: "transparent",
-                border: 0,
-                color: "var(--cream)",
-                fontFamily: "var(--sans)",
-                fontSize: 14,
-                outline: "none",
-                padding: "6px 0",
-              }}
-            />
-            <button
-              type="submit"
-              style={{
-                fontFamily: "var(--mono)",
-                fontSize: 11,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "var(--amber)",
-              }}
-            >
-              Subscribe →
-            </button>
-          </form>
         </div>
         <div>
           <h4>The Lineup</h4>
