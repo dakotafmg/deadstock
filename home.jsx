@@ -303,28 +303,6 @@ function Lineup({ onNavigate }) {
 // DEALER PITCH — for retailers considering carrying Deadstock
 // ------------------------------------------------------------
 function DealerPitch() {
-  const reasons = [
-    {
-      k: "Margin",
-      v: "Honest wholesale",
-      body: "50/50 on every guitar. We don't undercut our dealers — direct retail and wholesale are priced the same.",
-    },
-    {
-      k: "Exclusivity",
-      v: "One shop, one city",
-      body: "We protect territory. One authorized dealer per market until you tell us otherwise.",
-    },
-    {
-      k: "Velocity",
-      v: "11–13 week build",
-      body: "Order it Monday, ship from Indiana on a calendar you can plan around. No backorder math.",
-    },
-    {
-      k: "Story",
-      v: "A guitar that sells itself",
-      body: "Nitro, bone, handwound, signed by the maker. The customer asks one question; the guitar answers the rest.",
-    },
-  ];
   return (
     <section className="dealers" data-screen-label="dealer-pitch">
       <div className="wrap">
@@ -338,18 +316,6 @@ function DealerPitch() {
             instruments for players who can tell the difference. We're opening
             the dealer book for 2026.
           </p>
-        </div>
-
-        <div className="dealers-grid">
-          {reasons.map((r, i) => (
-            <Reveal key={r.k} delay={i * 80}>
-              <div className="dealer-cell">
-                <div className="k">{r.k}</div>
-                <div className="v">{r.v}</div>
-                <p>{r.body}</p>
-              </div>
-            </Reveal>
-          ))}
         </div>
 
         <div className="dealers-cta">
