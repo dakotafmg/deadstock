@@ -167,7 +167,7 @@ body::before {
   color: var(--cream);
 }
 .nav-logo img {
-  height: 28px;
+  height: 64px;
   width: auto;
   display: block;
   /* SVG fill is black; recolor to cream via filter */
