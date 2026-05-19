@@ -84,15 +84,13 @@ function Footer({ onNavigate }) {
           <ul>
             <li><a onClick={() => onNavigate("broadman")}>The Broadman</a></li>
             <li><a onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
-            <li><a style={{ opacity: 0.6 }}>The Monarch · soon</a></li>
+            <li><a onClick={() => onNavigate()} style={{ opacity: 0.6 }}>The Monarch · soon</a></li>
           </ul>
         </div>
         <div>
           <h4>Quiet</h4>
           <ul>
             <li><a>Dealers</a></li>
-            <li><a>Warranty · for life</a></li>
-            <li><a>Press</a></li>
             <li><a>Contact</a></li>
           </ul>
         </div>
