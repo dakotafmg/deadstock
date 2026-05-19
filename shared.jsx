@@ -106,7 +106,6 @@ function Footer({ onNavigate }) {
           <ul>
             <li><a onClick={() => onNavigate("broadman")}>The Broadman</a></li>
             <li><a onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
-            <li><a>Customs</a></li>
           </ul>
         </div>
         <div>
@@ -121,7 +120,7 @@ function Footer({ onNavigate }) {
       </div>
       <div className="footer-bottom">
         <span>© Deadstock Guitar Co. · 2026</span>
-        <span>Fortville, Indiana · 39.9337° N, 85.8478° W</span>
+        <span>Fortville, Indiana</span>
         <span>Built by hand. Built honest.</span>
       </div>
     </footer>
