@@ -9,6 +9,7 @@ function Nav({ route, onNavigate }) {
   const links = [
     { id: "broadman",  label: "Broadman" },
     { id: "wayfarer",  label: "Wayfarer" },
+    { id: "monarch",   label: "Monarch", soon: true },
     { id: "dealers",   label: "Dealers", scroll: ".dealers" },
   ];
   return (
@@ -23,10 +24,10 @@ function Nav({ route, onNavigate }) {
               key={l.id}
               className={route === l.id ? "active" : ""}
               href="#"
+              style={l.soon ? { opacity: 0.5 } : {}}
               onClick={(e) => {
                 e.preventDefault();
                 if (l.scroll) {
-                  // route to home then smooth-scroll to dealer section
                   if (route !== "home") {
                     onNavigate("home");
                     setTimeout(() => {
@@ -35,12 +36,27 @@ function Nav({ route, onNavigate }) {
                   } else {
                     document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
                   }
+                } else if (l.soon) {
+                  // bring users to the Monarch chapter on home
+                  const scrollToMonarch = () => {
+                    const el = [...document.querySelectorAll(".chapter")].find((c) =>
+                      c.querySelector(".chapter-headline")?.innerText.toLowerCase().includes(l.label.toLowerCase())
+                    );
+                    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  };
+                  if (route !== "home") {
+                    onNavigate("home");
+                    setTimeout(scrollToMonarch, 120);
+                  } else {
+                    scrollToMonarch();
+                  }
                 } else {
                   onNavigate(l.id);
                 }
               }}
             >
               {l.label}
+              {l.soon ? <span style={{ marginLeft: 6, fontSize: 10, letterSpacing: "0.18em", opacity: 0.7 }}> · soon</span> : null}
             </a>
           ))}
         </nav>
@@ -68,6 +84,7 @@ function Footer({ onNavigate }) {
           <ul>
             <li><a onClick={() => onNavigate("broadman")}>The Broadman</a></li>
             <li><a onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
+            <li><a style={{ opacity: 0.6 }}>The Monarch · soon</a></li>
           </ul>
         </div>
         <div>

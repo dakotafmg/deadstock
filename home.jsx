@@ -183,11 +183,12 @@ function Lineup({ onNavigate }) {
       </div>
 
       {LINEUP.map((m, i) => {
-        const variant = m.status === "IN-WORKSHOP"
-          ? "workshop"
-          : m.image
-            ? "dark"
-            : i % 2 === 0 ? "dark" : "cream";
+        const variant =
+          m.status === "COMING-SOON" || m.status === "IN-WORKSHOP"
+            ? "workshop"
+            : m.image
+              ? "dark"
+              : i % 2 === 0 ? "dark" : "cream";
         const labelArch = m.archetype.split(" / ")[0];
         const labelSub  = m.archetype.split(" / ")[1] || "";
         const interactable = m.status === "AVAILABLE";
@@ -204,7 +205,7 @@ function Lineup({ onNavigate }) {
                 className={"chapter-bg" + (m.image ? " has-image" : "")}
                 data-label={
                   m.id === "monarch"
-                    ? "Bench 01 — Monarch prototype II"
+                    ? "Monarch — in development"
                     : `${m.name} — ${m.id === "broadman" ? "Butterscotch" : "Sea Foam Worn"}`
                 }
                 style={
@@ -220,7 +221,7 @@ function Lineup({ onNavigate }) {
               <div className="chapter-toprow">
                 <span className="l">
                   {String(i + 1).padStart(2, "0")} —{" "}
-                  {m.status === "IN-WORKSHOP" ? "In the workshop" : "Available now"}
+                  {m.status === "AVAILABLE" ? "Available now" : "Coming soon"}
                 </span>
                 <span className="r">
                   <span>{labelArch}</span>
@@ -243,30 +244,39 @@ function Lineup({ onNavigate }) {
                   <div className="chapter-side">
                     <p className="blurb">{m.blurb}</p>
 
-                    {m.status === "IN-WORKSHOP" ? (
-                      <div className="workshop-progress">
-                        <div className="track"><div className="bar"></div></div>
-                        <div className="labels">
-                          <span>Prototype II · 38%</span>
-                          <span>Est. Q4 2026</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="chapter-meta">
-                        <div>
-                          <div className="k">Weight</div>
-                          <div className="v">{m.id === "broadman" ? "7.4 lb" : "7.6 lb"}</div>
-                        </div>
-                        <div>
-                          <div className="k">Finish</div>
-                          <div className="v"><em>{m.id === "broadman" ? "Butterscotch" : "Sea Foam"}</em></div>
-                        </div>
-                        <div>
-                          <div className="k">Pickups</div>
-                          <div className="v">Handwound</div>
-                        </div>
-                      </div>
-                    )}
+                    <div className="chapter-meta">
+                      {m.status === "COMING-SOON" ? (
+                        <>
+                          <div>
+                            <div className="k">Status</div>
+                            <div className="v"><em>Coming soon</em></div>
+                          </div>
+                          <div>
+                            <div className="k">Pickups</div>
+                            <div className="v">Handwound humbuckers</div>
+                          </div>
+                          <div>
+                            <div className="k">Build</div>
+                            <div className="v">Carved top, set neck</div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <div className="k">Weight</div>
+                            <div className="v">{m.id === "broadman" ? "7.4 lb" : "7.6 lb"}</div>
+                          </div>
+                          <div>
+                            <div className="k">Finish</div>
+                            <div className="v"><em>{m.id === "broadman" ? "Butterscotch" : "Sea Foam"}</em></div>
+                          </div>
+                          <div>
+                            <div className="k">Pickups</div>
+                            <div className="v">Handwound</div>
+                          </div>
+                        </>
+                      )}
+                    </div>
 
                     <span
                       className="chapter-cta"
@@ -275,7 +285,7 @@ function Lineup({ onNavigate }) {
                         handleOpen();
                       }}
                     >
-                      {m.status === "IN-WORKSHOP" ? "Join the waitlist" : `View the ${m.name}`}
+                      {m.status === "COMING-SOON" ? "Get notified" : `View the ${m.name}`}
                       <span className="arrow">→</span>
                     </span>
                   </div>
