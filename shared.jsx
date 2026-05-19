@@ -15,7 +15,7 @@ function Nav({ route, onNavigate }) {
     <header className="nav">
       <div className="wrap nav-inner">
         <div className="nav-logo" onClick={() => onNavigate("home")} aria-label="Deadstock">
-          <img src="assets/logo.svg" alt="Deadstock" />
+          <img src="assets/wordmark.svg" alt="Deadstock" />
         </div>
         <nav className="nav-links">
           {links.map((l) => (
@@ -55,7 +55,7 @@ function Footer({ onNavigate }) {
       <div className="footer-inner">
         <div>
           <div className="brand">
-            <img src="assets/logo.svg" alt="Deadstock" style={{ width: 240, display: "block", filter: "brightness(0) invert(0.94) sepia(0.20) saturate(0.6)" }} />
+            <img src="assets/wordmark.svg" alt="Deadstock" style={{ width: 280, display: "block", filter: "brightness(0) invert(0.94) sepia(0.20) saturate(0.6)" }} />
           </div>
           <p className="mini" style={{ marginTop: 28 }}>
             Deadstock Guitars are made in small batches at our shop in
