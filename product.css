@@ -750,3 +750,14 @@
 @media (max-width: 900px) {
   .p-related-row, .p-related-row.workshop { grid-template-columns: 1fr; gap: 32px; }
 }
+
+@media (max-width: 600px) {
+  .p-hero { padding: 24px 0 56px; }
+  .p-hero-top { padding-bottom: 44px; }
+  .p-story { padding: 64px 0; }
+  .spec { padding: 64px 0 72px; }
+  .spec-tabs { gap: 6px; }
+  .spec-tab { font-size: 11px; padding: 10px 14px; }
+  .p-build { padding: 64px 0; }
+  .p-related { padding: 72px 0 80px; }
+}
