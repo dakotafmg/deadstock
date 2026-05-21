@@ -25,7 +25,7 @@ function Hero({ onNavigate }) {
     <section className="hero" data-screen-label="home-hero">
       <div className="wrap">
         <div className="hero-top">
-          <div className="eyebrow">Deadstock Guitar Co. — Future Vintage</div>
+          <div className="eyebrow">Deadstock Guitar Co.</div>
           <div className="since">Fortville, Indiana · Est. 2026</div>
         </div>
 
@@ -41,19 +41,15 @@ function Hero({ onNavigate }) {
             <div className="glow"></div>
             <div className="corner-tl">The Lineup · 2026</div>
             <div className="corner-tr">DS-BRD-001 / DS-WAY-001</div>
-            <div className="corner-br">Face / 01 of 12</div>
-            <div className="ph-label">Hero product photography — two-guitar layout, black sweep</div>
           </div>
         </Reveal>
 
         <div className="hero-meta">
           <Reveal delay={150}>
             <div className="hero-philo">
-              The antidote to corporate guitar. Built by hand, honest in every
-              joint, made with locally sourced wood and <em>pickups wound a
-              quarter‑turn hotter</em> than spec because that's where the magic
-              lives.
-              <span className="quote-tag">— The Deadstock Manifesto</span>
+              Built by hand, honest in every joint. Locally sourced wood,
+              nitrocellulose finish, handwound pickups — <em>made to last
+              longer than the trend cycle.</em>
             </div>
           </Reveal>
 
@@ -81,8 +77,7 @@ function Hero({ onNavigate }) {
                   color: "rgba(242,230,201,0.55)",
                 }}
               >
-                Two production models, each built by a single maker and signed
-                by hand.
+                Two production models. Made in Fortville, Indiana.
               </p>
             </div>
           </Reveal>
@@ -95,15 +90,11 @@ function Hero({ onNavigate }) {
               </div>
               <div>
                 <div className="num">11–13<span style={{ fontSize: 22, color: 'rgba(242,230,201,0.5)', marginLeft: 4 }}>w</span></div>
-                <div className="lbl">Billet<br/>to bench tag</div>
+                <div className="lbl">Average<br/>build time</div>
               </div>
               <div>
                 <div className="num">100<span style={{ fontSize: 22, color: 'rgba(242,230,201,0.5)' }}>%</span></div>
                 <div className="lbl">Handwound<br/>pickups</div>
-              </div>
-              <div>
-                <div className="num">1</div>
-                <div className="lbl">Maker<br/>per guitar</div>
               </div>
             </div>
           </Reveal>
@@ -118,10 +109,10 @@ function Hero({ onNavigate }) {
 // ------------------------------------------------------------
 function Manifesto() {
   const pillars = [
-    { k: "Body",        v: "Locally sourced ash & alder",   vs: "Plantation laminate" },
-    { k: "Finish",      v: "Nitrocellulose, hand-rubbed",    vs: "Sealed polyurethane" },
-    { k: "Electronics", v: "Handwound, one person",          vs: "Machine wound in batches" },
-    { k: "Hardware",    v: "Aged in-house at the bench",     vs: "Off-the-shelf chrome" },
+    { k: "Body",        v: "Locally sourced alder" },
+    { k: "Finish",      v: "Nitrocellulose, hand-rubbed" },
+    { k: "Electronics", v: "Handwound single coils" },
+    { k: "Hardware",    v: "Aged in-house at the bench" },
   ];
   return (
     <section className="manifesto" data-screen-label="home-manifesto">
@@ -139,16 +130,13 @@ function Manifesto() {
           <Reveal delay={150}>
             <div className="manifesto-body">
               <p>
-                Deadstock is two makers, three benches, and a shared belief
-                that a real instrument should outlive its first owner. We will
-                never chase the trend cycle, and we will never offshore the
-                soul of the guitar to a press release.
+                A real instrument should outlive its first owner. We build
+                in small batches in Fortville, Indiana — nitro finish, bone
+                nut, handwound pickups, locally sourced wood.
               </p>
               <p>
-                Nitro finish. Bone nut. Handwound pickups. Locally sourced
-                wood. Aged hardware. Not as a marketing list — as the minimum
-                we'd let leave the bench. Every Deadstock is signed by the
-                person who built it.
+                These are not marketing points. They are the minimum spec we
+                will ship.
               </p>
             </div>
           </Reveal>
@@ -158,7 +146,6 @@ function Manifesto() {
                 <div key={i} className="pillar">
                   <div className="k">{p.k}</div>
                   <div className="v">{p.v}</div>
-                  <div className="vs">{p.vs}</div>
                 </div>
               ))}
             </div>
@@ -206,7 +193,7 @@ function Lineup({ onNavigate }) {
                 data-label={
                   m.id === "monarch"
                     ? "Monarch — in development"
-                    : `${m.name} — ${m.id === "broadman" ? "Butterscotch" : "Sea Foam Worn"}`
+                    : `${m.name} — ${m.id === "broadman" ? "Shell Pink" : "Sunburst"}`
                 }
                 style={
                   m.image
@@ -256,23 +243,23 @@ function Lineup({ onNavigate }) {
                             <div className="v">Handwound humbuckers</div>
                           </div>
                           <div>
-                            <div className="k">Build</div>
-                            <div className="v">Carved top, set neck</div>
+                            <div className="k">Construction</div>
+                            <div className="v">Carved top, bolt-on neck</div>
                           </div>
                         </>
                       ) : (
                         <>
                           <div>
-                            <div className="k">Weight</div>
-                            <div className="v">{m.id === "broadman" ? "7.4 lb" : "7.6 lb"}</div>
-                          </div>
-                          <div>
                             <div className="k">Finish</div>
-                            <div className="v"><em>{m.id === "broadman" ? "Butterscotch" : "Sea Foam"}</em></div>
+                            <div className="v"><em>{m.id === "broadman" ? "Shell Pink" : "Sunburst"}</em></div>
                           </div>
                           <div>
                             <div className="k">Pickups</div>
                             <div className="v">Handwound</div>
+                          </div>
+                          <div>
+                            <div className="k">Construction</div>
+                            <div className="v">Bolt-on neck</div>
                           </div>
                         </>
                       )}
@@ -339,60 +326,6 @@ function DealerPitch() {
     </section>
   );
 }
-function Transparency() {
-  return (
-    <section className="transparency" data-screen-label="home-transparency">
-      <div className="wrap">
-        <div className="section-head">
-          <div className="index">Sourcing &amp; Transparency</div>
-          <h2>No mystery wood.<br/>No mystery <i>hands.</i></h2>
-        </div>
-
-        <div className="tp-grid" style={{ marginTop: 60 }}>
-          <Reveal className="tp-intro">
-            <p>
-              We publish our sourcing because we have nothing to hide. Every
-              billet, coil and steel saddle on a Deadstock comes from a person
-              we can name — <em>often, one we drove to.</em>
-            </p>
-            <p className="body-m">
-              Where possible, we work within a two-hundred-mile radius of the
-              Pittsburgh shop. When we can't — because the tree didn't grow
-              here, or the winder is the best at what they do — we tell you
-              that too.
-            </p>
-            <button className="btn" style={{ marginTop: 12 }}>
-              Read the sourcing report
-              <span className="arrow">↓</span>
-            </button>
-          </Reveal>
-
-          <Reveal delay={200}>
-            <div className="tp-sources">
-              <div className="tp-headers">
-                <span>№</span>
-                <span>Material</span>
-                <span>Sourced from</span>
-                <span>Location</span>
-                <span>Distance</span>
-              </div>
-              {SOURCES.map((s, i) => (
-                <div key={i} className="tp-row">
-                  <div className="idx">{String(i + 1).padStart(2, "0")}</div>
-                  <div className="what">{s.what}</div>
-                  <div className="who">{s.who}</div>
-                  <div className="where">{s.where}</div>
-                  <div className="miles">{s.miles} →</div>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ------------------------------------------------------------
 // CRAFTSMANSHIP
 // ------------------------------------------------------------
@@ -423,7 +356,7 @@ function Craftsmanship() {
       title: "Handwound.",
       em: "By a person.",
       body:
-        "Plain enamel and formvar, wound in Pittsburgh by M. Halloran. Quarter‑turn hotter than spec. The magic is real.",
+        "Plain enamel and formvar, wound by hand. Quarter‑turn hotter than spec for output and character.",
       glyph: (
         <svg width="36" height="32" viewBox="0 0 36 32"><rect x="6" y="4" width="24" height="24" rx="2" fill="none" stroke="currentColor"/><circle cx="14" cy="16" r="2" fill="currentColor"/><circle cx="22" cy="16" r="2" fill="currentColor"/></svg>
       ),
@@ -433,7 +366,7 @@ function Craftsmanship() {
       title: "Aged.",
       em: "In-house.",
       body:
-        "Steel saddles, brass plates, tuner shells — aged at the bench in saltwater and vinegar. No two are alike.",
+        "Steel saddles, brass plates, tuner shells — aged in-house at the bench. Every set is unique.",
       glyph: (
         <svg width="32" height="32" viewBox="0 0 32 32"><polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="currentColor"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
       ),
@@ -456,27 +389,6 @@ function Craftsmanship() {
             </Reveal>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-// ------------------------------------------------------------
-// WORKSHOP STRIP
-// ------------------------------------------------------------
-function WorkshopStrip() {
-  return (
-    <section data-screen-label="home-workshop">
-      <div className="wrap workshop-strip">
-        <Reveal>
-          <PH label="BENCH 02 / A. REYES" corner="WORKSHOP №07" style={{ aspectRatio: "4/3" }} />
-        </Reveal>
-        <Reveal delay={150}>
-          <PH label="HAND‑WINDING / M. HALLORAN" corner="PICKUPS" style={{ aspectRatio: "3/4" }} />
-        </Reveal>
-        <Reveal delay={300}>
-          <PH label="ASH BILLETS / PAVLIK CO." corner="WOOD" style={{ aspectRatio: "3/4" }} />
-        </Reveal>
       </div>
     </section>
   );
