@@ -62,14 +62,8 @@
   position: relative;
   margin: 88px 0 0;
   height: clamp(380px, 52vw, 680px);
-  background:
-    radial-gradient(ellipse 60% 50% at 50% 60%, rgba(210,132,0,0.18), transparent 65%),
-    repeating-linear-gradient(135deg,
-      rgba(242,230,201,0.025) 0px,
-      rgba(242,230,201,0.025) 1px,
-      transparent 1px,
-      transparent 14px);
   overflow: hidden;
+  background: var(--black);
 }
 .hero-product .glow {
   position: absolute;
@@ -564,113 +558,6 @@
   .chapter-toprow { padding: 0 24px; flex-direction: column; gap: 8px; }
   .chapter-content { grid-template-columns: 1fr; gap: 32px; }
 }
-/* ---------- TRANSPARENCY ---------- */
-.transparency { padding: 140px 0; background: var(--cream); }
-.tp-grid {
-  display: grid;
-  grid-template-columns: 1.05fr 1fr;
-  gap: 80px;
-  align-items: start;
-}
-.tp-intro p {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: clamp(26px, 2.4vw, 36px);
-  line-height: 1.2;
-  margin: 0 0 28px;
-  letter-spacing: -0.035em;
-  color: var(--black);
-  text-wrap: balance;
-  max-width: 22ch;
-}
-.tp-intro p em {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  letter-spacing: -0.02em;
-  color: var(--tobacco);
-}
-.tp-intro p.body-m {
-  font-family: var(--sans);
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 1.65;
-  color: var(--walnut);
-  letter-spacing: 0;
-  max-width: 46ch;
-}
-
-.tp-headers {
-  display: grid;
-  grid-template-columns: 56px 1.3fr 1fr 1fr auto;
-  gap: 20px;
-  padding-bottom: 14px;
-  font-family: var(--display);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--amber);
-}
-
-.tp-sources {
-  border-top: 1px solid var(--black);
-}
-.tp-row {
-  display: grid;
-  grid-template-columns: 56px 1.3fr 1fr 1fr auto;
-  gap: 20px;
-  padding: 20px 0;
-  border-bottom: 1px solid var(--rule);
-  align-items: center;
-  transition: background .3s ease, padding .3s ease;
-  cursor: pointer;
-}
-.tp-row:hover {
-  background: rgba(210,132,0,0.05);
-  padding-left: 12px;
-}
-.tp-row .idx {
-  font-family: var(--display);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: var(--amber);
-}
-.tp-row .what {
-  font-family: var(--display);
-  font-weight: 500;
-  font-size: 22px;
-  letter-spacing: -0.025em;
-  color: var(--black);
-}
-.tp-row .who {
-  font-family: var(--sans);
-  font-size: 14.5px;
-  color: var(--walnut);
-}
-.tp-row .where {
-  font-family: var(--display);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--tobacco);
-}
-.tp-row .miles {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  letter-spacing: 0.06em;
-  color: var(--steel-2);
-  text-align: right;
-}
-.tp-row:hover .miles { color: var(--amber); }
-@media (max-width: 900px) {
-  .tp-grid { grid-template-columns: 1fr; }
-  .tp-row { grid-template-columns: 36px 1fr; row-gap: 4px; }
-  .tp-row .where, .tp-row .miles { grid-column: 2; }
-}
-
 /* ---------- CRAFTSMANSHIP STRIP ---------- */
 .craft { padding: 140px 0 120px; background: var(--cream-2); }
 .craft-grid {
@@ -840,16 +727,4 @@
 @media (max-width: 1000px) {
   .dealers-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .dealers-cta { grid-template-columns: 1fr; }
-}
-.workshop-strip {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 16px;
-  padding: 120px 0;
-  background: var(--cream);
-}
-.workshop-strip .ph { aspect-ratio: 4/3; }
-.workshop-strip .ph.tall { aspect-ratio: 3/4; }
-@media (max-width: 900px) {
-  .workshop-strip { grid-template-columns: 1fr; }
 }

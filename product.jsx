@@ -14,7 +14,6 @@ function Product({ id, onNavigate }) {
       <ProductHero p={p} onNavigate={onNavigate} />
       <SonicStory p={p} />
       <SpecSheet p={p} />
-      <ProductCraft p={p} />
       <BuildTag p={p} />
       <RelatedNav p={p} onNavigate={onNavigate} />
     </main>
@@ -25,7 +24,12 @@ function Product({ id, onNavigate }) {
 // HERO
 // ------------------------------------------------------------
 function ProductHero({ p, onNavigate }) {
-  const [color, setColor] = useStateProd(p.swatches[0]);
+  const [color, setColor] = useStateProd(p.swatches[0] || null);
+  const [imgIndex, setImgIndex] = useStateProd(0);
+  const images = p.images || [];
+  const heroImage = images[imgIndex];
+  const prev = () => setImgIndex(i => (i - 1 + images.length) % images.length);
+  const next = () => setImgIndex(i => (i + 1) % images.length);
   return (
     <section className="p-hero">
       <div className="wrap">
@@ -41,12 +45,17 @@ function ProductHero({ p, onNavigate }) {
         <div className="p-hero-grid">
           <Reveal>
             <div className="p-hero-image">
-              <PH
-                label={`${p.name} — ${color.name}`}
-              />
-              <div className="corner-tl">{p.archetype.split(" / ")[0]}</div>
-              <div className="corner-tr">Nitrocellulose finish</div>
-              <div className="corner-br">Face — 01 / 06</div>
+              {heroImage
+                ? <img src={heroImage} alt={p.name} className="product-photo" />
+                : <PH label={p.name} />
+              }
+              {images.length > 1 && (
+                <>
+                  <button className="photo-nav photo-prev" onClick={prev}>←</button>
+                  <button className="photo-nav photo-next" onClick={next}>→</button>
+                  <span className="photo-counter">{imgIndex + 1} / {images.length}</span>
+                </>
+              )}
             </div>
           </Reveal>
 
@@ -69,56 +78,48 @@ function ProductHero({ p, onNavigate }) {
                     <div className="v">{p.price}</div>
                   </div>
                   <div className="p-fact">
-                    <div className="k">Weight</div>
-                    <div className="v">{p.weight}</div>
-                  </div>
-                  <div className="p-fact">
                     <div className="k">Finish</div>
                     <div className="v"><em>{p.finish}</em></div>
                   </div>
+                  <div className="p-fact">
+                    <div className="k">Pickups</div>
+                    <div className="v">{p.pickups}</div>
+                  </div>
                 </div>
               </Reveal>
 
-              <Reveal delay={400}>
-                <div className="p-hero-cta">
-                  <button className="btn btn-amber">
-                    Reserve a build slot
-                    <span className="arrow">→</span>
-                  </button>
-                  <button className="btn btn-ghost">
-                    Book a fitting
-                    <span className="arrow">→</span>
-                  </button>
-                </div>
-              </Reveal>
             </div>
 
-            <Reveal delay={500}>
-              <div className="swatches">
-                <span className="lbl">Available finishes</span>
-                {p.swatches.map((s, i) => (
-                  <button
-                    key={i}
-                    className={"swatch " + (color.hex === s.hex ? "active" : "")}
-                    style={{ background: s.hex }}
-                    title={s.name}
-                    onClick={() => setColor(s)}
-                  ></button>
-                ))}
-                <span
-                  style={{
-                    marginLeft: "auto",
-                    fontFamily: "var(--mono)",
-                    fontSize: 10.5,
-                    letterSpacing: "0.16em",
-                    color: "var(--walnut)",
-                    textTransform: "uppercase",
-                  }}
-                >
-                  ⏤ {color.name}
-                </span>
-              </div>
-            </Reveal>
+            {p.swatches.length > 0 && (
+              <Reveal delay={500}>
+                <div className="swatches">
+                  <span className="lbl">Available finishes</span>
+                  {p.swatches.map((s, i) => (
+                    <button
+                      key={i}
+                      className={"swatch " + (color && color.hex === s.hex ? "active" : "")}
+                      style={{ background: s.hex }}
+                      title={s.name}
+                      onClick={() => setColor(s)}
+                    ></button>
+                  ))}
+                  {color && (
+                    <span
+                      style={{
+                        marginLeft: "auto",
+                        fontFamily: "var(--mono)",
+                        fontSize: 10.5,
+                        letterSpacing: "0.16em",
+                        color: "var(--walnut)",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      ⏤ {color.name}
+                    </span>
+                  )}
+                </div>
+              </Reveal>
+            )}
           </div>
         </div>
       </div>
@@ -182,8 +183,10 @@ function SpecSheet({ p }) {
     { id: "electronics", label: "Electronics" },
     { id: "hardware",    label: "Hardware" },
   ];
+  const tabImageIndex = { body: 1, neck: 2, electronics: 3, hardware: 4 };
   const [tab, setTab] = useStateProd("body");
   const rows = p.specs[tab];
+  const asideImage = p.images && p.images[tabImageIndex[tab]];
 
   return (
     <section className="spec">
@@ -213,121 +216,19 @@ function SpecSheet({ p }) {
               <Reveal key={i} delay={i * 40} className="spec-row">
                 <span className="num">{String(i + 1).padStart(2, "0")}</span>
                 <span className="k">{r.k}</span>
-                <span className="v">
-                  {r.v}
-                  {r.flag ? <em>· {r.flag}</em> : null}
-                  {r.note ? <small>{r.note}</small> : null}
-                </span>
+                <span className="v">{r.v}</span>
               </Reveal>
             ))}
           </div>
 
           <aside className="spec-aside">
             <div className="image-wrap">
-              <PH
-                label={`${p.name} — ${tab} detail`}
-              />
-              <div className="corner-tl">{tab.charAt(0).toUpperCase() + tab.slice(1)}</div>
-              <div className="corner-tr">04 / 18</div>
-              <div className="corner-br">{p.serial}</div>
-            </div>
-            <div className="hover-stamp">
-              <span><span className="hl">→</span> Hover any row for context</span>
-              <span>Download PDF</span>
-            </div>
-
-            <div
-              style={{
-                marginTop: 48,
-                paddingTop: 36,
-                borderTop: "1px solid rgba(242,230,201,0.14)",
-              }}
-            >
-              <div
-                style={{
-                  fontFamily: "var(--display)",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  letterSpacing: "0.2em",
-                  textTransform: "uppercase",
-                  color: "var(--amber)",
-                  marginBottom: 18,
-                }}
-              >
-                Builder's note
-              </div>
-              <p
-                style={{
-                  fontFamily: "var(--serif)",
-                  fontStyle: "italic",
-                  fontSize: 26,
-                  fontWeight: 400,
-                  lineHeight: 1.35,
-                  letterSpacing: "-0.02em",
-                  margin: 0,
-                  color: "var(--cream)",
-                  textWrap: "balance",
-                }}
-              >
-                "{p.id === 'broadman'
-                  ? "Listed it under the radio — the way a Tele should sit. Played a chord. Knew immediately."
-                  : "Set the trem at the bench, then took it home for the weekend. Came back to pitch every morning."}"
-              </p>
-              <div
-                style={{
-                  marginTop: 22,
-                  fontFamily: "var(--display)",
-                  fontSize: 12,
-                  fontWeight: 500,
-                  letterSpacing: "0.18em",
-                  color: "rgba(242,230,201,0.5)",
-                  textTransform: "uppercase",
-                }}
-              >
-                {p.id === 'broadman' ? "J. Halberd · Bench 03" : "A. Reyes · Bench 02"}
-              </div>
+              {asideImage
+                ? <img src={asideImage} alt={`${p.name} — ${tab}`} className="product-photo" />
+                : <PH label={`${p.name} — ${tab} detail`} />
+              }
             </div>
           </aside>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ------------------------------------------------------------
-// CRAFTSMANSHIP FOCUS
-// ------------------------------------------------------------
-function ProductCraft({ p }) {
-  return (
-    <section className="p-craft">
-      <div className="wrap">
-        <div className="section-head">
-          <div className="index">In the hand</div>
-          <h2>What the photos<br/>can't <i>quite</i> show.</h2>
-        </div>
-        <div className="p-craft-grid" style={{ marginTop: 40 }}>
-          <Reveal>
-            <div className="col">
-              <PH label="NITRO DETAIL · BELLY CONTOUR" corner="TACTILE" />
-              <h3>{p.craft.titleA}</h3>
-              <p>{p.craft.bodyA}</p>
-            </div>
-          </Reveal>
-          <Reveal delay={200}>
-            <div className="col">
-              <PH label="BONE NUT · HAND CUT" corner="TACTILE" />
-              <h3>{p.craft.titleB}</h3>
-              <p>{p.craft.bodyB}</p>
-              <ul className="tactile-list">
-                {p.craft.tactile.map((t, i) => (
-                  <li key={i}>
-                    <span className="k">{t.k}</span>
-                    <span>{t.v}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>
@@ -369,22 +270,13 @@ function BuildTag({ p }) {
               </div>
             </div>
             <div>
-              <h3>This guitar was built by a person.<br/><em>Here's who.</em></h3>
+              <h3>Built, numbered,<br/><em>set up by hand.</em></h3>
               <p>
-                Every Deadstock leaves the shop with a handwritten build tag —
-                the bench it was built on, the maker who signed off, and the
-                hours of human work. We keep our half on file. Forever.
+                Every Deadstock ships with its build tag — serial number,
+                build run, and a hand-setup note. We keep our copy on file.
               </p>
 
               <div className="specs">
-                <div>
-                  <div className="k">Bench &amp; Maker</div>
-                  <div className="v"><em>{p.build.bench.split(" — ")[0]}</em></div>
-                </div>
-                <div>
-                  <div className="k">Hands at bench</div>
-                  <div className="v">{p.build.time.replace(" of human work", "")}</div>
-                </div>
                 <div>
                   <div className="k">Serial</div>
                   <div className="v">{p.serial}</div>
@@ -394,20 +286,8 @@ function BuildTag({ p }) {
                   <div className="v">{p.build.run}</div>
                 </div>
                 <div>
-                  <div className="k">Warranty</div>
-                  <div className="v"><em>For life,</em> first owner.</div>
-                </div>
-                <div>
                   <div className="k">Setup</div>
                   <div className="v">By hand, every one.</div>
-                </div>
-                <div>
-                  <div className="k">Final QA</div>
-                  <div className="v">{p.id === "broadman" ? "J. Halberd" : "A. Reyes"}</div>
-                </div>
-                <div>
-                  <div className="k">Returns</div>
-                  <div className="v">30 days, no questions.</div>
                 </div>
               </div>
             </div>
@@ -433,7 +313,10 @@ function RelatedNav({ p, onNavigate }) {
         <Reveal>
           <div className="p-related-row" onClick={() => onNavigate(otherId)}>
             <div className="related-image">
-              <PH label={`${other.name} — face / ${other.swatches[0].name}`} />
+              {other.images && other.images[0]
+                ? <img src={other.images[0]} alt={other.name} className="product-photo" />
+                : <PH label={other.name} />
+              }
             </div>
             <div className="related-copy">
               <h4>The <em>{other.name}.</em></h4>

@@ -30,6 +30,15 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
 }
+.product-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
 .p-hero-image .ph {
   position: absolute; inset: 0;
   background:
@@ -71,6 +80,41 @@
   font-size: 11px;
   letter-spacing: 0.04em;
   color: rgba(242,230,201,0.5);
+}
+
+.photo-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.35);
+  color: var(--cream);
+  border: none;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .2s, background .2s;
+  z-index: 2;
+}
+.photo-nav:hover { background: rgba(0,0,0,0.6); }
+.photo-prev { left: 14px; }
+.photo-next { right: 14px; }
+.p-hero-image:hover .photo-nav { opacity: 1; }
+
+.photo-counter {
+  position: absolute;
+  bottom: 18px;
+  right: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: rgba(242,230,201,0.6);
+  z-index: 2;
+  pointer-events: none;
 }
 
 .p-hero-side {
