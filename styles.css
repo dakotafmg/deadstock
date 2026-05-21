@@ -400,6 +400,13 @@ body::before {
 @media (max-width: 900px) {
   .footer-inner { grid-template-columns: 1fr 1fr; }
 }
+@media (max-width: 600px) {
+  .nav-logo { display: none; }
+  .nav-links { gap: 22px; font-size: 12px; }
+  .footer { margin-top: 64px; }
+  .footer-inner { grid-template-columns: 1fr; padding: 48px 24px 24px; gap: 36px; }
+  .footer-bottom { padding: 18px 24px; flex-direction: column; gap: 10px; text-align: center; }
+}
 
 /* ============================================================
    REVEAL ANIMATION
