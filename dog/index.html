@@ -110,11 +110,11 @@
     margin: 0 auto 44px;
   }
 
-  /* ── Video frame ── */
+  /* ── Video frame — portrait 9:16 ── */
   .video-wrap {
-    width: 100%;
+    width: min(100%, 380px);
     position: relative;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 9 / 16;
     background: #0a0a0a;
     border: 1px solid rgba(242,230,201,0.10);
     overflow: hidden;
@@ -258,8 +258,7 @@
   <div class="video-wrap">
     
     <video controls playsinline>
-      <source src="dog_video.mov" type="video/quicktime" />
-      <source src="dog_video.mov" type="video/mp4" />
+      <source src="/assets/dog_video.mp4" type="video/mp4" />
     </video>
 
   </div>
