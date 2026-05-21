@@ -197,6 +197,15 @@
     color: rgba(242,230,201,0.7);
   }
 
+  /* ── Video element fill ── */
+  .video-wrap video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
   /* ── Footer sig ── */
   .sig {
     font-size: 13px;
@@ -247,33 +256,11 @@
                                                  ↑ this part
        ═══════════════════════════════════════════════════════════ -->
   <div class="video-wrap">
-
-    <!-- OPTION A — YouTube embed (uncomment and replace VIDEO_ID_HERE) -->
-    <!--
-    <iframe
-      src="https://www.youtube.com/embed/VIDEO_ID_HERE?rel=0&modestbranding=1&color=white"
-      title="A note from the Deadstock bench"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen>
-    </iframe>
-    -->
-
-    <!-- OPTION B — Self-hosted video file (uncomment and set src) -->
-    <!--
-    <video controls playsinline poster="">
-      <source src="assets/dog-video.mp4" type="video/mp4" />
+    
+    <video controls playsinline>
+      <source src="dog_video.mov" type="video/quicktime" />
+      <source src="dog_video.mov" type="video/mp4" />
     </video>
-    -->
-
-    <!-- Placeholder — remove this block once video is live -->
-    <div class="video-placeholder">
-      <div class="play-ring">
-        <svg width="22" height="22" viewBox="0 0 22 22" fill="currentColor">
-          <path d="M7 5l12 6-12 6V5z"/>
-        </svg>
-      </div>
-      <div class="label">Video coming soon</div>
-    </div>
 
   </div>
   <!-- ═══════════════════════════════════════════════════════════ -->
