@@ -40,7 +40,6 @@ function Hero({ onNavigate }) {
           <div className="hero-product">
             <img src="assets/lineup-1.jpg" alt="The Lineup" className="hero-product-img" />
             <div className="corner-tl">The Lineup · 2026</div>
-            <div className="corner-tr">DS26001 / DS26002</div>
           </div>
         </Reveal>
 
