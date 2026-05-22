@@ -38,16 +38,16 @@ function Hero({ onNavigate }) {
 
         <Reveal delay={200}>
           <div className="hero-product">
-            <div className="glow"></div>
+            <img src="assets/lineup-1.jpg" alt="The Lineup" className="hero-product-img" />
             <div className="corner-tl">The Lineup · 2026</div>
-            <div className="corner-tr">DS-BRD-001 / DS-WAY-001</div>
+            <div className="corner-tr">DS26001 / DS26002</div>
           </div>
         </Reveal>
 
         <div className="hero-meta">
           <Reveal delay={150}>
             <div className="hero-philo">
-              Built by hand, honest in every joint. Locally sourced wood,
+              Built by hand, honest in every joint. Ohio-sourced wood,
               nitrocellulose finish, handwound pickups — <em>made to last
               longer than the trend cycle.</em>
             </div>
