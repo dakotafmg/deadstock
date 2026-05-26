@@ -1,10 +1,12 @@
-/* global React, ReactDOM, Nav, Footer, Home, Product, useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakColor, TweakSelect */
+/* global React, ReactDOM, Nav, Footer, Home, Product, Pickups, PickupProduct, useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakColor, TweakSelect */
 
 const { useState, useEffect } = React;
 
 // ============================================================
 // DEADSTOCK — App shell + router
 // ============================================================
+
+const VALID_ROUTES = ["home", "broadman", "wayfarer", "pickups", "tele52", "strat62", "paf"];
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -22,7 +24,7 @@ const FONT_OPTIONS = {
 function App() {
   const [route, setRoute] = useState(() => {
     const hash = window.location.hash.replace("#", "") || "home";
-    return ["home", "broadman", "wayfarer"].includes(hash) ? hash : "home";
+    return VALID_ROUTES.includes(hash) ? hash : "home";
   });
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -37,7 +39,7 @@ function App() {
   useEffect(() => {
     const onHash = () => {
       const hash = window.location.hash.replace("#", "") || "home";
-      if (["home", "broadman", "wayfarer"].includes(hash)) setRoute(hash);
+      if (VALID_ROUTES.includes(hash)) setRoute(hash);
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
@@ -65,9 +67,13 @@ function App() {
   return (
     <>
       <Nav route={route} onNavigate={onNavigate} />
-      {route === "home" && <Home onNavigate={onNavigate} />}
+      {route === "home"    && <Home onNavigate={onNavigate} />}
       {route === "broadman" && <Product id="broadman" onNavigate={onNavigate} />}
       {route === "wayfarer" && <Product id="wayfarer" onNavigate={onNavigate} />}
+      {route === "pickups"  && <Pickups onNavigate={onNavigate} />}
+      {route === "tele52"   && <PickupProduct id="tele52"  onNavigate={onNavigate} />}
+      {route === "strat62"  && <PickupProduct id="strat62" onNavigate={onNavigate} />}
+      {route === "paf"      && <PickupProduct id="paf"     onNavigate={onNavigate} />}
       <Footer onNavigate={onNavigate} />
 
       <TweaksPanel title="Tweaks">
@@ -102,6 +108,9 @@ function App() {
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("home")}>↳ Homepage</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("broadman")}>↳ The Broadman</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("wayfarer")}>↳ The Wayfarer</button>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("pickups")}>↳ Pickups</button>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("tele52")}>↳ '52 Tele Set</button>
+          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("paf")}>↳ PAF Set</button>
         </div>
       </TweaksPanel>
     </>

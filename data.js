@@ -184,6 +184,157 @@ const LINEUP = [
   },
 ];
 
+// ============================================================
+// PICKUP PRODUCTS
+// ============================================================
+const PICKUPS = {
+  tele52: {
+    id: "tele52",
+    name: "'52 Tele Set",
+    type: "SINGLE-COIL / TELE",
+    serial: "DS-PU-T52",
+    year: "MMXXVI",
+    price: "Coming soon",
+    magnet: "A2 — Alnico II",
+    wind: "Plain enamel, hand-scatter wound",
+    lede: "The spank, the twang, the bark. Everything a '52 Tele had before anyone started polishing the edges off.",
+    story: {
+      heading: "The original attitude, wound by hand.",
+      problem: "Mass-wound pickups measure to spec but miss the point. The scatter, the tension, the inconsistency — that's where the tone lives. You can't CNC that.",
+      solution: "A2 rods, plain enamel wire, wound by hand on a slow machine. Bridge wound just over 8k for bite and sustain. Neck kept warm and clear at 7k. Both voiced to knock against each other the way the old ones did.",
+      pull: "If you've ever wondered what your Tele is supposed to sound like — this is it.",
+    },
+    specs: {
+      bridge: [
+        { k: "Magnet",        v: "Alnico II rods" },
+        { k: "Wire",          v: "42 AWG plain enamel" },
+        { k: "DC Resistance", v: "~8.2 kΩ" },
+        { k: "Wind",          v: "Hand-scatter wound" },
+        { k: "Bobbin",        v: "Fiber, period-correct" },
+        { k: "Cover",         v: "Brass, aged in-house" },
+      ],
+      neck: [
+        { k: "Magnet",        v: "Alnico II rods" },
+        { k: "Wire",          v: "42 AWG plain enamel" },
+        { k: "DC Resistance", v: "~7.0 kΩ" },
+        { k: "Wind",          v: "Hand-scatter wound" },
+        { k: "Bobbin",        v: "Fiber, period-correct" },
+        { k: "Cover",         v: "Aged nickel" },
+      ],
+    },
+    foundIn: "broadman",
+  },
+
+  strat62: {
+    id: "strat62",
+    name: "'62 Strat Set",
+    type: "SINGLE-COIL / STRAT",
+    serial: "DS-PU-S62",
+    year: "MMXXVI",
+    price: "Coming soon",
+    magnet: "A5 — Alnico V",
+    wind: "Formvar, hand-scatter wound",
+    lede: "Bell tones, glassy cleans, hum-cancelling positions 2 and 4. Three A5 pickups voiced for players who actually move the switch.",
+    story: {
+      heading: "Three pickups. One voice. Zero compromise.",
+      problem: "Most 'vintage' Strat sets are either too dark or too shrill. And the middle pickup is just there to hum-cancel. We wanted three pickups that each had enough character you'd want to play them on their own.",
+      solution: "A5 rods throughout. Bridge is bright and defined, not ice-pick. Middle is RWRP for hum-cancelling in positions 2 and 4 — wound for bell tone on its own. Neck is warm and glassy; Formvar wire for a smoother top end.",
+      pull: "Three distinct voices. One guitar that does everything.",
+    },
+    specs: {
+      bridge: [
+        { k: "Magnet",        v: "Alnico V rods" },
+        { k: "Wire",          v: "42 AWG Formvar" },
+        { k: "DC Resistance", v: "~6.5 kΩ" },
+        { k: "Wind",          v: "Hand-scatter wound" },
+        { k: "Polarity",      v: "Standard" },
+      ],
+      middle: [
+        { k: "Magnet",        v: "Alnico V rods" },
+        { k: "Wire",          v: "42 AWG Formvar" },
+        { k: "DC Resistance", v: "~6.2 kΩ" },
+        { k: "Wind",          v: "Hand-scatter wound, RWRP" },
+        { k: "Polarity",      v: "Reverse-wound / reverse-polarity" },
+      ],
+      neck: [
+        { k: "Magnet",        v: "Alnico V rods" },
+        { k: "Wire",          v: "42 AWG Formvar" },
+        { k: "DC Resistance", v: "~5.8 kΩ" },
+        { k: "Wind",          v: "Hand-scatter wound" },
+        { k: "Polarity",      v: "Standard" },
+      ],
+    },
+    foundIn: "wayfarer",
+  },
+
+  paf: {
+    id: "paf",
+    name: "PAF Set",
+    type: "HUMBUCKER",
+    serial: "DS-PU-PAF",
+    year: "MMXXVI",
+    price: "Coming soon",
+    magnet: "A2 — Alnico II",
+    wind: "Plain enamel, hand-scatter wound",
+    lede: "Warm, musical, clear. A scatter-wound humbucker set that breathes the way the originals did — not the tribute act, the real thing.",
+    story: {
+      heading: "Built for the guitar that's coming.",
+      problem: "The humbucker got famous for being warm and full — then got pushed hotter and hotter until 'vintage output' became a selling point. We started from the original measurements and went from there.",
+      solution: "A2 bar magnets, hand-scatter wound on a slow machine, mismatched coil winds the way the originals varied. Nickel covers that age on the guitar. Wound for the Monarch — but they drop into any standard humbucker cavity.",
+      pull: "The Monarch isn't finished yet. The pickups that'll go in it are.",
+    },
+    specs: {
+      bridge: [
+        { k: "Magnet",        v: "Alnico II bar" },
+        { k: "Wire",          v: "42 AWG plain enamel" },
+        { k: "DC Resistance", v: "~8.5 kΩ" },
+        { k: "Wind",          v: "Hand-scatter, mismatched coils" },
+        { k: "Cover",         v: "Aged nickel, no potting" },
+      ],
+      neck: [
+        { k: "Magnet",        v: "Alnico II bar" },
+        { k: "Wire",          v: "42 AWG plain enamel" },
+        { k: "DC Resistance", v: "~7.8 kΩ" },
+        { k: "Wind",          v: "Hand-scatter, mismatched coils" },
+        { k: "Cover",         v: "Aged nickel, no potting" },
+      ],
+    },
+    foundIn: "monarch",
+  },
+};
+
+const PICKUP_LINEUP = [
+  {
+    id: "tele52",
+    name: "'52 Tele Set",
+    type: "SINGLE-COIL / TELE",
+    price: "Coming soon",
+    blurb: "The spank, the twang, the bark. A2 magnets, plain enamel, wound for snap and bite.",
+    magnet: "Alnico II",
+    foundIn: "broadman",
+  },
+  {
+    id: "strat62",
+    name: "'62 Strat Set",
+    type: "SINGLE-COIL / STRAT",
+    price: "Coming soon",
+    blurb: "Bell tones and glassy cleans. Three A5 pickups with RWRP middle for positions 2 and 4.",
+    magnet: "Alnico V",
+    foundIn: "wayfarer",
+  },
+  {
+    id: "paf",
+    name: "PAF Set",
+    type: "HUMBUCKER",
+    price: "Coming soon",
+    blurb: "Warm, musical, clear. A scatter-wound A2 humbucker set. Built for the Monarch.",
+    magnet: "Alnico II",
+    foundIn: "monarch",
+  },
+];
+
 window.PRODUCTS = PRODUCTS;
 window.SOURCES = SOURCES;
 window.LINEUP = LINEUP;
+window.PICKUPS = PICKUPS;
+window.PICKUP_LINEUP = PICKUP_LINEUP;

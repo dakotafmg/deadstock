@@ -8,40 +8,23 @@ const { useEffect, useRef, useState } = React;
 function Nav({ route, onNavigate }) {
   const [open, setOpen] = useState(false);
 
-  const links = [
-    { id: "broadman",  label: "Broadman" },
-    { id: "wayfarer",  label: "Wayfarer" },
-    { id: "monarch",   label: "Monarch", soon: true },
-    { id: "dealers",   label: "Dealers", scroll: ".dealers" },
-  ];
+  const isGuitarRoute  = ["broadman", "wayfarer"].includes(route);
+  const isPickupsRoute = ["pickups", "tele52", "strat62", "paf"].includes(route);
 
-  const handleLink = (l, e) => {
-    e.preventDefault();
+  const navigate = (id, e) => {
+    if (e) e.preventDefault();
     setOpen(false);
-    if (l.scroll) {
-      if (route !== "home") {
-        onNavigate("home");
-        setTimeout(() => {
-          document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 80);
-      } else {
-        document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    } else if (l.soon) {
-      const scrollToMonarch = () => {
-        const el = [...document.querySelectorAll(".chapter")].find((c) =>
-          c.querySelector(".chapter-headline")?.innerText.toLowerCase().includes(l.label.toLowerCase())
-        );
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-      };
-      if (route !== "home") {
-        onNavigate("home");
-        setTimeout(scrollToMonarch, 120);
-      } else {
-        scrollToMonarch();
-      }
+    onNavigate(id);
+  };
+
+  const scrollTo = (selector, e) => {
+    if (e) e.preventDefault();
+    setOpen(false);
+    if (route !== "home") {
+      onNavigate("home");
+      setTimeout(() => document.querySelector(selector)?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     } else {
-      onNavigate(l.id);
+      document.querySelector(selector)?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -51,38 +34,45 @@ function Nav({ route, onNavigate }) {
         <div className="nav-logo" onClick={() => { setOpen(false); onNavigate("home"); }} aria-label="Deadstock">
           <img src="assets/wordmark.svg" alt="Deadstock" />
         </div>
+
         <nav className="nav-links">
-          {links.map((l) => (
-            <a
-              key={l.id}
-              className={route === l.id ? "active" : ""}
-              href="#"
-              style={l.soon ? { opacity: 0.5 } : {}}
-              onClick={(e) => handleLink(l, e)}
-            >
-              {l.label}
-              {l.soon ? <span style={{ marginLeft: 6, fontSize: 10, letterSpacing: "0.18em", opacity: 0.7 }}> · soon</span> : null}
-            </a>
-          ))}
+          {/* Guitars dropdown */}
+          <div className="nav-dropdown-wrap">
+            <span className={"nav-dropdown-trigger" + (isGuitarRoute ? " active" : "")}>
+              Guitars
+              <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ marginLeft: 3, flexShrink: 0 }}>
+                <path d="M1 1l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
+            <div className="nav-dropdown">
+              <a className={route === "broadman" ? "active" : ""} href="#" onClick={(e) => navigate("broadman", e)}>The Broadman</a>
+              <a className={route === "wayfarer" ? "active" : ""} href="#" onClick={(e) => navigate("wayfarer", e)}>The Wayfarer</a>
+              <a style={{ opacity: 0.4, cursor: "default" }} onClick={(e) => e.preventDefault()}>The Monarch · soon</a>
+            </div>
+          </div>
+
+          {/* Pickups */}
+          <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
+
+          {/* Dealers */}
+          <a href="#" onClick={(e) => scrollTo(".dealers", e)}>Dealers</a>
         </nav>
+
         <button className="nav-hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
           <span /><span /><span />
         </button>
       </div>
 
+      {/* Mobile menu */}
       <div className="nav-mobile">
-        {links.map((l) => (
-          <a
-            key={l.id}
-            className={route === l.id ? "active" : ""}
-            href="#"
-            style={l.soon ? { opacity: 0.45 } : {}}
-            onClick={(e) => handleLink(l, e)}
-          >
-            {l.label}
-            {l.soon ? <span style={{ marginLeft: 8, fontSize: 11, letterSpacing: "0.16em" }}> · soon</span> : null}
-          </a>
-        ))}
+        <div className="nav-mobile-label">Guitars</div>
+        <div className="nav-mobile-sub-links">
+          <a className={route === "broadman" ? "active" : ""} href="#" onClick={(e) => navigate("broadman", e)}>Broadman</a>
+          <a className={route === "wayfarer" ? "active" : ""} href="#" onClick={(e) => navigate("wayfarer", e)}>Wayfarer</a>
+          <a style={{ opacity: 0.38 }} href="#" onClick={(e) => e.preventDefault()}>Monarch · soon</a>
+        </div>
+        <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
+        <a href="#" onClick={(e) => scrollTo(".dealers", e)}>Dealers</a>
       </div>
     </header>
   );
@@ -103,15 +93,23 @@ function Footer({ onNavigate }) {
           </p>
         </div>
         <div>
-          <h4>The Lineup</h4>
+          <h4>Guitars</h4>
           <ul>
-            <li><a onClick={() => onNavigate("broadman")}>The Broadman</a></li>
-            <li><a onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
-            <li><a onClick={() => onNavigate()} style={{ opacity: 0.6 }}>The Monarch · soon</a></li>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("broadman")}>The Broadman</a></li>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
+            <li><a style={{ opacity: 0.5 }}>The Monarch · soon</a></li>
           </ul>
         </div>
         <div>
-          <h4>Quiet</h4>
+          <h4>Pickups</h4>
+          <ul>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("tele52")}>'52 Tele Set</a></li>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("strat62")}>'62 Strat Set</a></li>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("paf")}>PAF Set</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Store</h4>
           <ul>
             <li><a>Dealers</a></li>
             <li><a>Contact</a></li>
