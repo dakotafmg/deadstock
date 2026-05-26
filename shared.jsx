@@ -6,16 +6,49 @@ const { useEffect, useRef, useState } = React;
 // ============================================================
 
 function Nav({ route, onNavigate }) {
+  const [open, setOpen] = useState(false);
+
   const links = [
     { id: "broadman",  label: "Broadman" },
     { id: "wayfarer",  label: "Wayfarer" },
     { id: "monarch",   label: "Monarch", soon: true },
     { id: "dealers",   label: "Dealers", scroll: ".dealers" },
   ];
+
+  const handleLink = (l, e) => {
+    e.preventDefault();
+    setOpen(false);
+    if (l.scroll) {
+      if (route !== "home") {
+        onNavigate("home");
+        setTimeout(() => {
+          document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 80);
+      } else {
+        document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    } else if (l.soon) {
+      const scrollToMonarch = () => {
+        const el = [...document.querySelectorAll(".chapter")].find((c) =>
+          c.querySelector(".chapter-headline")?.innerText.toLowerCase().includes(l.label.toLowerCase())
+        );
+        el?.scrollIntoView({ behavior: "smooth", block: "start" });
+      };
+      if (route !== "home") {
+        onNavigate("home");
+        setTimeout(scrollToMonarch, 120);
+      } else {
+        scrollToMonarch();
+      }
+    } else {
+      onNavigate(l.id);
+    }
+  };
+
   return (
-    <header className="nav">
+    <header className={"nav" + (open ? " nav-open" : "")}>
       <div className="wrap nav-inner">
-        <div className="nav-logo" onClick={() => onNavigate("home")} aria-label="Deadstock">
+        <div className="nav-logo" onClick={() => { setOpen(false); onNavigate("home"); }} aria-label="Deadstock">
           <img src="assets/wordmark.svg" alt="Deadstock" />
         </div>
         <nav className="nav-links">
@@ -25,41 +58,31 @@ function Nav({ route, onNavigate }) {
               className={route === l.id ? "active" : ""}
               href="#"
               style={l.soon ? { opacity: 0.5 } : {}}
-              onClick={(e) => {
-                e.preventDefault();
-                if (l.scroll) {
-                  if (route !== "home") {
-                    onNavigate("home");
-                    setTimeout(() => {
-                      document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                    }, 80);
-                  } else {
-                    document.querySelector(l.scroll)?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }
-                } else if (l.soon) {
-                  // bring users to the Monarch chapter on home
-                  const scrollToMonarch = () => {
-                    const el = [...document.querySelectorAll(".chapter")].find((c) =>
-                      c.querySelector(".chapter-headline")?.innerText.toLowerCase().includes(l.label.toLowerCase())
-                    );
-                    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-                  };
-                  if (route !== "home") {
-                    onNavigate("home");
-                    setTimeout(scrollToMonarch, 120);
-                  } else {
-                    scrollToMonarch();
-                  }
-                } else {
-                  onNavigate(l.id);
-                }
-              }}
+              onClick={(e) => handleLink(l, e)}
             >
               {l.label}
               {l.soon ? <span style={{ marginLeft: 6, fontSize: 10, letterSpacing: "0.18em", opacity: 0.7 }}> · soon</span> : null}
             </a>
           ))}
         </nav>
+        <button className="nav-hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
+          <span /><span /><span />
+        </button>
+      </div>
+
+      <div className="nav-mobile">
+        {links.map((l) => (
+          <a
+            key={l.id}
+            className={route === l.id ? "active" : ""}
+            href="#"
+            style={l.soon ? { opacity: 0.45 } : {}}
+            onClick={(e) => handleLink(l, e)}
+          >
+            {l.label}
+            {l.soon ? <span style={{ marginLeft: 8, fontSize: 11, letterSpacing: "0.16em" }}> · soon</span> : null}
+          </a>
+        ))}
       </div>
     </header>
   );

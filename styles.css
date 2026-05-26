@@ -202,6 +202,55 @@ body::before {
 .nav-links a.active::after { transform: scaleX(1); }
 .nav-links a.active { color: var(--cream); }
 
+/* Hamburger button — hidden on desktop */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: var(--cream);
+  border-radius: 1px;
+  transition: transform .28s cubic-bezier(.2,.7,.2,1), opacity .2s;
+  transform-origin: center;
+}
+.nav-open .nav-hamburger span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.nav-open .nav-hamburger span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.nav-open .nav-hamburger span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+/* Mobile dropdown — hidden by default, shown when .nav-open */
+.nav-mobile {
+  display: none;
+  flex-direction: column;
+  padding: 16px 28px 32px;
+  border-top: 1px solid rgba(242,230,201,0.07);
+}
+.nav-open .nav-mobile {
+  display: flex;
+}
+.nav-mobile a {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  color: rgba(242,230,201,0.7);
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(242,230,201,0.07);
+  transition: color .2s;
+  display: block;
+}
+.nav-mobile a:last-child { border-bottom: 0; }
+.nav-mobile a.active,
+.nav-mobile a:hover { color: var(--cream); }
+
 .nav-right {
   justify-self: end;
   display: flex; align-items: center; gap: 20px;
@@ -401,8 +450,9 @@ body::before {
   .footer-inner { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 600px) {
-  .nav-logo { display: none; }
-  .nav-links { gap: 22px; font-size: 12px; }
+  .nav-logo { display: flex; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
   .footer { margin-top: 64px; }
   .footer-inner { grid-template-columns: 1fr; padding: 48px 24px 24px; gap: 36px; }
   .footer-bottom { padding: 18px 24px; flex-direction: column; gap: 10px; text-align: center; }
