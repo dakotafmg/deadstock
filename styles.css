@@ -230,7 +230,7 @@ body::before {
 .nav-mobile {
   display: none;
   flex-direction: column;
-  padding: 16px 28px 32px;
+  padding: 12px 28px 24px;
   border-top: 1px solid rgba(242,230,201,0.07);
 }
 .nav-open .nav-mobile {
@@ -238,11 +238,11 @@ body::before {
 }
 .nav-mobile a {
   font-family: var(--display);
-  font-size: 32px;
-  font-weight: 600;
-  letter-spacing: -0.035em;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
   color: rgba(242,230,201,0.7);
-  padding: 16px 0;
+  padding: 12px 0;
   border-bottom: 1px solid rgba(242,230,201,0.07);
   transition: color .2s;
   display: block;
