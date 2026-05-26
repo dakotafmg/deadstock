@@ -25,7 +25,6 @@ function Hero({ onNavigate }) {
     <section className="hero" data-screen-label="home-hero">
       <div className="wrap">
         <div className="hero-top">
-          <div className="eyebrow">Deadstock Guitar Co.</div>
           <div className="since">Fortville, Indiana · Est. 2026</div>
         </div>
 
