@@ -1,5 +1,5 @@
 /* global React, Reveal, PH, DrawLine, PICKUPS, PICKUP_LINEUP, PRODUCTS */
-const { useState: useStatePickup } = React;
+const { useState: useStatePickup, useRef: useRefPickup } = React;
 
 // ============================================================
 // PICKUPS — Landing page + individual product pages
@@ -54,6 +54,11 @@ function PickupLineup({ onNavigate }) {
               onClick={() => onNavigate(pu.id)}
               style={{ cursor: "pointer" }}
             >
+              {pu.thumb && (
+                <div className="pu-card-img">
+                  <img src={pu.thumb} alt={pu.name} />
+                </div>
+              )}
               <div className="pu-card-num">{String(i + 1).padStart(2, "0")}</div>
               <div className="pu-card-type">{pu.type}</div>
               <h3 className="pu-card-name">{pu.name}</h3>
@@ -95,6 +100,12 @@ function PickupProduct({ id, onNavigate }) {
 // HERO
 // ------------------------------------------------------------
 function PickupProductHero({ p, onNavigate }) {
+  const images = p.images || [];
+  const [imgIndex, setImgIndex] = useStatePickup(0);
+  const prev = () => setImgIndex(i => (i - 1 + images.length) % images.length);
+  const next = () => setImgIndex(i => (i + 1) % images.length);
+  const heroImage = images[imgIndex];
+
   return (
     <section className="pu-p-hero">
       <div className="wrap">
@@ -110,7 +121,17 @@ function PickupProductHero({ p, onNavigate }) {
         <div className="pu-p-hero-grid">
           <Reveal>
             <div className="pu-p-image">
-              <PH label={p.name} />
+              {heroImage
+                ? <img src={heroImage} alt={p.name} className="product-photo" />
+                : <PH label={p.name} />
+              }
+              {images.length > 1 && (
+                <>
+                  <button className="photo-nav photo-prev" onClick={prev}>←</button>
+                  <button className="photo-nav photo-next" onClick={next}>→</button>
+                  <span className="photo-counter">{imgIndex + 1} / {images.length}</span>
+                </>
+              )}
             </div>
           </Reveal>
 
@@ -220,7 +241,10 @@ function PickupSpec({ p }) {
           </div>
           <aside className="spec-aside">
             <div className="image-wrap">
-              <PH label={`${p.name} — ${tab} coil`} />
+              {p.images && p.images[1]
+                ? <img src={p.images[positions.indexOf(tab) + 1] || p.images[1]} alt={`${p.name} — ${tab}`} className="product-photo" />
+                : <PH label={`${p.name} — ${tab} coil`} />
+              }
             </div>
           </aside>
         </div>

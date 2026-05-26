@@ -197,6 +197,13 @@ const PICKUPS = {
     price: "$270",
     magnet: "A2 — Alnico II",
     wind: "Plain enamel, flat-pole, hand-scatter wound",
+    images: [
+      "assets/Tele52-1.jpg",
+      "assets/Tele52-2.jpg",
+      "assets/Tele52-3.jpg",
+      "assets/Tele52-4.jpg",
+      "assets/Tele52-5.jpg",
+    ],
     lede: "The pickup that started it all. Flat-pole design, low output between 6k–7k — wound to bring your Tele back to its 1952 glory.",
     story: {
       heading: "The pickup that haunts you in your sleep.",
@@ -234,6 +241,11 @@ const PICKUPS = {
     price: "$290",
     magnet: "A5 — Alnico V",
     wind: "Formvar, hand-scatter wound",
+    images: [
+      "assets/Strat62-1.jpg",
+      "assets/Strat62-2.jpg",
+      "assets/Strat62-3.jpg",
+    ],
     lede: "Slightly scooped mids, excited highs, full lows. The pre-CBS Strat sound that everyone talks about — tested against slab-board Strats to get it right.",
     story: {
       heading: "All the glorious things you hear about the early '60s.",
@@ -276,6 +288,11 @@ const PICKUPS = {
     price: "$350",
     magnet: "A2 — Alnico II",
     wind: "Plain enamel, hand-scatter wound",
+    images: [
+      "assets/PAF-1.jpg",
+      "assets/PAF-2.jpg",
+      "assets/PAF-3.jpg",
+    ],
     lede: "One of the most coveted pickups on earth. Original PAFs run thousands — if you can find one. Our faithful recreation gets you there.",
     story: {
       heading: "Welcome to the most coveted pickup on earth.",
@@ -311,6 +328,7 @@ const PICKUP_LINEUP = [
     price: "$270",
     blurb: "Flat-pole design, 6k–7k output. As close to an original '52 Tele as we can wind it.",
     magnet: "Alnico II",
+    thumb: "assets/Tele52-1.jpg",
     foundIn: "broadman",
   },
   {
@@ -320,6 +338,7 @@ const PICKUP_LINEUP = [
     price: "$290",
     blurb: "Slightly scooped mids, excited highs, full lows. The pre-CBS Strat sound — tested against slab-board Strats.",
     magnet: "Alnico V",
+    thumb: "assets/Strat62-1.jpg",
     foundIn: "wayfarer",
   },
   {
@@ -329,6 +348,7 @@ const PICKUP_LINEUP = [
     price: "$350",
     blurb: "One of the most coveted pickups on earth. Faithful recreation. A2 bar magnets, mismatched coils, aged nickel covers.",
     magnet: "Alnico II",
+    thumb: "assets/PAF-1.jpg",
     foundIn: "monarch",
   },
 ];
