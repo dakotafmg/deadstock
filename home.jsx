@@ -45,9 +45,9 @@ function Hero({ onNavigate }) {
         <div className="hero-meta">
           <Reveal delay={150}>
             <div className="hero-philo">
-              Built by hand, honest in every joint. Ohio-sourced wood,
-              nitrocellulose finish, handwound pickups — <em>made to last
-              longer than the trend cycle.</em>
+              Built by hand, honest in every joint. Ohio sourced wood,
+              nitrocellulose finish, handwound pickups <em>Future Vintage
+              Instruments, Inspired by you!</em>
             </div>
           </Reveal>
 
@@ -66,36 +66,9 @@ function Hero({ onNavigate }) {
                   <span className="arrow">→</span>
                 </button>
               </div>
-              <p
-                style={{
-                  marginTop: 22,
-                  maxWidth: 320,
-                  fontSize: 14,
-                  lineHeight: 1.55,
-                  color: "rgba(242,230,201,0.55)",
-                }}
-              >
-                Two production models. Made in Fortville, Indiana.
-              </p>
             </div>
           </Reveal>
 
-          <Reveal delay={450}>
-            <div className="hero-stats">
-              <div>
-                <div className="num">2</div>
-                <div className="lbl">Models<br/>made by hand</div>
-              </div>
-              <div>
-                <div className="num">11–13<span style={{ fontSize: 22, color: 'rgba(242,230,201,0.5)', marginLeft: 4 }}>w</span></div>
-                <div className="lbl">Average<br/>build time</div>
-              </div>
-              <div>
-                <div className="num">100<span style={{ fontSize: 22, color: 'rgba(242,230,201,0.5)' }}>%</span></div>
-                <div className="lbl">Handwound<br/>pickups</div>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </div>
     </section>
@@ -107,7 +80,7 @@ function Hero({ onNavigate }) {
 // ------------------------------------------------------------
 function Manifesto() {
   const pillars = [
-    { k: "Body",        v: "Locally sourced alder" },
+    { k: "Body",        v: "Ohio: Ash, Alder" },
     { k: "Finish",      v: "Nitrocellulose, hand-rubbed" },
     { k: "Electronics", v: "Handwound single coils" },
     { k: "Hardware",    v: "Aged in-house at the bench" },
@@ -242,7 +215,7 @@ function Lineup({ onNavigate }) {
                           </div>
                           <div>
                             <div className="k">Construction</div>
-                            <div className="v">Carved top, bolt-on neck</div>
+                            <div className="v">Carved top, back bolt-on neck</div>
                           </div>
                         </>
                       ) : (
@@ -314,10 +287,14 @@ function DealerPitch() {
             </a>
           </div>
           <div>
-            <button className="btn btn-amber" style={{ marginTop: 4 }}>
+            <a
+              href="mailto:dealers@deadstockguitars.com?subject=Dealer%20Pack%20Request"
+              className="btn btn-amber"
+              style={{ marginTop: 4 }}
+            >
               Request the dealer pack
               <span className="arrow">→</span>
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -335,9 +312,6 @@ function Craftsmanship() {
       em: "Always.",
       body:
         "Eight thin coats, hand‑rubbed. Designed to breathe, check and earn its story over decades — not look new forever.",
-      glyph: (
-        <svg width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor"/><circle cx="16" cy="16" r="9" fill="none" stroke="currentColor"/><circle cx="16" cy="16" r="4" fill="currentColor"/></svg>
-      ),
     },
     {
       n: "02 — Nut",
@@ -345,19 +319,13 @@ function Craftsmanship() {
       em: "Never composite.",
       body:
         "Unbleached, cut and dressed by hand for every string set. Sustain you can feel in the headstock.",
-      glyph: (
-        <svg width="36" height="32" viewBox="0 0 36 32"><rect x="2" y="14" width="32" height="4" fill="currentColor"/><circle cx="6" cy="16" r="5" fill="none" stroke="currentColor"/><circle cx="30" cy="16" r="5" fill="none" stroke="currentColor"/></svg>
-      ),
     },
     {
       n: "03 — Pickups",
       title: "Handwound.",
       em: "By a person.",
       body:
-        "Plain enamel and formvar, wound by hand. Quarter‑turn hotter than spec for output and character.",
-      glyph: (
-        <svg width="36" height="32" viewBox="0 0 36 32"><rect x="6" y="4" width="24" height="24" rx="2" fill="none" stroke="currentColor"/><circle cx="14" cy="16" r="2" fill="currentColor"/><circle cx="22" cy="16" r="2" fill="currentColor"/></svg>
-      ),
+        "Plain enamel and formvar, wound by hand.",
     },
     {
       n: "04 — Hardware",
@@ -365,9 +333,6 @@ function Craftsmanship() {
       em: "In-house.",
       body:
         "Steel saddles, brass plates, tuner shells — aged in-house at the bench. Every set is unique.",
-      glyph: (
-        <svg width="32" height="32" viewBox="0 0 32 32"><polygon points="16,3 28,10 28,22 16,29 4,22 4,10" fill="none" stroke="currentColor"/><circle cx="16" cy="16" r="3" fill="currentColor"/></svg>
-      ),
     },
   ];
   return (
@@ -383,7 +348,6 @@ function Craftsmanship() {
               <div className="num">{c.n}</div>
               <h3>{c.title} <em>{c.em}</em></h3>
               <p>{c.body}</p>
-              <div className="glyph" style={{ color: "var(--tobacco)" }}>{c.glyph}</div>
             </Reveal>
           ))}
         </div>
