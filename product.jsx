@@ -272,8 +272,8 @@ function BuildTag({ p }) {
             <div>
               <h3>Built, numbered,<br/><em>set up by hand.</em></h3>
               <p>
-                Every Deadstock ships with its build tag — serial number,
-                build run, and a hand-setup note. We keep our copy on file.
+                Every Deadstock ships with its build tag — certified
+                authenticity story card.
               </p>
 
               <div className="specs">
