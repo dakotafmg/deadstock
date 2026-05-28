@@ -760,4 +760,9 @@
   .spec-tab { font-size: 11px; padding: 10px 14px; }
   .p-build { padding: 64px 0; }
   .p-related { padding: 72px 0 80px; }
+  .p-hero-facts { grid-template-columns: 1fr 1fr; }
+  .p-hero-side .swatches { flex-wrap: wrap; gap: 10px; }
+  .p-fact .v { font-size: 18px; }
 }
+
+.product, .pickup-product { overflow-x: hidden; }

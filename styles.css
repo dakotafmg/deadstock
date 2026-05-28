@@ -559,6 +559,319 @@ body::before {
 .draw-line.in { transform: scaleX(1); }
 
 /* ============================================================
+   FOUNDERS LETTER
+   ============================================================ */
+.letter-page {
+  background: var(--cream);
+  padding: 80px 0 140px;
+  min-height: 100vh;
+}
+.letter-nav {
+  margin-bottom: 64px;
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tobacco);
+}
+.letter-nav a:hover { color: var(--walnut); }
+.letter-eyebrow {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 24px;
+}
+.letter-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(52px, 7vw, 112px);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  color: var(--black);
+  margin: 0 0 72px;
+  max-width: 14ch;
+}
+.letter-title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--walnut);
+}
+.letter-content {
+  max-width: 660px;
+  border-top: 1px solid var(--rule);
+  padding-top: 56px;
+}
+.letter-salutation {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--walnut);
+  margin-bottom: 40px;
+}
+.letter-content p {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.72;
+  color: var(--walnut);
+  margin: 0 0 24px;
+  text-wrap: pretty;
+}
+.letter-pull {
+  font-family: var(--display) !important;
+  font-weight: 600 !important;
+  font-size: clamp(24px, 2.8vw, 32px) !important;
+  line-height: 1.25 !important;
+  color: var(--black) !important;
+  border-left: 2px solid var(--amber);
+  padding: 4px 0 4px 24px;
+  margin: 40px 0 !important;
+  letter-spacing: -0.02em;
+  text-wrap: balance !important;
+}
+.letter-signature {
+  margin-top: 64px;
+  padding-top: 36px;
+  border-top: 1px solid var(--rule);
+}
+.letter-sig-name {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.letter-sig-title {
+  font-family: var(--display);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tobacco);
+}
+@media (max-width: 720px) {
+  .letter-page { padding: 56px 0 100px; }
+  .letter-title { font-size: clamp(44px, 10vw, 80px); margin-bottom: 48px; }
+  .letter-content p { font-size: 16px; }
+}
+
+/* ============================================================
+   PARTNERS PAGE
+   ============================================================ */
+.partners-page { background: var(--cream); min-height: 100vh; }
+.partners-hero {
+  padding: 80px 0 100px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--rule);
+}
+.partners-hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(48px, 6vw, 96px);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  color: var(--black);
+  max-width: 16ch;
+}
+.partners-hero h1 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--walnut);
+}
+.partners-lede {
+  font-family: var(--display);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--walnut);
+  max-width: 520px;
+  margin: 28px 0 0;
+}
+.partners-list { padding: 80px 0 120px; }
+.partner-row {
+  display: grid;
+  grid-template-columns: 48px 120px 1fr;
+  gap: 40px;
+  align-items: start;
+  padding: 48px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.partner-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--tobacco);
+  padding-top: 6px;
+}
+.partner-logo-slot { display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; }
+.partner-logo-ph {
+  width: 72px; height: 72px;
+  background: var(--cream-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 26px;
+  color: var(--tobacco);
+}
+.partner-role {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+.partner-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 42px);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--black);
+  margin: 0 0 20px;
+}
+.partner-desc {
+  font-family: var(--display);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: var(--walnut);
+  margin: 0 0 20px;
+  max-width: 520px;
+  text-wrap: pretty;
+}
+.partner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px;
+  text-decoration: none;
+  transition: color .2s, border-color .2s, gap .2s;
+}
+.partner-link:hover { color: var(--amber); border-bottom-color: var(--amber); gap: 16px; }
+@media (max-width: 720px) {
+  .partner-row { grid-template-columns: 40px 1fr; }
+  .partner-logo-slot { display: none; }
+  .partners-hero { padding: 56px 0 64px; }
+  .partners-list { padding: 48px 0 80px; }
+}
+
+/* ============================================================
+   DEALERS PAGE
+   ============================================================ */
+.dealers-page { background: var(--cream); min-height: 100vh; }
+.dealers-page-hero {
+  padding: 80px 0 100px;
+  background: var(--cream);
+  border-bottom: 1px solid var(--rule);
+}
+.dealers-page-hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(48px, 6vw, 96px);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  color: var(--black);
+  max-width: 16ch;
+}
+.dealers-page-hero h1 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--walnut);
+}
+.dealers-list-section { padding: 80px 0 120px; }
+.dealers-list-head { margin-bottom: 40px; }
+.dealers-list { border-top: 1px solid var(--rule); }
+.dealer-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.dealer-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--tobacco);
+}
+.dealer-name {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(22px, 2.5vw, 32px);
+  letter-spacing: -0.02em;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.dealer-location {
+  font-family: var(--display);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--walnut);
+  letter-spacing: 0.02em;
+}
+.dealer-type {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  white-space: nowrap;
+}
+.dealers-become {
+  margin-top: 80px;
+  background: var(--black);
+  border-radius: 4px;
+  padding: 64px;
+  color: var(--cream);
+}
+.dealers-become h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(28px, 3.5vw, 48px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--cream);
+  margin: 0 0 20px;
+}
+.dealers-become p {
+  font-family: var(--display);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.65;
+  color: rgba(242,230,201,0.72);
+  max-width: 480px;
+  margin: 0 0 32px;
+}
+.dealers-become-cta { display: flex; gap: 16px; flex-wrap: wrap; }
+@media (max-width: 720px) {
+  .dealers-become { padding: 40px 24px; }
+  .dealer-row { grid-template-columns: 40px 1fr; }
+  .dealer-type { display: none; }
+}
+
+/* ============================================================
    SCROLLBAR (subtle)
    ============================================================ */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
