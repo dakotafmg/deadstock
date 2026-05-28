@@ -712,16 +712,14 @@ body::before {
   padding-top: 6px;
 }
 .partner-logo-slot { display: flex; align-items: flex-start; justify-content: center; padding-top: 4px; }
-.partner-logo-ph {
-  width: 72px; height: 72px;
-  background: var(--cream-2);
-  border: 1px solid var(--rule);
+.partner-logo-img {
+  width: 96px;
+  height: 72px;
+  object-fit: contain;
+  object-position: center;
   border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: var(--display);
-  font-weight: 600;
-  font-size: 26px;
-  color: var(--tobacco);
+  background: var(--cream-2);
+  padding: 8px;
 }
 .partner-role {
   font-family: var(--display);
@@ -803,11 +801,18 @@ body::before {
 .dealers-list { border-top: 1px solid var(--rule); }
 .dealer-row {
   display: grid;
-  grid-template-columns: 48px 1fr auto;
+  grid-template-columns: 48px 96px 1fr auto;
   gap: 32px;
   align-items: center;
   padding: 32px 0;
   border-bottom: 1px solid var(--rule);
+}
+.dealer-logo-slot { display: flex; align-items: center; }
+.dealer-logo-img {
+  width: 96px;
+  height: 56px;
+  object-fit: contain;
+  object-position: left center;
 }
 .dealer-num {
   font-family: var(--mono);
@@ -867,8 +872,10 @@ body::before {
 .dealers-become-cta { display: flex; gap: 16px; flex-wrap: wrap; }
 @media (max-width: 720px) {
   .dealers-become { padding: 40px 24px; }
-  .dealer-row { grid-template-columns: 40px 1fr; }
-  .dealer-type { display: none; }
+  .dealer-row { grid-template-columns: 1fr auto; gap: 16px; }
+  .dealer-num { display: none; }
+  .dealer-logo-slot { display: none; }
+  .dealer-type { font-size: 10px; }
 }
 
 /* ============================================================
