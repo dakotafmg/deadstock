@@ -121,7 +121,7 @@ function Hero({ onNavigate }) {
         <div className="hero-meta">
           <Reveal delay={150}>
             <div className="hero-philo">
-              Built by hand, honest in every joint. Ohio sourced wood,
+              Built by hand, honest in every joint. Ohio-milled wood,
               nitrocellulose finish, handwound pickups <em>Future Vintage
               Instruments, Inspired by you!</em>
             </div>
@@ -155,7 +155,7 @@ function Hero({ onNavigate }) {
 // ------------------------------------------------------------
 function Manifesto() {
   const pillars = [
-    { k: "Body",        v: "Ohio: Ash, Alder" },
+    { k: "Body",        v: "Ash + Alder, milled in Ohio" },
     { k: "Finish",      v: "Nitrocellulose, hand-rubbed" },
     { k: "Electronics", v: "Handwound single coils" },
     { k: "Hardware",    v: "Aged in-house at the bench" },
@@ -178,7 +178,7 @@ function Manifesto() {
               <p>
                 A real instrument should outlive its first owner. We build
                 in small batches in Fortville, Indiana — nitro finish, bone
-                nut, handwound pickups, locally sourced wood.
+                nut, handwound pickups, Ohio-milled wood.
               </p>
               <p>
                 These are not marketing points. They are the minimum spec we
