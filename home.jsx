@@ -13,11 +13,14 @@ const HERO_SLIDES = [
   { src: "assets/hero-3.jpg", pos: "center",   scale: 1    },
   { src: "assets/hero-4.jpg", pos: "center",   scale: 1    },
   { src: "assets/hero-5.jpg", pos: "center",   scale: 1    },
-  { src: "assets/hero-6.jpg", pos: "50% 60%",   scale: 1    },
+  { src: "assets/hero-6.jpeg", pos: "50% 60%",   scale: 1    },
   { src: "assets/hero-7.jpg", pos: "center",   scale: 1    },
   { src: "assets/hero-8.jpg", pos: "50% 15%",   scale: 1    },
   { src: "assets/hero-9.jpg", pos: "center",   scale: 1    },
-  { src: "assets/hero-10.jpg", pos: "center",   scale: 1    }
+  { src: "assets/hero-10.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-11.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-12.jpg", pos: "50% 90%",   scale: 1    },
+  { src: "assets/hero-15.jpg", pos: "center",   scale: 1    }
 ];
 
 const NOTIFY_ENDPOINT = "https://formspree.io/f/mvzylraj";
