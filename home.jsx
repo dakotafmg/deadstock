@@ -1,30 +1,37 @@
 /* global React, Reveal, PH, DrawLine, LINEUP, SOURCES */
 const { useState: useStateHome, useEffect: useEffectHome, useRef: useRefHome } = React;
 
+// Each slide has a src and a focal-point (CSS object-position).
+// Tweak pos values to frame each photo — e.g. "50% 30%" pushes the crop up.
 const HERO_SLIDES = [
-  "assets/hero-1.jpg",
-  "assets/hero-2.jpg",
-  "assets/hero-3.jpg",
-  "assets/hero-4.jpg",
-  "assets/hero-5.jpg",
-  "assets/hero-6.jpg",
-  "assets/hero-7.jpg",
-  "assets/hero-8.jpg",
-  "assets/hero-9.jpg",
+  { src: "assets/hero-1.jpg", pos: "center" },
+  { src: "assets/hero-2.jpg", pos: "center" },
+  { src: "assets/hero-3.jpg", pos: "center" },
+  { src: "assets/hero-4.jpg", pos: "center" },
+  { src: "assets/hero-5.jpg", pos: "center" },
+  { src: "assets/hero-6.jpg", pos: "center" },
+  { src: "assets/hero-7.jpg", pos: "center" },
+  { src: "assets/hero-8.jpg", pos: "center" },
+  { src: "assets/hero-9.jpg", pos: "center" },
 ];
+
+// Replace with your Formspree form ID after signing up at formspree.io
+const NOTIFY_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
 
 // ============================================================
 // HOMEPAGE
 // ============================================================
 
 function Home({ onNavigate }) {
+  const [notifyOpen, setNotifyOpen] = useStateHome(false);
   return (
     <main className="home">
       <Hero onNavigate={onNavigate} />
       <Manifesto />
-      <Lineup onNavigate={onNavigate} />
+      <Lineup onNavigate={onNavigate} onNotify={() => setNotifyOpen(true)} />
       <Craftsmanship />
       <DealerPitch />
+      {notifyOpen && <NotifyModal onClose={() => setNotifyOpen(false)} />}
     </main>
   );
 }
@@ -60,6 +67,8 @@ function Hero({ onNavigate }) {
     }, 400);
   };
 
+  const slide = HERO_SLIDES[current];
+
   return (
     <section className="hero" data-screen-label="home-hero">
       <div className="wrap">
@@ -77,7 +86,12 @@ function Hero({ onNavigate }) {
         <Reveal delay={200}>
           <div className="hero-product">
             <div className={"hero-slideshow" + (fading ? " fading" : "")}>
-              <img src={HERO_SLIDES[current]} alt="The Lineup" className="hero-product-img" />
+              <img
+                src={slide.src}
+                alt="The Lineup"
+                className="hero-product-img"
+                style={{ objectPosition: slide.pos }}
+              />
             </div>
             <div className="corner-tl">The Lineup · 2026</div>
             {/* Dot indicators */}
@@ -181,7 +195,7 @@ function Manifesto() {
 // ------------------------------------------------------------
 // LINEUP — full-bleed editorial chapters, not bordered cards
 // ------------------------------------------------------------
-function Lineup({ onNavigate }) {
+function Lineup({ onNavigate, onNotify }) {
   return (
     <section className="lineup" data-screen-label="home-lineup">
       <div className="wrap">
@@ -201,12 +215,15 @@ function Lineup({ onNavigate }) {
         const labelArch = m.archetype.split(" / ")[0];
         const labelSub  = m.archetype.split(" / ")[1] || "";
         const interactable = m.status === "AVAILABLE";
-        const handleOpen = () => interactable && onNavigate(m.id);
+        const handleCTA = () => {
+          if (m.status === "AVAILABLE") onNavigate(m.id);
+          else if (m.status === "COMING-SOON") onNotify();
+        };
         return (
           <Reveal key={m.id}>
             <article
               className={`chapter ${variant}`}
-              onClick={handleOpen}
+              onClick={() => interactable && onNavigate(m.id)}
               style={interactable ? { cursor: "pointer" } : {}}
               data-screen-label={`chapter-${m.id}`}
             >
@@ -289,10 +306,7 @@ function Lineup({ onNavigate }) {
 
                     <span
                       className="chapter-cta"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpen();
-                      }}
+                      onClick={(e) => { e.stopPropagation(); handleCTA(); }}
                     >
                       {m.status === "COMING-SOON" ? "Get notified" : `View the ${m.name}`}
                       <span className="arrow">→</span>
@@ -305,6 +319,89 @@ function Lineup({ onNavigate }) {
         );
       })}
     </section>
+  );
+}
+
+// ------------------------------------------------------------
+// NOTIFY MODAL — email collection for coming-soon models
+// ------------------------------------------------------------
+function NotifyModal({ onClose }) {
+  const [email, setEmail] = useStateHome("");
+  const [status, setStatus] = useStateHome("idle"); // idle | sending | done | error
+
+  // Close on Escape key
+  useEffectHome(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const res = await fetch(NOTIFY_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ email, _subject: "Monarch — notify me" }),
+      });
+      setStatus(res.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="notify-overlay" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="notify-modal" onClick={e => e.stopPropagation()}>
+        <button className="notify-close" onClick={onClose} aria-label="Close">×</button>
+
+        {status === "done" ? (
+          <div className="notify-success">
+            <div className="notify-check">✓</div>
+            <h3>You're on the list.</h3>
+            <p>We'll reach out the moment The Monarch is ready to order.</p>
+            <button className="btn btn-amber" style={{ marginTop: 32 }} onClick={onClose}>
+              Close <span className="arrow">→</span>
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="notify-eyebrow">The Monarch · Coming 2026</div>
+            <h3 className="notify-heading">Be first<br/>to <em>know.</em></h3>
+            <p className="notify-body">
+              Leave your email and we'll reach out the moment The Monarch
+              is ready to order. No noise. Just the one email that matters.
+            </p>
+            <form className="notify-form" onSubmit={handleSubmit}>
+              <input
+                className="notify-input"
+                type="email"
+                required
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                autoFocus
+              />
+              <button
+                className="btn btn-amber notify-submit"
+                type="submit"
+                disabled={status === "sending"}
+              >
+                {status === "sending" ? "Sending…" : "Notify me"}
+                {status !== "sending" && <span className="arrow">→</span>}
+              </button>
+            </form>
+            {status === "error" && (
+              <p className="notify-error">
+                Something went wrong — email us directly at{" "}
+                <a href="mailto:hello@deadstockguitars.com">hello@deadstockguitars.com</a>
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
