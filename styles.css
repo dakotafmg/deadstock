@@ -234,7 +234,6 @@ body::before {
 .nav-dropdown-trigger.active::after { transform: scaleX(1); }
 
 .nav-dropdown {
-  display: none;
   position: absolute;
   top: calc(100% + 14px);
   left: -20px;
@@ -246,8 +245,27 @@ body::before {
   padding: 8px 0;
   min-width: 200px;
   z-index: 100;
+  /* fade in/out instead of instant display:none so we can delay close */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0s linear 0.18s;
 }
-.nav-dropdown-wrap:hover .nav-dropdown { display: block; }
+/* Invisible bridge fills the 14px gap so mouse travel doesn't break hover */
+.nav-dropdown::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 14px;
+}
+.nav-dropdown-wrap:hover .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.15s ease, visibility 0s linear 0s;
+}
 .nav-dropdown a {
   display: block;
   padding: 11px 20px;
