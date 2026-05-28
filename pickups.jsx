@@ -22,7 +22,7 @@ function PickupsHero() {
           <div className="since">Fortville, Indiana · Est. 2026</div>
         </div>
         <Reveal className="display">
-          <h1 style={{ margin: 0 }}>
+          <h1 style={{ marginTop: 0 }}>
             Wound by hand.
             <span style={{ display: "block", marginTop: "0.3em" }}><em>Every one.</em></span>
           </h1>

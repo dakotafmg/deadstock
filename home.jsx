@@ -37,14 +37,6 @@ function Hero({ onNavigate }) {
   const [fading, setFading] = useStateHome(false);
   const timerRef = useRefHome(null);
 
-  const goTo = (idx) => {
-    setFading(true);
-    setTimeout(() => {
-      setCurrent(idx);
-      setFading(false);
-    }, 400);
-  };
-
   const advance = () => {
     setFading(true);
     setTimeout(() => {
@@ -58,21 +50,19 @@ function Hero({ onNavigate }) {
     return () => clearInterval(timerRef.current);
   }, []);
 
-  const resetTimer = (idx) => {
+  const goTo = (idx) => {
     clearInterval(timerRef.current);
-    goTo(idx);
-    timerRef.current = setInterval(advance, 5000);
+    setFading(true);
+    setTimeout(() => {
+      setCurrent(idx);
+      setFading(false);
+      timerRef.current = setInterval(advance, 5000);
+    }, 400);
   };
 
   return (
     <section className="hero" data-screen-label="home-hero">
-      {/* Full-bleed slideshow background */}
-      <div className={"hero-slide-bg" + (fading ? " fading" : "")}>
-        <img src={HERO_SLIDES[current]} alt="Deadstock Guitars" className="hero-slide-img" />
-        <div className="hero-slide-overlay" />
-      </div>
-
-      <div className="wrap hero-slide-content">
+      <div className="wrap">
         <div className="hero-top">
           <div className="since">Fortville, Indiana · Est. 2026</div>
         </div>
@@ -82,6 +72,26 @@ function Hero({ onNavigate }) {
             We build <em>premium</em> instruments —<br/>
             but music belongs to <em>everyone.</em>
           </h1>
+        </Reveal>
+
+        <Reveal delay={200}>
+          <div className="hero-product">
+            <div className={"hero-slideshow" + (fading ? " fading" : "")}>
+              <img src={HERO_SLIDES[current]} alt="The Lineup" className="hero-product-img" />
+            </div>
+            <div className="corner-tl">The Lineup · 2026</div>
+            {/* Dot indicators */}
+            <div className="hero-dots">
+              {HERO_SLIDES.map((_, i) => (
+                <button
+                  key={i}
+                  className={"hero-dot" + (i === current ? " active" : "")}
+                  onClick={() => goTo(i)}
+                  aria-label={`Slide ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
         </Reveal>
 
         <div className="hero-meta">
@@ -110,18 +120,6 @@ function Hero({ onNavigate }) {
               </div>
             </div>
           </Reveal>
-        </div>
-
-        {/* Dot indicators */}
-        <div className="hero-dots">
-          {HERO_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              className={"hero-dot" + (i === current ? " active" : "")}
-              onClick={() => resetTimer(i)}
-              aria-label={`Slide ${i + 1}`}
-            />
-          ))}
         </div>
       </div>
     </section>
