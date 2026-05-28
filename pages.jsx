@@ -107,30 +107,35 @@ const PARTNER_DATA = [
   {
     name: "Woodtech Routing",
     role: "Bodies",
+    logo: "assets/partner-woodtech.jpg",
     description: "Built by tradesmen who spent years in sawmills and around lumber before betting on themselves. They hand select Ohio-grown woods, kiln dry them locally, and CNC every body to our exact specifications. That's not supply chain — that's legacy.",
     url: "https://woodtechrouting.com",
   },
   {
     name: "Musikraft",
     role: "Necks",
+    logo: "assets/partner-musikraft.jpg",
     description: "Their pursuit of excellence mirrors our own belief that instruments should feel like extensions of the player, not products off an assembly line. Every carve, every spec, every detail matters. Built in relationship, not transaction.",
     url: "https://musikraft.com",
   },
   {
     name: "Mojotone",
     role: "Pickups & Winding",
+    logo: "assets/partner-mojotone.jpg",
     description: "Their passion for tone and pursuit of great pickup design has helped us chase sounds that feel inspiring, alive and unmistakably ours. Partners in the pursuit of the real thing.",
     url: "https://mojotone.com",
   },
   {
     name: "Allparts USA",
     role: "Hardware & Components",
+    logo: "assets/partner-allparts.jpg",
     description: "Hardware, lacquer, screws, bolts, plates, bridges and countless tiny details. They've supported us from the beginning and helped make the impossible start to feel possible.",
     url: "https://allparts.com",
   },
   {
     name: "Crossrock Cases",
     role: "Cases",
+    logo: "assets/partner-crossrock.jpg",
     description: "From the beginning we believed the experience should feel special before the guitar is ever played. Crossrock partnered with us to create an unboxing experience that feels intentional — unlike the standard-issue black box the industry settled for years ago.",
     url: "https://crossrockcases.com",
   },
@@ -165,8 +170,7 @@ function Partners({ onNavigate }) {
             <Reveal key={p.name} delay={i * 60} className="partner-row">
               <div className="partner-num">{String(i + 1).padStart(2, "0")}</div>
               <div className="partner-logo-slot">
-                {/* Logo goes here */}
-                <div className="partner-logo-ph">{p.name.charAt(0)}</div>
+                <img src={p.logo} alt={p.name} className="partner-logo-img" />
               </div>
               <div className="partner-info">
                 <div className="partner-role">{p.role}</div>
@@ -199,6 +203,7 @@ const DEALER_LIST = [
     city: "Nashville",
     state: "TN",
     type: "Authorized Dealer",
+    logo: "assets/dealer-tonecentral.jpg",
   },
 ];
 
@@ -234,6 +239,11 @@ function DealersPage({ onNavigate }) {
             {DEALER_LIST.map((d, i) => (
               <Reveal key={i} className="dealer-row">
                 <div className="dealer-num">{String(i + 1).padStart(2, "0")}</div>
+                {d.logo && (
+                  <div className="dealer-logo-slot">
+                    <img src={d.logo} alt={d.name} className="dealer-logo-img" />
+                  </div>
+                )}
                 <div className="dealer-info">
                   <div className="dealer-name">{d.name}</div>
                   <div className="dealer-location">{d.city}, {d.state}</div>
