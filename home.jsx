@@ -9,17 +9,17 @@ const { useState: useStateHome, useEffect: useEffectHome, useRef: useRefHome } =
 //           The zoom is anchored to the same focal point as `pos`.
 const HERO_SLIDES = [
   { src: "assets/hero-1.jpg", pos: "center",   scale: 1    },
-  { src: "assets/hero-2.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-2.jpg", pos: "50% 10%",   scale: 1    },
   { src: "assets/hero-3.jpg", pos: "center",   scale: 1    },
   { src: "assets/hero-4.jpg", pos: "center",   scale: 1    },
   { src: "assets/hero-5.jpg", pos: "center",   scale: 1    },
-  { src: "assets/hero-6.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-6.jpg", pos: "50% 60%",   scale: 1    },
   { src: "assets/hero-7.jpg", pos: "center",   scale: 1    },
-  { src: "assets/hero-8.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-8.jpg", pos: "50% 15%",   scale: 1    },
   { src: "assets/hero-9.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-10.jpg", pos: "center",   scale: 1    }
 ];
 
-// Replace with your Formspree form ID after signing up at formspree.io
 const NOTIFY_ENDPOINT = "https://formspree.io/f/mvzylraj";
 
 // ============================================================
