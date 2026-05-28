@@ -1,18 +1,22 @@
 /* global React, Reveal, PH, DrawLine, LINEUP, SOURCES */
 const { useState: useStateHome, useEffect: useEffectHome, useRef: useRefHome } = React;
 
-// Each slide has a src and a focal-point (CSS object-position).
-// Tweak pos values to frame each photo — e.g. "50% 30%" pushes the crop up.
+// Each slide has:
+//   src  — image path
+//   pos  — CSS object-position focal point, e.g. "50% 30%" pushes crop up,
+//           "70% 50%" shifts right. Use percentages or keywords (top, bottom…)
+//   scale — zoom multiplier (1 = no zoom, 1.15 = 15% in, 1.3 = 30% in etc.)
+//           The zoom is anchored to the same focal point as `pos`.
 const HERO_SLIDES = [
-  { src: "assets/hero-1.jpg", pos: "center" },
-  { src: "assets/hero-2.jpg", pos: "center" },
-  { src: "assets/hero-3.jpg", pos: "center" },
-  { src: "assets/hero-4.jpg", pos: "center" },
-  { src: "assets/hero-5.jpg", pos: "center" },
-  { src: "assets/hero-6.jpg", pos: "center" },
-  { src: "assets/hero-7.jpg", pos: "center" },
-  { src: "assets/hero-8.jpg", pos: "center" },
-  { src: "assets/hero-9.jpg", pos: "center" },
+  { src: "assets/hero-1.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-2.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-3.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-4.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-5.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-6.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-7.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-8.jpg", pos: "center",   scale: 1    },
+  { src: "assets/hero-9.jpg", pos: "center",   scale: 1    },
 ];
 
 // Replace with your Formspree form ID after signing up at formspree.io
@@ -90,10 +94,13 @@ function Hero({ onNavigate }) {
                 src={slide.src}
                 alt="The Lineup"
                 className="hero-product-img"
-                style={{ objectPosition: slide.pos }}
+                style={{
+                  objectPosition: slide.pos,
+                  transform: `scale(${slide.scale || 1})`,
+                  transformOrigin: slide.pos,
+                }}
               />
             </div>
-            <div className="corner-tl">The Lineup · 2026</div>
             {/* Dot indicators */}
             <div className="hero-dots">
               {HERO_SLIDES.map((_, i) => (
