@@ -45,7 +45,7 @@ function FoundersLetter({ onNavigate }) {
 
           <p>That matters to us.</p>
 
-          <p>Our bodies begin in Ohio through our partnership with Woodtech Routing, a company built by tradesmen who spent years in sawmills, around lumber, machinery and hard work before stepping out to build something of their own. They hand select woods cut down right there in Ohio, kiln dry them locally and CNC every body in house to our specifications.</p>
+          <p>Our bodies begin in Ohio through our partnership with Woodtech Routing, a company built by tradesmen who spent years in sawmills, around lumber, machinery and hard work before stepping out to build something of their own. They hand select domestic lumber, kiln dry it locally and CNC every body in house to our specifications.</p>
 
           <p>That's not just supply chain. That's legacy. That's American skill. That's real people betting on themselves.</p>
 
@@ -108,7 +108,7 @@ const PARTNER_DATA = [
     name: "Woodtech Routing",
     role: "Bodies",
     logo: "assets/partner-woodtech.jpg",
-    description: "Built by tradesmen who spent years in sawmills and around lumber before betting on themselves. They hand select Ohio-grown woods, kiln dry them locally, and CNC every body to our exact specifications. That's not supply chain — that's legacy.",
+    description: "Built by tradesmen who spent years in sawmills and around lumber before betting on themselves. They hand select domestic lumber, kiln dry it locally, and CNC every body to our exact specifications. That's not supply chain — that's legacy.",
     url: "https://woodtechrouting.com",
   },
   {

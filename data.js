@@ -43,7 +43,7 @@ const PRODUCTS = {
     },
     specs: {
       body: [
-        { k: "Wood",        v: "2‑piece Swamp Ash, solid top — Ohio, USA" },
+        { k: "Wood",        v: "2‑piece Swamp Ash, solid top — milled in Ohio" },
         { k: "Finish",      v: "Nitrocellulose, very thin coats" },
         { k: "Construction",v: "Bolt‑on, 4 screws + neck plate" },
         { k: "Contour",     v: "Flat top, vintage edge radius" },
@@ -117,7 +117,7 @@ const PRODUCTS = {
     },
     specs: {
       body: [
-        { k: "Wood",         v: "Locally sourced — Ohio, USA" },
+        { k: "Wood",         v: "Locally sourced Alder — milled in Ohio" },
         { k: "Finish",       v: "Nitrocellulose" },
         { k: "Construction", v: "Bolt‑on, contoured heel" },
         { k: "Contour",      v: "Deep belly + forearm" },
