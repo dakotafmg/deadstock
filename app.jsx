@@ -1,4 +1,4 @@
-/* global React, ReactDOM, Nav, Footer, Home, Product, Pickups, PickupProduct, useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakColor, TweakSelect */
+/* global React, ReactDOM, Nav, Footer, Home, Product, Pickups, PickupProduct, FoundersLetter, Partners, DealersPage, useTweaks, TweaksPanel, TweakSection, TweakRadio, TweakToggle, TweakColor, TweakSelect */
 
 const { useState, useEffect } = React;
 
@@ -6,7 +6,7 @@ const { useState, useEffect } = React;
 // DEADSTOCK — App shell + router
 // ============================================================
 
-const VALID_ROUTES = ["home", "broadman", "wayfarer", "pickups", "tele52", "strat62", "paf"];
+const VALID_ROUTES = ["home", "broadman", "wayfarer", "pickups", "tele52", "strat62", "paf", "letter", "partners", "dealers"];
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -74,6 +74,9 @@ function App() {
       {route === "tele52"   && <PickupProduct id="tele52"  onNavigate={onNavigate} />}
       {route === "strat62"  && <PickupProduct id="strat62" onNavigate={onNavigate} />}
       {route === "paf"      && <PickupProduct id="paf"     onNavigate={onNavigate} />}
+      {route === "letter"   && <FoundersLetter onNavigate={onNavigate} />}
+      {route === "partners" && <Partners onNavigate={onNavigate} />}
+      {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
       <Footer onNavigate={onNavigate} />
 
       <TweaksPanel title="Tweaks">

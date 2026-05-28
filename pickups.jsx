@@ -23,7 +23,8 @@ function PickupsHero() {
         </div>
         <Reveal className="display">
           <h1 style={{ margin: 0 }}>
-            Wound by hand.<br/><em>Every one.</em>
+            Wound by hand.
+            <span style={{ display: "block", marginTop: "0.3em" }}><em>Every one.</em></span>
           </h1>
         </Reveal>
         <Reveal delay={180}>

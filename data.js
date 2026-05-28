@@ -208,7 +208,7 @@ const PICKUPS = {
     serial: "DS-PU-T52",
     year: "MMXXVI",
     price: "$270",
-    magnet: "A2 — Alnico II",
+    magnet: "A3 neck / A5 bridge",
     wind: "Plain enamel, flat-pole, hand-scatter wound",
     images: [
       "assets/Tele52-1.jpg",
@@ -226,7 +226,7 @@ const PICKUPS = {
     },
     specs: {
       bridge: [
-        { k: "Magnet",        v: "Alnico II rods, flat-pole" },
+        { k: "Magnet",        v: "Alnico V rods, flat-pole" },
         { k: "Wire",          v: "42 AWG plain enamel" },
         { k: "DC Resistance", v: "6k–7k Ω" },
         { k: "Wind",          v: "Hand-scatter wound" },
@@ -234,7 +234,7 @@ const PICKUPS = {
         { k: "Cover",         v: "Brass, aged in-house" },
       ],
       neck: [
-        { k: "Magnet",        v: "Alnico II rods, flat-pole" },
+        { k: "Magnet",        v: "Alnico III rods, flat-pole" },
         { k: "Wire",          v: "42 AWG plain enamel" },
         { k: "DC Resistance", v: "6k–7k Ω" },
         { k: "Wind",          v: "Hand-scatter wound" },
@@ -340,7 +340,7 @@ const PICKUP_LINEUP = [
     type: "SINGLE-COIL / TELE",
     price: "$270",
     blurb: "Flat-pole design, 6k–7k output. As close to an original '52 Tele as we can wind it.",
-    magnet: "Alnico II",
+    magnet: "A3 neck / A5 bridge",
     thumb: "assets/Tele52-1.jpg",
     foundIn: "broadman",
   },
