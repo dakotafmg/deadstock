@@ -20,7 +20,7 @@ const HERO_SLIDES = [
 ];
 
 // Replace with your Formspree form ID after signing up at formspree.io
-const NOTIFY_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID";
+const NOTIFY_ENDPOINT = "https://formspree.io/f/mvzylraj";
 
 // ============================================================
 // HOMEPAGE
