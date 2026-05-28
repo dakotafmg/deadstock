@@ -137,7 +137,7 @@ const PARTNER_DATA = [
     role: "Cases",
     logo: "assets/partner-crossrock.jpg",
     description: "From the beginning we believed the experience should feel special before the guitar is ever played. Crossrock partnered with us to create an unboxing experience that feels intentional — unlike the standard-issue black box the industry settled for years ago.",
-    url: "https://crossrockcases.com",
+    url: "https://crossrockcase.com/",
   },
 ];
 
