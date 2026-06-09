@@ -89,6 +89,15 @@ function ProductHero({ p, onNavigate }) {
                 </div>
               </Reveal>
 
+              <Reveal delay={420}>
+                <div className="p-hero-dealer">
+                  <button className="btn btn-amber" onClick={() => onNavigate("dealers")}>
+                    Find a dealer <span className="arrow">→</span>
+                  </button>
+                  <span className="p-hero-dealer-note">Available through authorized dealers</span>
+                </div>
+              </Reveal>
+
             </div>
 
             {p.swatches.length > 0 && (
