@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Nav, Footer } from './shared';
 import Home from './home';
 import Product from './product';
@@ -122,6 +123,7 @@ export default function App() {
         </div>
       </TweaksPanel>
       <Analytics />
+      <SpeedInsights />
     </>
   );
 }
