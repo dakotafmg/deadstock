@@ -49,16 +49,9 @@ export default function Home({ onNavigate }) {
 // ------------------------------------------------------------
 function Hero({ onNavigate }) {
   const [current, setCurrent] = useState(0);
-  const [fading, setFading] = useState(false);
   const timerRef = useRef(null);
 
-  const advance = () => {
-    setFading(true);
-    setTimeout(() => {
-      setCurrent(i => (i + 1) % HERO_SLIDES.length);
-      setFading(false);
-    }, 400);
-  };
+  const advance = () => setCurrent(i => (i + 1) % HERO_SLIDES.length);
 
   useEffect(() => {
     timerRef.current = setInterval(advance, 5000);
@@ -67,15 +60,9 @@ function Hero({ onNavigate }) {
 
   const goTo = (idx) => {
     clearInterval(timerRef.current);
-    setFading(true);
-    setTimeout(() => {
-      setCurrent(idx);
-      setFading(false);
-      timerRef.current = setInterval(advance, 5000);
-    }, 400);
+    setCurrent(idx);
+    timerRef.current = setInterval(advance, 5000);
   };
-
-  const slide = HERO_SLIDES[current];
 
   return (
     <section className="hero" data-screen-label="home-hero">
@@ -93,17 +80,20 @@ function Hero({ onNavigate }) {
 
         <Reveal delay={200}>
           <div className="hero-product">
-            <div className={"hero-slideshow" + (fading ? " fading" : "")}>
-              <img
-                src={slide.src}
-                alt="The Lineup"
-                className="hero-product-img"
-                style={{
-                  objectPosition: slide.pos,
-                  transform: `scale(${slide.scale || 1})`,
-                  transformOrigin: slide.pos,
-                }}
-              />
+            <div className="hero-slideshow">
+              {HERO_SLIDES.map((slide, i) => (
+                <img
+                  key={slide.src}
+                  src={slide.src}
+                  alt={`Slide ${i + 1}`}
+                  className={"hero-product-img" + (i === current ? " active" : "")}
+                  style={{
+                    objectPosition: slide.pos,
+                    transform: `scale(${slide.scale || 1})`,
+                    transformOrigin: slide.pos,
+                  }}
+                />
+              ))}
             </div>
             {/* Dot indicators */}
             <div className="hero-dots">
