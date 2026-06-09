@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { Nav, Footer } from './shared';
 import Home from './home';
 import Product from './product';
@@ -120,6 +121,7 @@ export default function App() {
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("paf")}>↳ PAF Set</button>
         </div>
       </TweaksPanel>
+      <Analytics />
     </>
   );
 }
