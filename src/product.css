@@ -194,6 +194,22 @@
   color: var(--walnut);
 }
 
+.p-hero-dealer {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+}
+.p-hero-dealer-note {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.7;
+}
+
 .p-hero-cta {
   display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap;
 }
