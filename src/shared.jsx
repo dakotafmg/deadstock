@@ -53,6 +53,9 @@ export function Nav({ route, onNavigate }) {
           {/* Pickups */}
           <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
 
+          {/* Shop */}
+          <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
+
           {/* Dealers */}
           <a className={route === "dealers" ? "active" : ""} href="#" onClick={(e) => navigate("dealers", e)}>Dealers</a>
 
@@ -77,6 +80,7 @@ export function Nav({ route, onNavigate }) {
           <a style={{ opacity: 0.38 }} href="#" onClick={(e) => e.preventDefault()}>Monarch · soon</a>
         </div>
         <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
+        <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
         <a className={route === "dealers" ? "active" : ""} href="#" onClick={(e) => navigate("dealers", e)}>Dealers</a>
         <a className={route === "letter" ? "active" : ""} href="#" onClick={(e) => navigate("letter", e)}>Our Story</a>
         <a className={route === "partners" ? "active" : ""} href="#" onClick={(e) => navigate("partners", e)}>Partners</a>
