@@ -7,6 +7,8 @@ import './styles.css';
 import './home.css';
 import './product.css';
 import './pickups.css';
+import './shop.css';
+import './admin.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

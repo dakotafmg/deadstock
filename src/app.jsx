@@ -6,13 +6,15 @@ import Home from './home';
 import Product from './product';
 import { Pickups, PickupProduct } from './pickups';
 import { FoundersLetter, Partners, DealersPage } from './pages';
+import Shop from './shop';
+import Admin from './admin';
 import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './tweaks-panel';
 
 // ============================================================
 // DEADSTOCK — App shell + router
 // ============================================================
 
-const VALID_ROUTES = ["home", "broadman", "wayfarer", "pickups", "tele52", "strat62", "paf", "letter", "partners", "dealers"];
+const VALID_ROUTES = ["home", "broadman", "wayfarer", "pickups", "tele52", "strat62", "paf", "letter", "partners", "dealers", "shop", "admin"];
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -70,6 +72,10 @@ export default function App() {
     if (grainEl) grainEl.textContent = `body::before { opacity: ${tw.showGrain ? 0.35 : 0} !important; }`;
   }, [tw.accent, tw.displayFont, tw.showGrain, tw.darkMode]);
 
+  if (route === "admin") {
+    return <Admin onNavigate={onNavigate} />;
+  }
+
   return (
     <>
       <Nav route={route} onNavigate={onNavigate} />
@@ -83,6 +89,7 @@ export default function App() {
       {route === "letter"   && <FoundersLetter onNavigate={onNavigate} />}
       {route === "partners" && <Partners onNavigate={onNavigate} />}
       {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
+      {route === "shop"     && <Shop onNavigate={onNavigate} />}
       <Footer onNavigate={onNavigate} />
 
       <TweaksPanel title="Tweaks">
