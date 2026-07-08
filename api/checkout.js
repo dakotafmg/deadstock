@@ -15,7 +15,6 @@ export default async function handler(req, res) {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items: [{ price: priceId, quantity: 1 }],
-      automatic_payment_methods: { enabled: true },
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
       success_url: `${siteUrl}/shop?checkout=success`,
       cancel_url: `${siteUrl}/shop`,
