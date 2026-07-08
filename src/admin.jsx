@@ -567,8 +567,10 @@ function Sales({ onExpire }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
+  const [deleting, setDeleting] = useState(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     apiCall('/api/admin-sales')
       .then(d => { setSales(d.sales || []); setLoading(false); })
       .catch(err => {
@@ -576,6 +578,22 @@ function Sales({ onExpire }) {
         setError(err.message); setLoading(false);
       });
   }, []);
+
+  useEffect(load, [load]);
+
+  const deleteSale = async (id) => {
+    if (!confirm('Void and remove this sale record?')) return;
+    setDeleting(id);
+    try {
+      await apiCall('/api/admin-sales', { method: 'DELETE', body: { id } });
+      load();
+    } catch (err) {
+      if (err.message === 'SESSION_EXPIRED') { onExpire(); return; }
+      alert(err.message);
+    } finally {
+      setDeleting(null);
+    }
+  };
 
   const visible = filter === 'all' ? sales : sales.filter(s => s.channel === filter);
   const totalRev = visible.reduce((s, x) => s + (x.amount || 0), 0);
@@ -614,6 +632,7 @@ function Sales({ onExpire }) {
                 <th>Channel</th>
                 <th>Method</th>
                 <th>Buyer</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -627,6 +646,17 @@ function Sales({ onExpire }) {
                   <td><span className={`badge badge-${s.channel}`}>{s.channel}</span></td>
                   <td className="admin-muted">{s.paymentMethod || '—'}</td>
                   <td className="admin-muted">{s.customer || '—'}</td>
+                  <td>
+                    {s.channel === 'manual' && (
+                      <button
+                        className="admin-btn admin-btn-ghost admin-btn-sm admin-btn-danger"
+                        onClick={() => deleteSale(s.id)}
+                        disabled={deleting === s.id}
+                      >
+                        {deleting === s.id ? '…' : 'Delete'}
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

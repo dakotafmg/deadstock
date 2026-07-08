@@ -492,6 +492,16 @@ body.admin-active {
   opacity: 1;
 }
 
+.admin-btn-danger {
+  border-color: #3a1a1a;
+  color: #ef4444;
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
 /* ===================== Login ===================== */
 .admin-login-wrap {
   min-height: 100vh;
