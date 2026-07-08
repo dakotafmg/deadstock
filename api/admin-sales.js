@@ -68,13 +68,6 @@ export default async function handler(req, res) {
         customerId = customer.id;
       }
 
-      await stripe.invoiceItems.create({
-        customer: customerId,
-        amount: Math.round(parseFloat(amount) * 100),
-        currency: 'usd',
-        description: productName || 'Manual Sale',
-      });
-
       const invoice = await stripe.invoices.create({
         customer: customerId,
         auto_advance: false,
@@ -88,6 +81,14 @@ export default async function handler(req, res) {
           paymentMethod: paymentMethod || 'Other',
           notes: notes || '',
         },
+      });
+
+      await stripe.invoiceItems.create({
+        customer: customerId,
+        invoice: invoice.id,
+        amount: Math.round(parseFloat(amount) * 100),
+        currency: 'usd',
+        description: productName || 'Manual Sale',
       });
 
       await stripe.invoices.finalizeInvoice(invoice.id);
