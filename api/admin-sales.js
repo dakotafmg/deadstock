@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         }));
 
       const manualSales = invoices
-        .filter(inv => inv.metadata?.manual === 'true')
+        .filter(inv => inv.metadata?.manual === 'true' && inv.metadata?.deleted !== 'true')
         .map(inv => ({
           id: inv.id,
           channel: 'manual',
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
       const { id } = await parseBody(req);
       if (!id) return res.status(400).json({ error: 'id required' });
-      await stripe.invoices.voidInvoice(id);
+      await stripe.invoices.update(id, { metadata: { deleted: 'true' } });
       return res.status(200).json({ success: true });
     }
 
