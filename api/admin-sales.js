@@ -78,6 +78,8 @@ export default async function handler(req, res) {
       const invoice = await stripe.invoices.create({
         customer: customerId,
         auto_advance: false,
+        collection_method: 'send_invoice',
+        days_until_due: 0,
         metadata: {
           manual: 'true',
           buyerName: buyerName || '',
