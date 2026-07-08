@@ -17,8 +17,8 @@ export default async function handler(req, res) {
       line_items: [{ price: priceId, quantity: 1 }],
       automatic_payment_methods: { enabled: true },
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
-      success_url: `${siteUrl}/?checkout=success#shop`,
-      cancel_url: `${siteUrl}/#shop`,
+      success_url: `${siteUrl}/shop?checkout=success`,
+      cancel_url: `${siteUrl}/shop`,
       metadata: { productId: productId || '' },
     });
     res.status(200).json({ url: session.url });
