@@ -31,8 +31,8 @@ const FONT_OPTIONS = {
 
 export default function App() {
   const [route, setRoute] = useState(() => {
-    const hash = window.location.hash.replace("#", "") || "home";
-    return VALID_ROUTES.includes(hash) ? hash : "home";
+    const path = window.location.pathname.slice(1) || "home";
+    return VALID_ROUTES.includes(path) ? path : "home";
   });
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
@@ -40,17 +40,17 @@ export default function App() {
     if (id === "workshop") id = "home"; // workshop links to manifesto on home
     if (id === "monarch") return; // soon
     setRoute(id);
-    window.location.hash = id;
+    history.pushState({}, "", id === "home" ? "/" : "/" + id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
-    const onHash = () => {
-      const hash = window.location.hash.replace("#", "") || "home";
-      if (VALID_ROUTES.includes(hash)) setRoute(hash);
+    const onPop = () => {
+      const path = window.location.pathname.slice(1) || "home";
+      if (VALID_ROUTES.includes(path)) setRoute(path);
     };
-    window.addEventListener("hashchange", onHash);
-    return () => window.removeEventListener("hashchange", onHash);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
   }, []);
 
   // Apply tweak vars
