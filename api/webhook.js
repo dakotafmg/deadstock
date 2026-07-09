@@ -1,21 +1,28 @@
 import Stripe from 'stripe';
-import { parseRawBody } from './_body.js';
-
-export const config = { api: { bodyParser: false } };
+import { parseBody } from './_body.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const rawBody = await parseRawBody(req);
-  const sig = req.headers['stripe-signature'];
 
+  let eventId;
+  try {
+    const body = await parseBody(req);
+    eventId = body.id;
+    if (!eventId) return res.status(400).json({ error: 'Missing event id' });
+  } catch (err) {
+    return res.status(400).json({ error: 'Bad request body' });
+  }
+
+  // Verify authenticity by re-fetching the event from Stripe using our secret key.
+  // An attacker cannot forge a valid Stripe event ID.
   let event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    event = await stripe.events.retrieve(eventId);
   } catch (err) {
-    console.error('Webhook signature error:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    console.error('Could not retrieve event:', err.message);
+    return res.status(400).json({ error: 'Invalid event' });
   }
 
   if (event.type === 'checkout.session.completed') {
