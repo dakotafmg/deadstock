@@ -11,6 +11,21 @@ export default async function handler(req, res) {
 
   try {
     if (req.method === 'GET') {
+      // ?source=all returns every Stripe product for the "import" picker
+      if (req.query?.source === 'all') {
+        const { data } = await stripe.products.list({ limit: 100, active: true });
+        return res.status(200).json({
+          products: data.map(p => ({
+            id: p.id,
+            name: p.name,
+            description: p.description || '',
+            images: p.images || [],
+            model: p.metadata?.model || '',
+            type: p.metadata?.type || '',
+          })),
+        });
+      }
+
       const [{ data: active }, { data: inactive }] = await Promise.all([
         stripe.products.list({ limit: 100, active: true }),
         stripe.products.list({ limit: 100, active: false }),

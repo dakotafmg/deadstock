@@ -401,6 +401,12 @@ body.admin-active {
   margin-bottom: 6px;
 }
 
+.admin-import-row {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #2a2a2a;
+  margin-bottom: 4px;
+}
+
 .admin-label-opt {
   text-transform: none;
   letter-spacing: 0;
