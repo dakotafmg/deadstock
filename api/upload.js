@@ -8,14 +8,19 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const { filename, contentType, data } = await parseBody(req);
-  if (!data) return res.status(400).json({ error: 'data required' });
+  try {
+    const { filename, contentType, data } = await parseBody(req);
+    if (!data) return res.status(400).json({ error: 'data required' });
 
-  const buffer = Buffer.from(data, 'base64');
-  const blob = await put(`listings/${Date.now()}-${filename || 'image.jpg'}`, buffer, {
-    access: 'public',
-    contentType: contentType || 'image/jpeg',
-  });
+    const buffer = Buffer.from(data, 'base64');
+    const blob = await put(`listings/${Date.now()}-${filename || 'image.jpg'}`, buffer, {
+      access: 'public',
+      contentType: contentType || 'image/jpeg',
+    });
 
-  return res.status(200).json({ url: blob.url });
+    return res.status(200).json({ url: blob.url });
+  } catch (err) {
+    console.error('Upload error:', err);
+    return res.status(500).json({ error: err.message });
+  }
 }
