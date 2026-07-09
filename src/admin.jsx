@@ -1,10 +1,35 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { PRODUCTS, PICKUPS } from './data';
 
 // ============================================================
 // DEADSTOCK ADMIN — password-protected sales dashboard
 // ============================================================
 
 const MODEL_OPTIONS = ['Broadman', 'Wayfarer', 'Monarch', "'52 Tele Set", "'62 Strat Set", 'PAF Set'];
+
+// Pre-built templates from the product pages in data.js
+const MODEL_TEMPLATES = [
+  ...Object.values(PRODUCTS).map(p => ({
+    id: p.id,
+    label: `The ${p.name}`,
+    model: p.name,
+    type: 'guitar',
+    name: `The ${p.name}`,
+    description: [
+      p.lede,
+      p.finish && `Finish: ${p.finish}.`,
+      p.pickups && `Pickups: ${p.pickups}.`,
+    ].filter(Boolean).join(' '),
+  })),
+  ...Object.values(PICKUPS).map(p => ({
+    id: p.id,
+    label: p.name,
+    model: p.name,
+    type: 'pickup',
+    name: p.name,
+    description: p.lede,
+  })),
+];
 const PAYMENT_METHODS = ['Cash', 'Check', 'Card', 'Bank Transfer', 'Affirm', 'Afterpay', 'Klarna', 'Trade', 'Other'];
 
 async function apiCall(path, opts = {}) {
@@ -438,13 +463,6 @@ function NewListing({ onExpire, onDone }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [allProducts, setAllProducts] = useState([]);
-
-  useEffect(() => {
-    apiCall('/api/admin-listings?source=all')
-      .then(d => setAllProducts(d.products || []))
-      .catch(() => {});
-  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -455,17 +473,16 @@ function NewListing({ onExpire, onDone }) {
     else set('type', 'pickup');
   };
 
-  const importProduct = (productId) => {
-    if (!productId) return;
-    const p = allProducts.find(p => p.id === productId);
-    if (!p) return;
+  const importFromModel = (templateId) => {
+    if (!templateId) return;
+    const t = MODEL_TEMPLATES.find(m => m.id === templateId);
+    if (!t) return;
     setForm(f => ({
       ...f,
-      name: p.name || f.name,
-      description: p.description || f.description,
-      images: p.images?.length ? p.images : f.images,
-      model: p.model || f.model,
-      type: p.type || f.type,
+      model: t.model,
+      type: t.type,
+      name: t.name,
+      description: t.description,
     }));
   };
 
@@ -502,21 +519,26 @@ function NewListing({ onExpire, onDone }) {
       <form className="admin-form" onSubmit={submit}>
         {error && <div className="admin-error">{error}</div>}
 
-        {allProducts.length > 0 && (
-          <div className="admin-field admin-import-row">
-            <label className="admin-label">Import from existing product <span className="admin-label-opt">(optional)</span></label>
-            <select
-              className="admin-select"
-              defaultValue=""
-              onChange={e => importProduct(e.target.value)}
-            >
-              <option value="">— pick a product to pre-fill —</option>
-              {allProducts.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
+        <div className="admin-field admin-import-row">
+          <label className="admin-label">Start from model <span className="admin-label-opt">(optional — pre-fills description &amp; specs)</span></label>
+          <select
+            className="admin-select"
+            defaultValue=""
+            onChange={e => importFromModel(e.target.value)}
+          >
+            <option value="">— select a model to pre-fill —</option>
+            <optgroup label="Guitars">
+              {MODEL_TEMPLATES.filter(t => t.type === 'guitar').map(t => (
+                <option key={t.id} value={t.id}>{t.label}</option>
               ))}
-            </select>
-          </div>
-        )}
+            </optgroup>
+            <optgroup label="Pickups">
+              {MODEL_TEMPLATES.filter(t => t.type === 'pickup').map(t => (
+                <option key={t.id} value={t.id}>{t.label}</option>
+              ))}
+            </optgroup>
+          </select>
+        </div>
 
         <div className="admin-form-row">
           <div className="admin-field">
