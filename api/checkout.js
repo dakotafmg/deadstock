@@ -5,20 +5,28 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const { priceId, productId } = await parseBody(req);
-
-  if (!priceId) return res.status(400).json({ error: 'priceId required' });
-
+  const body = await parseBody(req);
   const siteUrl = process.env.SITE_URL || `https://${process.env.VERCEL_URL}`;
+
+  let lineItems, productIds;
+  if (body.items && Array.isArray(body.items) && body.items.length > 0) {
+    lineItems = body.items.map(item => ({ price: item.priceId, quantity: 1 }));
+    productIds = body.items.map(i => i.productId).filter(Boolean).join(',');
+  } else if (body.priceId) {
+    lineItems = [{ price: body.priceId, quantity: 1 }];
+    productIds = body.productId || '';
+  } else {
+    return res.status(400).json({ error: 'items or priceId required' });
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: lineItems,
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
       success_url: `${siteUrl}/shop?checkout=success`,
       cancel_url: `${siteUrl}/shop`,
-      metadata: { productId: productId || '' },
+      metadata: { productIds },
     });
     res.status(200).json({ url: session.url });
   } catch (err) {
