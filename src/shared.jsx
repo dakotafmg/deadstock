@@ -31,7 +31,7 @@ export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
     <header className={"nav" + (open ? " nav-open" : "")}>
       <div className="wrap nav-inner">
         <div className="nav-logo" onClick={() => { setOpen(false); onNavigate("home"); }} aria-label="Deadstock">
-          <img src="assets/wordmark.svg" alt="Deadstock" />
+          <img src="/assets/wordmark.svg" alt="Deadstock" />
         </div>
 
         <nav className="nav-links">

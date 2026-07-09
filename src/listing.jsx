@@ -55,6 +55,10 @@ export default function ListingDetail({ id, onNavigate, cart = [], addToCart }) 
   const images = listing.images?.length ? listing.images : [];
   const price = listing.price != null ? `$${(listing.price / 100).toLocaleString()}` : 'Price on request';
   const sold = !listing.available;
+  const SPECS_SEP = '\n\n— SPECIFICATIONS —\n';
+  const descParts = (listing.description || '').split(SPECS_SEP);
+  const descText = descParts[0] || '';
+  const specsText = descParts[1] || '';
   const inCart = cart.some(i => i.id === listing.id);
 
   const handleAddToCart = () => {
@@ -109,8 +113,8 @@ export default function ListingDetail({ id, onNavigate, cart = [], addToCart }) 
             <h1 className="listing-name">{listing.name}</h1>
             {listing.serial && <div className="listing-serial">S/N {listing.serial}</div>}
 
-            {listing.description && (
-              <p className="listing-desc">{listing.description}</p>
+            {descText && (
+              <p className="listing-desc">{descText}</p>
             )}
             {listing.condition && (
               <p className="listing-condition">{listing.condition}</p>
@@ -158,6 +162,14 @@ export default function ListingDetail({ id, onNavigate, cart = [], addToCart }) 
           </div>
 
         </div>
+
+        {specsText && (
+          <div className="listing-specs-section">
+            <div className="listing-specs-heading">Specifications</div>
+            <p className="listing-specs-body">{specsText}</p>
+          </div>
+        )}
+
       </div>
     </main>
   );
