@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       ]);
 
       const onlineSales = sessions
-        .filter(s => s.payment_status === 'paid')
+        .filter(s => s.payment_status === 'paid' && s.metadata?.deleted !== 'true')
         .map(s => {
           const ids = (s.metadata?.productIds || s.metadata?.productId || '').split(',').filter(Boolean);
           const names = (s.metadata?.productNames || s.metadata?.productName || '').split(',').filter(Boolean);
@@ -133,7 +133,19 @@ export default async function handler(req, res) {
     if (req.method === 'DELETE') {
       const { id } = await parseBody(req);
       if (!id) return res.status(400).json({ error: 'id required' });
-      await stripe.invoices.update(id, { metadata: { deleted: 'true' } });
+
+      if (id.startsWith('cs_')) {
+        const session = await stripe.checkout.sessions.retrieve(id);
+        await stripe.checkout.sessions.update(id, { metadata: { deleted: 'true' } });
+        const productIds = (session.metadata?.productIds || session.metadata?.productId || '')
+          .split(',').filter(Boolean);
+        for (const productId of productIds) {
+          await stripe.products.update(productId, { metadata: { available: 'true' } });
+        }
+      } else {
+        await stripe.invoices.update(id, { metadata: { deleted: 'true' } });
+      }
+
       return res.status(200).json({ success: true });
     }
 
