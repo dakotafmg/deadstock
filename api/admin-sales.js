@@ -32,28 +32,46 @@ export default async function handler(req, res) {
 
       const manualSales = invoices
         .filter(inv => inv.metadata?.manual === 'true' && inv.metadata?.deleted !== 'true')
-        .map(inv => ({
-          id: inv.id,
-          channel: 'manual',
-          amount: inv.amount_paid,
-          currency: inv.currency,
-          date: inv.created,
-          customer: inv.metadata?.buyerName || '—',
-          email: inv.customer_email || '',
-          productId: inv.metadata?.productId || '',
-          productName: inv.metadata?.productName || '',
-          paymentMethod: inv.metadata?.paymentMethod || 'Other',
-          notes: inv.metadata?.notes || '',
-        }));
+        .map(inv => {
+          let products = [];
+          try {
+            if (inv.metadata?.productNames) {
+              const names = JSON.parse(inv.metadata.productNames);
+              const ids = JSON.parse(inv.metadata.productIds || '[]');
+              products = names.map((name, i) => ({ name: name || '', id: ids[i] || '' })).filter(p => p.name || p.id);
+            } else if (inv.metadata?.productName) {
+              products = [{ name: inv.metadata.productName || '', id: inv.metadata.productId || '' }];
+            }
+          } catch { products = []; }
+
+          return {
+            id: inv.id,
+            channel: 'manual',
+            amount: inv.amount_paid,
+            currency: inv.currency,
+            date: inv.created,
+            customer: inv.metadata?.buyerName || '—',
+            email: inv.customer_email || '',
+            products,
+            productName: products.map(p => p.name).filter(Boolean).join(', '),
+            productId: products[0]?.id || '',
+            paymentMethod: inv.metadata?.paymentMethod || 'Other',
+            notes: inv.metadata?.notes || '',
+          };
+        });
 
       const sales = [...onlineSales, ...manualSales].sort((a, b) => b.date - a.date);
       return res.status(200).json({ sales });
     }
 
     if (req.method === 'POST') {
-      const { buyerName, buyerEmail, productId, productName, amount, paymentMethod, notes } = await parseBody(req);
+      const { buyerName, buyerEmail, items: rawItems, productId, productName, amount, paymentMethod, notes } = await parseBody(req);
 
-      if (!amount) return res.status(400).json({ error: 'amount required' });
+      // Normalize: new multi-item format or legacy single-item
+      const items = rawItems || [{ productId: productId || '', productName: productName || '', amount }];
+      if (!items.length || !items.some(i => i.amount)) {
+        return res.status(400).json({ error: 'at least one item with amount required' });
+      }
 
       let customerId;
       if (buyerEmail) {
@@ -76,26 +94,30 @@ export default async function handler(req, res) {
         metadata: {
           manual: 'true',
           buyerName: buyerName || '',
-          productId: productId || '',
-          productName: productName || '',
+          productIds: JSON.stringify(items.map(i => i.productId || '')),
+          productNames: JSON.stringify(items.map(i => i.productName || '')),
           paymentMethod: paymentMethod || 'Other',
           notes: notes || '',
         },
       });
 
-      await stripe.invoiceItems.create({
-        customer: customerId,
-        invoice: invoice.id,
-        amount: Math.round(parseFloat(amount) * 100),
-        currency: 'usd',
-        description: productName || 'Manual Sale',
-      });
+      for (const item of items) {
+        await stripe.invoiceItems.create({
+          customer: customerId,
+          invoice: invoice.id,
+          amount: Math.round(parseFloat(item.amount) * 100),
+          currency: 'usd',
+          description: item.productName || 'Manual Sale',
+        });
+      }
 
       await stripe.invoices.finalizeInvoice(invoice.id);
       await stripe.invoices.pay(invoice.id, { paid_out_of_band: true });
 
-      if (productId) {
-        await stripe.products.update(productId, { metadata: { available: 'false' } });
+      for (const item of items) {
+        if (item.productId) {
+          await stripe.products.update(item.productId, { metadata: { available: 'false' } });
+        }
       }
 
       return res.status(201).json({ success: true, invoiceId: invoice.id });
