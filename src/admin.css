@@ -608,6 +608,76 @@ body.admin-active {
   background: #1a1a1a;
 }
 
+/* ===================== Sale Items ===================== */
+.admin-item-add {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-item-add .admin-select { flex: 2; min-width: 160px; }
+.admin-item-add .admin-input { flex: 2; min-width: 120px; }
+.admin-item-amount-input { flex: 1 !important; min-width: 90px !important; }
+
+.admin-items-list {
+  border: 1px solid #222;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.admin-item-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #1e1e1e;
+  gap: 12px;
+}
+
+.admin-item-name {
+  flex: 1;
+  font-size: 13px;
+  color: #ccc;
+}
+
+.admin-item-price {
+  font-size: 13px;
+  color: #e4e4e4;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-item-remove {
+  background: transparent;
+  border: none;
+  color: #3a3a3a;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  line-height: 1;
+  border-radius: 3px;
+}
+
+.admin-item-remove:hover { color: #ef4444; background: rgba(239,68,68,0.08); }
+
+.admin-items-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: #141414;
+  font-size: 12px;
+  font-weight: 500;
+  color: #888;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-items-total span:last-child {
+  color: #e4e4e4;
+  font-size: 14px;
+}
+
 /* ===================== Image Upload ===================== */
 .admin-image-upload {
   display: grid;
