@@ -4,7 +4,6 @@ export default function Shop({ onNavigate }) {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [buying, setBuying] = useState(null);
 
   const success = typeof window !== 'undefined' &&
     new URLSearchParams(window.location.search).get('checkout') === 'success';
@@ -15,26 +14,6 @@ export default function Shop({ onNavigate }) {
       .then(d => { setListings(d.listings || []); setLoading(false); })
       .catch(() => { setError('Could not load listings.'); setLoading(false); });
   }, []);
-
-  const handleBuy = async (listing) => {
-    setBuying(listing.id);
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: listing.priceId, productId: listing.id }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error(data.error || 'Checkout failed');
-      }
-    } catch (err) {
-      alert(err.message);
-      setBuying(null);
-    }
-  };
 
   return (
     <main className="shop">
@@ -79,8 +58,7 @@ export default function Shop({ onNavigate }) {
               <ShopCard
                 key={listing.id}
                 listing={listing}
-                onBuy={handleBuy}
-                buying={buying === listing.id}
+                onNavigate={onNavigate}
               />
             ))}
           </div>
@@ -91,13 +69,13 @@ export default function Shop({ onNavigate }) {
   );
 }
 
-function ShopCard({ listing, onBuy, buying }) {
+function ShopCard({ listing, onNavigate }) {
   const price = listing.price != null
     ? `$${(listing.price / 100).toLocaleString()}`
     : 'Price on request';
 
   return (
-    <div className="shop-card">
+    <div className="shop-card shop-card-link" onClick={() => onNavigate('listing', listing.id)}>
       <div className="shop-card-img">
         {listing.images?.[0]
           ? <img src={listing.images[0]} alt={listing.name} />
@@ -121,23 +99,10 @@ function ShopCard({ listing, onBuy, buying }) {
         {listing.description && (
           <p className="shop-card-desc">{listing.description}</p>
         )}
-        {listing.condition && (
-          <p className="shop-card-condition">{listing.condition}</p>
-        )}
 
         <div className="shop-card-footer">
           <span className="shop-card-price">{price}</span>
-          <button
-            className="btn btn-amber"
-            onClick={() => onBuy(listing)}
-            disabled={buying || !listing.priceId}
-          >
-            {buying ? 'Redirecting...' : 'Buy now →'}
-          </button>
-        </div>
-
-        <div className="shop-card-payment-note">
-          Affirm · Afterpay · Klarna · All major cards
+          <span className="shop-card-view">View details →</span>
         </div>
       </div>
     </div>

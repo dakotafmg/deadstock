@@ -1,0 +1,225 @@
+.listing-page {
+  padding: 60px 0 120px;
+  min-height: 70vh;
+}
+
+.listing-back {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.6;
+  padding: 0;
+  margin-bottom: 40px;
+  display: block;
+  transition: opacity 0.15s;
+}
+
+.listing-back:hover { opacity: 1; }
+
+.listing-state {
+  padding: 80px 0;
+  text-align: center;
+  font-family: var(--display);
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.5;
+}
+
+.listing-state-error { color: #C0392B; opacity: 1; }
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+
+/* ---- Gallery ---- */
+.listing-gallery {
+  position: sticky;
+  top: 32px;
+}
+
+.listing-main-wrap {
+  position: relative;
+  aspect-ratio: 4/3;
+  background: var(--cream-2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.listing-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-main-ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.3;
+}
+
+.listing-sold-banner {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: var(--black);
+  color: var(--cream);
+  font-family: var(--display);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: 2px;
+}
+
+.listing-thumbs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.listing-thumb {
+  width: 68px;
+  height: 68px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  background: var(--cream-2);
+  transition: border-color 0.15s;
+  flex-shrink: 0;
+}
+
+.listing-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-thumb.active {
+  border-color: var(--amber);
+}
+
+.listing-thumb:hover:not(.active) {
+  border-color: var(--rule);
+}
+
+/* ---- Info ---- */
+.listing-model {
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+
+.listing-name {
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  color: var(--black);
+  line-height: 1.1;
+  margin: 0 0 8px;
+}
+
+.listing-serial {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--walnut);
+  opacity: 0.55;
+  margin-bottom: 24px;
+}
+
+.listing-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--walnut);
+  margin-bottom: 12px;
+}
+
+.listing-condition {
+  font-family: var(--display);
+  font-size: 12px;
+  color: var(--walnut);
+  opacity: 0.6;
+  font-style: italic;
+  margin-bottom: 28px;
+}
+
+.listing-price-row {
+  padding: 24px 0;
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  margin-bottom: 24px;
+}
+
+.listing-price {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 400;
+  color: var(--black);
+}
+
+.listing-buy-btn {
+  width: 100%;
+  padding: 16px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.listing-payment-note {
+  font-family: var(--display);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.4;
+  text-align: center;
+}
+
+.listing-sold-note {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--walnut);
+  opacity: 0.5;
+  padding: 16px 0;
+}
+
+@media (max-width: 860px) {
+  .listing-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .listing-gallery {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .listing-page { padding: 40px 0 80px; }
+  .listing-thumb { width: 56px; height: 56px; }
+}
