@@ -843,7 +843,14 @@ function SaleDetail({ sale, onClose }) {
               <span className="admin-detail-label">{(sale.products?.length ?? 1) > 1 ? 'Products' : 'Product'}</span>
               <span className="admin-detail-value">
                 {sale.products?.length > 0
-                  ? sale.products.map((p, i) => <span key={i} style={{ display: 'block' }}>{p.name || p.id || '—'}</span>)
+                  ? sale.products.map((p, i) => (
+                      <span key={i} style={{ display: 'block' }}>
+                        {p.id
+                          ? <a href={`/listing/${p.id}`} target="_blank" rel="noopener noreferrer" className="admin-detail-link">{p.name || p.id}</a>
+                          : (p.name || '—')
+                        }
+                      </span>
+                    ))
                   : sale.productName}
               </span>
             </div>
