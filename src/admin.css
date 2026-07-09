@@ -599,6 +599,17 @@ body.admin-active {
   text-align: right;
 }
 
+.admin-detail-link {
+  color: #D28400;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(210, 132, 0, 0.3);
+  transition: border-color 0.15s;
+}
+
+.admin-detail-link:hover {
+  border-color: #D28400;
+}
+
 .admin-row-clickable {
   cursor: pointer;
   transition: background 0.1s;
