@@ -8,13 +8,15 @@ export default async function handler(req, res) {
   const body = await parseBody(req);
   const siteUrl = process.env.SITE_URL || `https://${process.env.VERCEL_URL}`;
 
-  let lineItems, productIds;
+  let lineItems, productIds, productNames;
   if (body.items && Array.isArray(body.items) && body.items.length > 0) {
     lineItems = body.items.map(item => ({ price: item.priceId, quantity: 1 }));
     productIds = body.items.map(i => i.productId).filter(Boolean).join(',');
+    productNames = body.items.map(i => i.name || '').join(',');
   } else if (body.priceId) {
     lineItems = [{ price: body.priceId, quantity: 1 }];
     productIds = body.productId || '';
+    productNames = body.productName || '';
   } else {
     return res.status(400).json({ error: 'items or priceId required' });
   }
@@ -26,7 +28,7 @@ export default async function handler(req, res) {
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
       success_url: `${siteUrl}/shop?checkout=success`,
       cancel_url: `${siteUrl}/shop`,
-      metadata: { productIds },
+      metadata: { productIds, productNames },
     });
     res.status(200).json({ url: session.url });
   } catch (err) {

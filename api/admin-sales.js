@@ -18,17 +18,24 @@ export default async function handler(req, res) {
 
       const onlineSales = sessions
         .filter(s => s.payment_status === 'paid')
-        .map(s => ({
-          id: s.id,
-          channel: 'online',
-          amount: s.amount_total,
-          currency: s.currency,
-          date: s.created,
-          customer: s.customer_details?.name || s.customer_details?.email || '—',
-          email: s.customer_details?.email || '',
-          productId: s.metadata?.productId || '',
-          paymentMethod: 'Stripe Checkout',
-        }));
+        .map(s => {
+          const ids = (s.metadata?.productIds || s.metadata?.productId || '').split(',').filter(Boolean);
+          const names = (s.metadata?.productNames || s.metadata?.productName || '').split(',').filter(Boolean);
+          const products = ids.map((id, i) => ({ id, name: names[i] || '' }));
+          return {
+            id: s.id,
+            channel: 'online',
+            amount: s.amount_total,
+            currency: s.currency,
+            date: s.created,
+            customer: s.customer_details?.name || s.customer_details?.email || '—',
+            email: s.customer_details?.email || '',
+            products,
+            productName: products.map(p => p.name).filter(Boolean).join(', '),
+            productId: ids[0] || '',
+            paymentMethod: 'Stripe Checkout',
+          };
+        });
 
       const manualSales = invoices
         .filter(inv => inv.metadata?.manual === 'true' && inv.metadata?.deleted !== 'true')

@@ -18,12 +18,13 @@ export default async function handler(req, res) {
 
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-    const productId = session.metadata?.productId;
-    if (productId) {
+    const ids = (session.metadata?.productIds || session.metadata?.productId || '')
+      .split(',').filter(Boolean);
+    for (const productId of ids) {
       try {
         await stripe.products.update(productId, { metadata: { available: 'false' } });
       } catch (err) {
-        console.error('Failed to mark product sold:', err);
+        console.error(`Failed to mark product ${productId} sold:`, err);
       }
     }
   }
