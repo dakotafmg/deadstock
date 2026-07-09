@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 // SHARED COMPONENTS — Nav, Footer, Placeholder, Reveal
 // ============================================================
 
-export function Nav({ route, onNavigate }) {
+export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
   const [open, setOpen] = useState(false);
 
   const isGuitarRoute  = ["broadman", "wayfarer"].includes(route);
@@ -65,6 +65,15 @@ export function Nav({ route, onNavigate }) {
           {/* Partners */}
           <a className={route === "partners" ? "active" : ""} href="#" onClick={(e) => navigate("partners", e)}>Partners</a>
         </nav>
+
+        <button className="nav-cart-btn" onClick={onCartOpen} aria-label="Open cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          {cartCount > 0 && <span className="nav-cart-badge">{cartCount}</span>}
+        </button>
 
         <button className="nav-hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
           <span /><span /><span />

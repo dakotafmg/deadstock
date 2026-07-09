@@ -8,6 +8,7 @@ import { Pickups, PickupProduct } from './pickups';
 import { FoundersLetter, Partners, DealersPage } from './pages';
 import Shop from './shop';
 import ListingDetail from './listing';
+import CartDrawer from './cart';
 import Admin from './admin';
 import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './tweaks-panel';
 
@@ -40,6 +41,15 @@ function parsePath() {
 export default function App() {
   const [[route, listingId], setNav] = useState(parsePath);
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const addToCart = (listing) => {
+    setCart(prev => prev.find(i => i.id === listing.id) ? prev : [...prev, listing]);
+    setCartOpen(true);
+  };
+
+  const removeFromCart = (id) => setCart(prev => prev.filter(i => i.id !== id));
 
   const onNavigate = (id, param = null) => {
     if (id === "workshop") id = "home";
@@ -86,7 +96,7 @@ export default function App() {
 
   return (
     <>
-      <Nav route={route} onNavigate={onNavigate} />
+      <Nav route={route} onNavigate={onNavigate} cartCount={cart.length} onCartOpen={() => setCartOpen(true)} />
       {route === "home"     && <Home onNavigate={onNavigate} />}
       {route === "broadman" && <Product id="broadman" onNavigate={onNavigate} />}
       {route === "wayfarer" && <Product id="wayfarer" onNavigate={onNavigate} />}
@@ -98,8 +108,16 @@ export default function App() {
       {route === "partners" && <Partners onNavigate={onNavigate} />}
       {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
       {route === "shop"     && <Shop onNavigate={onNavigate} />}
-      {route === "listing"  && <ListingDetail id={listingId} onNavigate={onNavigate} />}
+      {route === "listing"  && <ListingDetail id={listingId} onNavigate={onNavigate} cart={cart} addToCart={addToCart} />}
       <Footer onNavigate={onNavigate} />
+      {cartOpen && (
+        <CartDrawer
+          cart={cart}
+          onRemove={removeFromCart}
+          onClose={() => setCartOpen(false)}
+          onNavigate={onNavigate}
+        />
+      )}
 
       <TweaksPanel title="Tweaks">
         <TweakSection label="Brand">

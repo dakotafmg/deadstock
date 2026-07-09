@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function ListingDetail({ id, onNavigate }) {
+export default function ListingDetail({ id, onNavigate, cart = [], addToCart }) {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,6 +55,19 @@ export default function ListingDetail({ id, onNavigate }) {
   const images = listing.images?.length ? listing.images : [];
   const price = listing.price != null ? `$${(listing.price / 100).toLocaleString()}` : 'Price on request';
   const sold = !listing.available;
+  const inCart = cart.some(i => i.id === listing.id);
+
+  const handleAddToCart = () => {
+    addToCart?.({
+      id: listing.id,
+      name: listing.name,
+      model: listing.model,
+      serial: listing.serial,
+      price: listing.price,
+      priceId: listing.priceId,
+      image: images[0] || null,
+    });
+  };
 
   return (
     <main className="listing-page">
@@ -109,14 +122,33 @@ export default function ListingDetail({ id, onNavigate }) {
 
             {!sold ? (
               <>
+                {inCart ? (
+                  <button
+                    className="btn btn-ghost listing-buy-btn"
+                    onClick={() => onNavigate('cart')}
+                    style={{ marginBottom: 10 }}
+                    disabled
+                  >
+                    In cart ✓
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-amber listing-buy-btn"
+                    onClick={handleAddToCart}
+                    disabled={!listing.priceId}
+                    style={{ marginBottom: 10 }}
+                  >
+                    Add to cart →
+                  </button>
+                )}
                 <button
-                  className="btn btn-amber listing-buy-btn"
+                  className="btn btn-ghost listing-buy-btn"
                   onClick={handleBuy}
                   disabled={buying || !listing.priceId}
                 >
                   {buying ? 'Redirecting...' : 'Buy now →'}
                 </button>
-                <div className="listing-payment-note">
+                <div className="listing-payment-note" style={{ marginTop: 14 }}>
                   Affirm · Afterpay · Klarna · All major cards
                 </div>
               </>
