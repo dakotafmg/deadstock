@@ -206,7 +206,7 @@ function Overview({ onExpire, onView }) {
   if (error) return <div className="admin-error">{error}</div>;
 
   const activeCt  = listings.filter(l => l.available && l.active).length;
-  const soldCt    = listings.filter(l => !l.available).length;
+  const soldCt    = sales.length;
   const totalRev  = sales.reduce((s, x) => s + (x.amount || 0), 0);
   const recent    = sales.slice(0, 8);
 
@@ -979,7 +979,7 @@ function Sales({ onExpire }) {
                   <td className="admin-muted">{s.paymentMethod || '—'}</td>
                   <td className="admin-muted">{s.customer || '—'}</td>
                   <td onClick={e => e.stopPropagation()}>
-                    {s.channel === 'manual' && (
+                    {(s.channel === 'manual' || s.channel === 'online') && (
                       <button
                         className="admin-btn admin-btn-ghost admin-btn-sm admin-btn-danger"
                         onClick={() => deleteSale(s.id)}
