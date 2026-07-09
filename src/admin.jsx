@@ -42,6 +42,7 @@ export default function Admin({ onNavigate }) {
     try { return sessionStorage.getItem('ds-admin-token'); } catch { return null; }
   });
   const [view, setView] = useState('overview');
+  const [editTarget, setEditTarget] = useState(null);
 
   useEffect(() => {
     document.body.classList.add('admin-active');
@@ -69,8 +70,9 @@ export default function Admin({ onNavigate }) {
       <AdminSidebar view={view} onView={setView} onLogout={logout} onNavigate={onNavigate} />
       <div className="admin-main">
         {view === 'overview'     && <Overview     onExpire={handleSessionExpired} onView={setView} />}
-        {view === 'listings'     && <Listings     onExpire={handleSessionExpired} onView={setView} />}
+        {view === 'listings'     && <Listings     onExpire={handleSessionExpired} onView={setView} onEdit={(l) => { setEditTarget(l); setView('edit-listing'); }} />}
         {view === 'new-listing'  && <NewListing   onExpire={handleSessionExpired} onDone={() => setView('listings')} />}
+        {view === 'edit-listing' && editTarget && <EditListing listing={editTarget} onExpire={handleSessionExpired} onDone={() => { setEditTarget(null); setView('listings'); }} />}
         {view === 'sales'        && <Sales        onExpire={handleSessionExpired} />}
         {view === 'log-sale'     && <LogSale      onExpire={handleSessionExpired} onDone={() => setView('sales')} />}
       </div>
@@ -258,7 +260,7 @@ function Overview({ onExpire, onView }) {
 // ============================================================
 // LISTINGS
 // ============================================================
-function Listings({ onExpire, onView }) {
+function Listings({ onExpire, onView, onEdit }) {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -373,6 +375,13 @@ function Listings({ onExpire, onView }) {
               </span>
               <div className="admin-listing-price">{fmt$$(l.price)}</div>
               <div className="admin-listing-actions">
+                <button
+                  className="admin-btn admin-btn-ghost admin-btn-sm"
+                  onClick={() => onEdit(l)}
+                  disabled={acting === l.id}
+                >
+                  Edit
+                </button>
                 {l.active && l.available && (
                   <button
                     className="admin-btn admin-btn-ghost admin-btn-sm"
@@ -415,8 +424,7 @@ function Listings({ onExpire, onView }) {
 function NewListing({ onExpire, onDone }) {
   const [form, setForm] = useState({
     name: '', model: '', serial: '', type: 'guitar', price: '',
-    description: '', condition: '',
-    image1: '', image2: '', image3: '',
+    description: '', condition: '', images: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -434,7 +442,6 @@ function NewListing({ onExpire, onDone }) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const images = [form.image1, form.image2, form.image3].filter(Boolean);
     try {
       await apiCall('/api/admin-listings', {
         method: 'POST',
@@ -446,7 +453,7 @@ function NewListing({ onExpire, onDone }) {
           price: form.price,
           description: form.description,
           condition: form.condition,
-          images,
+          images: form.images,
         },
       });
       onDone();
@@ -540,15 +547,257 @@ function NewListing({ onExpire, onDone }) {
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Images — publicly accessible URLs</label>
-          <input className="admin-input" style={{ marginBottom: 8 }} value={form.image1} onChange={e => set('image1', e.target.value)} placeholder="https://..." />
-          <input className="admin-input" style={{ marginBottom: 8 }} value={form.image2} onChange={e => set('image2', e.target.value)} placeholder="https://... (optional)" />
-          <input className="admin-input" value={form.image3} onChange={e => set('image3', e.target.value)} placeholder="https://... (optional)" />
+          <label className="admin-label">Images</label>
+          <ImageUpload
+            urls={form.images}
+            onChange={(imgs) => set('images', imgs)}
+          />
         </div>
 
         <div className="admin-form-actions">
           <button type="submit" className="admin-btn admin-btn-primary" disabled={loading || !form.name || !form.price}>
             {loading ? 'Creating...' : 'Create listing'}
+          </button>
+          <button type="button" className="admin-btn admin-btn-ghost" onClick={onDone}>
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// ============================================================
+// IMAGE UPLOAD
+// ============================================================
+async function compressAndUpload(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      const MAX = 1800;
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > MAX || h > MAX) {
+        if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(objectUrl);
+      canvas.toBlob(async (blob) => {
+        try {
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            const base64 = e.target.result.split(',')[1];
+            const { url } = await apiCall('/api/upload', {
+              method: 'POST',
+              body: { filename: `listing-${Date.now()}.jpg`, contentType: 'image/jpeg', data: base64 },
+            });
+            resolve(url);
+          };
+          reader.readAsDataURL(blob);
+        } catch (err) { reject(err); }
+      }, 'image/jpeg', 0.82);
+    };
+    img.onerror = reject;
+    img.src = objectUrl;
+  });
+}
+
+function ImageUpload({ urls = [], onChange }) {
+  const [uploading, setUploading] = useState(null);
+  const [errors, setErrors] = useState({});
+
+  const handleFile = async (file, index) => {
+    if (!file) return;
+    setUploading(index);
+    setErrors(e => ({ ...e, [index]: null }));
+    try {
+      const url = await compressAndUpload(file);
+      const next = [...(urls || [])];
+      next[index] = url;
+      onChange(next.filter(Boolean));
+    } catch (err) {
+      setErrors(e => ({ ...e, [index]: 'Upload failed' }));
+    } finally {
+      setUploading(null);
+    }
+  };
+
+  const remove = (index) => {
+    const next = [...(urls || [])];
+    next.splice(index, 1);
+    onChange(next.filter(Boolean));
+  };
+
+  const slots = [0, 1, 2];
+  return (
+    <div className="admin-image-upload">
+      {slots.map(i => {
+        const url = urls?.[i];
+        return (
+          <div key={i} className="admin-image-slot">
+            {url ? (
+              <div className="admin-image-preview">
+                <img src={url} alt={`Photo ${i + 1}`} />
+                <button type="button" className="admin-image-remove" onClick={() => remove(i)}>✕</button>
+              </div>
+            ) : (
+              <label className={`admin-image-drop${uploading === i ? ' uploading' : ''}`}>
+                {uploading === i
+                  ? 'Uploading...'
+                  : <><span className="admin-image-plus">+</span><span>Photo {i + 1}{i > 0 ? ' (optional)' : ''}</span></>
+                }
+                <input
+                  type="file"
+                  accept="image/jpeg,image/jpg,image/png,image/webp"
+                  style={{ display: 'none' }}
+                  onChange={e => handleFile(e.target.files?.[0], i)}
+                  disabled={uploading !== null}
+                />
+              </label>
+            )}
+            {errors[i] && <div className="admin-image-error">{errors[i]}</div>}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ============================================================
+// EDIT LISTING
+// ============================================================
+function EditListing({ listing, onExpire, onDone }) {
+  const [form, setForm] = useState({
+    name: listing.name || '',
+    model: listing.model || '',
+    serial: listing.serial || '',
+    type: listing.type || 'guitar',
+    price: listing.price != null ? String(listing.price / 100) : '',
+    description: listing.description || '',
+    condition: listing.condition || '',
+    images: listing.images || [],
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    const priceChanged = form.price !== String(listing.price / 100);
+    try {
+      await apiCall('/api/admin-listings', {
+        method: 'PATCH',
+        body: {
+          id: listing.id,
+          name: form.name,
+          model: form.model,
+          serial: form.serial,
+          type: form.type,
+          description: form.description,
+          condition: form.condition,
+          images: form.images,
+          ...(priceChanged ? { price: form.price } : {}),
+        },
+      });
+      onDone();
+    } catch (err) {
+      if (err.message === 'SESSION_EXPIRED') { onExpire(); return; }
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <h1 className="admin-page-title">Edit Listing</h1>
+
+      <form className="admin-form" onSubmit={submit}>
+        {error && <div className="admin-error">{error}</div>}
+
+        <div className="admin-form-row">
+          <div className="admin-field">
+            <label className="admin-label">Model</label>
+            <select className="admin-select" value={form.model} onChange={e => set('model', e.target.value)}>
+              <option value="">Select model</option>
+              {MODEL_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div className="admin-field">
+            <label className="admin-label">Type</label>
+            <select className="admin-select" value={form.type} onChange={e => set('type', e.target.value)}>
+              <option value="guitar">Guitar</option>
+              <option value="pickup">Pickup</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="admin-field">
+          <label className="admin-label">Listing Name</label>
+          <input
+            className="admin-input"
+            value={form.name}
+            onChange={e => set('name', e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="admin-form-row">
+          <div className="admin-field">
+            <label className="admin-label">Serial Number</label>
+            <input
+              className="admin-input"
+              value={form.serial}
+              onChange={e => set('serial', e.target.value)}
+            />
+          </div>
+          <div className="admin-field">
+            <label className="admin-label">Price (USD)</label>
+            <input
+              className="admin-input"
+              type="number"
+              min="1"
+              step="1"
+              value={form.price}
+              onChange={e => set('price', e.target.value)}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="admin-field">
+          <label className="admin-label">Description</label>
+          <textarea
+            className="admin-textarea"
+            value={form.description}
+            onChange={e => set('description', e.target.value)}
+            rows={3}
+          />
+        </div>
+
+        <div className="admin-field">
+          <label className="admin-label">Condition Notes <span className="admin-label-opt">(optional)</span></label>
+          <input
+            className="admin-input"
+            value={form.condition}
+            onChange={e => set('condition', e.target.value)}
+          />
+        </div>
+
+        <div className="admin-field">
+          <label className="admin-label">Images</label>
+          <ImageUpload urls={form.images} onChange={(imgs) => set('images', imgs)} />
+        </div>
+
+        <div className="admin-form-actions">
+          <button type="submit" className="admin-btn admin-btn-primary" disabled={loading || !form.name || !form.price}>
+            {loading ? 'Saving...' : 'Save changes'}
           </button>
           <button type="button" className="admin-btn admin-btn-ghost" onClick={onDone}>
             Cancel
