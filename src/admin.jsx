@@ -109,7 +109,7 @@ export default function Admin({ onNavigate }) {
         <button className="admin-hamburger" onClick={() => setSidebarOpen(o => !o)}>
           <span /><span /><span />
         </button>
-        <img src="assets/wordmark.svg" alt="Deadstock" className="admin-mobile-logo" />
+        <img src="/assets/wordmark.svg" alt="Deadstock" className="admin-mobile-logo" />
       </div>
       {sidebarOpen && <div className="admin-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
       <AdminSidebar view={view} onView={changeView} onLogout={logout} onNavigate={onNavigate} open={sidebarOpen} />
@@ -150,7 +150,7 @@ function AdminLogin({ onLogin }) {
     <div className="admin-login-wrap">
       <form className="admin-login-card" onSubmit={submit}>
         <div className="admin-login-logo">
-          <img src="assets/wordmark.svg" alt="Deadstock" />
+          <img src="/assets/wordmark.svg" alt="Deadstock" />
           <div className="admin-login-sub">Admin</div>
         </div>
         {error && <div className="admin-error">{error}</div>}
@@ -180,7 +180,7 @@ function AdminSidebar({ view, onView, onLogout, onNavigate, open }) {
   return (
     <aside className={`admin-sidebar${open ? ' open' : ''}`}>
       <div className="admin-sidebar-logo">
-        <img src="assets/wordmark.svg" alt="Deadstock" />
+        <img src="/assets/wordmark.svg" alt="Deadstock" />
         <div className="admin-sidebar-label">Admin</div>
       </div>
 
@@ -466,10 +466,12 @@ function Listings({ onExpire, onView, onEdit }) {
 // ============================================================
 // NEW LISTING
 // ============================================================
+const SPECS_SEP = '\n\n— SPECIFICATIONS —\n';
+
 function NewListing({ onExpire, onDone }) {
   const [form, setForm] = useState({
     name: '', model: '', serial: '', type: 'guitar', price: '',
-    description: '', condition: '', images: [],
+    description: '', specs: '', condition: '', images: [],
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -487,13 +489,13 @@ function NewListing({ onExpire, onDone }) {
     if (!templateId) return;
     const t = MODEL_TEMPLATES.find(m => m.id === templateId);
     if (!t) return;
-    const description = [t.lede, t.specs ? formatSpecs(t.specs, t.type) : ''].filter(Boolean).join('\n\n');
     setForm(f => ({
       ...f,
       model: t.model,
       type: t.type,
       name: t.name,
-      description,
+      description: t.lede || '',
+      specs: t.specs ? formatSpecs(t.specs, t.type) : '',
     }));
   };
 
@@ -502,6 +504,7 @@ function NewListing({ onExpire, onDone }) {
     setLoading(true);
     setError(null);
     try {
+      const combined = [form.description, form.specs].filter(Boolean).join(SPECS_SEP);
       await apiCall('/api/admin-listings', {
         method: 'POST',
         body: {
@@ -510,7 +513,7 @@ function NewListing({ onExpire, onDone }) {
           serial: form.serial,
           type: form.type,
           price: form.price,
-          description: form.description,
+          description: combined,
           condition: form.condition,
           images: form.images,
         },
@@ -617,6 +620,17 @@ function NewListing({ onExpire, onDone }) {
         </div>
 
         <div className="admin-field">
+          <label className="admin-label">Specifications <span className="admin-label-opt">(optional — shown as a separate section on the listing)</span></label>
+          <textarea
+            className="admin-textarea admin-textarea-mono"
+            value={form.specs}
+            onChange={e => set('specs', e.target.value)}
+            placeholder={"BODY\nWood: 2-piece Swamp Ash\nFinish: Nitrocellulose\n\nNECK\nScale: 25.5\""}
+            rows={8}
+          />
+        </div>
+
+        <div className="admin-field">
           <label className="admin-label">Condition Notes <span className="admin-label-opt">(optional)</span></label>
           <input
             className="admin-input"
@@ -650,6 +664,8 @@ function NewListing({ onExpire, onDone }) {
 // ============================================================
 // IMAGE UPLOAD
 // ============================================================
+const MAX_IMAGES = 8;
+
 async function compressAndUpload(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -670,9 +686,10 @@ async function compressAndUpload(file) {
           const reader = new FileReader();
           reader.onload = async (e) => {
             const base64 = e.target.result.split(',')[1];
+            const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
             const { url } = await apiCall('/api/upload', {
               method: 'POST',
-              body: { filename: `listing-${Date.now()}.jpg`, contentType: 'image/jpeg', data: base64 },
+              body: { filename: `listing-${uid}.jpg`, contentType: 'image/jpeg', data: base64 },
             });
             resolve(url);
           };
@@ -686,62 +703,70 @@ async function compressAndUpload(file) {
 }
 
 function ImageUpload({ urls = [], onChange }) {
-  const [uploading, setUploading] = useState(null);
-  const [errors, setErrors] = useState({});
+  const [uploading, setUploading] = useState(false);
+  const [pending, setPending] = useState(0);
+  const [error, setError] = useState(null);
 
-  const handleFile = async (file, index) => {
-    if (!file) return;
-    setUploading(index);
-    setErrors(e => ({ ...e, [index]: null }));
+  const handleFiles = async (e) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!files.length) return;
+    const slots = MAX_IMAGES - urls.length;
+    const toUpload = files.slice(0, slots);
+    setUploading(true);
+    setPending(toUpload.length);
+    setError(null);
     try {
-      const url = await compressAndUpload(file);
-      const next = [...(urls || [])];
-      next[index] = url;
-      onChange(next.filter(Boolean));
-    } catch (err) {
-      setErrors(e => ({ ...e, [index]: 'Upload failed' }));
+      const newUrls = await Promise.all(toUpload.map(f => compressAndUpload(f)));
+      onChange([...urls, ...newUrls].slice(0, MAX_IMAGES));
+    } catch {
+      setError('One or more uploads failed — check connection and try again.');
     } finally {
-      setUploading(null);
+      setUploading(false);
+      setPending(0);
     }
   };
 
-  const remove = (index) => {
-    const next = [...(urls || [])];
-    next.splice(index, 1);
-    onChange(next.filter(Boolean));
+  const remove = (i) => {
+    const next = [...urls];
+    next.splice(i, 1);
+    onChange(next);
   };
 
-  const slots = [0, 1, 2];
+  const canAdd = urls.length < MAX_IMAGES && !uploading;
+
   return (
-    <div className="admin-image-upload">
-      {slots.map(i => {
-        const url = urls?.[i];
-        return (
-          <div key={i} className="admin-image-slot">
-            {url ? (
-              <div className="admin-image-preview">
-                <img src={url} alt={`Photo ${i + 1}`} />
-                <button type="button" className="admin-image-remove" onClick={() => remove(i)}>✕</button>
-              </div>
-            ) : (
-              <label className={`admin-image-drop${uploading === i ? ' uploading' : ''}`}>
-                {uploading === i
-                  ? 'Uploading...'
-                  : <><span className="admin-image-plus">+</span><span>Photo {i + 1}{i > 0 ? ' (optional)' : ''}</span></>
-                }
-                <input
-                  type="file"
-                  accept="image/jpeg,image/jpg,image/png,image/webp"
-                  style={{ display: 'none' }}
-                  onChange={e => handleFile(e.target.files?.[0], i)}
-                  disabled={uploading !== null}
-                />
-              </label>
-            )}
-            {errors[i] && <div className="admin-image-error">{errors[i]}</div>}
+    <div>
+      <div className="admin-image-upload">
+        {urls.map((url, i) => (
+          <div key={i} className="admin-image-preview">
+            <img src={url} alt={`Photo ${i + 1}`} />
+            <button type="button" className="admin-image-remove" onClick={() => remove(i)}>✕</button>
           </div>
-        );
-      })}
+        ))}
+        {uploading && (
+          <div className="admin-image-drop uploading">
+            Uploading {pending} photo{pending !== 1 ? 's' : ''}…
+          </div>
+        )}
+        {canAdd && (
+          <label className="admin-image-drop">
+            <span className="admin-image-plus">+</span>
+            <span>Add photos</span>
+            <input
+              type="file"
+              accept="image/jpeg,image/jpg,image/png,image/webp"
+              multiple
+              style={{ display: 'none' }}
+              onChange={handleFiles}
+            />
+          </label>
+        )}
+      </div>
+      {error && <div className="admin-image-error" style={{ marginTop: 6 }}>{error}</div>}
+      {urls.length > 0 && (
+        <div className="admin-image-meta">{urls.length} / {MAX_IMAGES} photos · First photo is the cover</div>
+      )}
     </div>
   );
 }
@@ -750,13 +775,15 @@ function ImageUpload({ urls = [], onChange }) {
 // EDIT LISTING
 // ============================================================
 function EditListing({ listing, onExpire, onDone }) {
+  const descParts = (listing.description || '').split(SPECS_SEP);
   const [form, setForm] = useState({
     name: listing.name || '',
     model: listing.model || '',
     serial: listing.serial || '',
     type: listing.type || 'guitar',
     price: listing.price != null ? String(listing.price / 100) : '',
-    description: listing.description || '',
+    description: descParts[0] || '',
+    specs: descParts[1] || '',
     condition: listing.condition || '',
     images: listing.images || [],
   });
@@ -771,6 +798,7 @@ function EditListing({ listing, onExpire, onDone }) {
     setError(null);
     const priceChanged = form.price !== String(listing.price / 100);
     try {
+      const combined = [form.description, form.specs].filter(Boolean).join(SPECS_SEP);
       await apiCall('/api/admin-listings', {
         method: 'PATCH',
         body: {
@@ -779,7 +807,7 @@ function EditListing({ listing, onExpire, onDone }) {
           model: form.model,
           serial: form.serial,
           type: form.type,
-          description: form.description,
+          description: combined,
           condition: form.condition,
           images: form.images,
           ...(priceChanged ? { price: form.price } : {}),
@@ -858,6 +886,16 @@ function EditListing({ listing, onExpire, onDone }) {
             value={form.description}
             onChange={e => set('description', e.target.value)}
             rows={3}
+          />
+        </div>
+
+        <div className="admin-field">
+          <label className="admin-label">Specifications <span className="admin-label-opt">(optional — shown as a separate section on the listing)</span></label>
+          <textarea
+            className="admin-textarea admin-textarea-mono"
+            value={form.specs}
+            onChange={e => set('specs', e.target.value)}
+            rows={8}
           />
         </div>
 

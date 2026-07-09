@@ -210,6 +210,37 @@
   padding: 16px 0;
 }
 
+/* ---- Specifications ---- */
+.listing-specs-section {
+  margin-top: 64px;
+  padding-top: 40px;
+  border-top: 1px solid var(--rule-soft);
+}
+
+.listing-specs-heading {
+  font-family: var(--display);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--walnut);
+  opacity: 0.5;
+  margin-bottom: 20px;
+}
+
+.listing-specs-body {
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--walnut);
+  white-space: pre-wrap;
+  columns: 2;
+  column-gap: 48px;
+}
+
+@media (max-width: 680px) {
+  .listing-specs-body { columns: 1; }
+}
+
 @media (max-width: 860px) {
   .listing-grid {
     grid-template-columns: 1fr;
