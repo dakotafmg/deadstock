@@ -7,6 +7,7 @@ import Product from './product';
 import { Pickups, PickupProduct } from './pickups';
 import { FoundersLetter, Partners, DealersPage } from './pages';
 import Shop from './shop';
+import ListingDetail from './listing';
 import Admin from './admin';
 import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './tweaks-panel';
 
@@ -29,26 +30,33 @@ const FONT_OPTIONS = {
   newsreader: { family: '"Newsreader", Georgia, serif', label: "Newsreader" },
 };
 
+function parsePath() {
+  const path = window.location.pathname;
+  if (path.startsWith("/listing/")) return ["listing", path.slice(9)];
+  const segment = path.slice(1) || "home";
+  return [VALID_ROUTES.includes(segment) ? segment : "home", null];
+}
+
 export default function App() {
-  const [route, setRoute] = useState(() => {
-    const path = window.location.pathname.slice(1) || "home";
-    return VALID_ROUTES.includes(path) ? path : "home";
-  });
+  const [[route, listingId], setNav] = useState(parsePath);
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
-  const onNavigate = (id) => {
-    if (id === "workshop") id = "home"; // workshop links to manifesto on home
-    if (id === "monarch") return; // soon
-    setRoute(id);
+  const onNavigate = (id, param = null) => {
+    if (id === "workshop") id = "home";
+    if (id === "monarch") return;
+    if (id === "listing") {
+      setNav(["listing", param]);
+      history.pushState({}, "", "/listing/" + param);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    setNav([id, null]);
     history.pushState({}, "", id === "home" ? "/" : "/" + id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   useEffect(() => {
-    const onPop = () => {
-      const path = window.location.pathname.slice(1) || "home";
-      if (VALID_ROUTES.includes(path)) setRoute(path);
-    };
+    const onPop = () => setNav(parsePath());
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
   }, []);
@@ -90,6 +98,7 @@ export default function App() {
       {route === "partners" && <Partners onNavigate={onNavigate} />}
       {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
       {route === "shop"     && <Shop onNavigate={onNavigate} />}
+      {route === "listing"  && <ListingDetail id={listingId} onNavigate={onNavigate} />}
       <Footer onNavigate={onNavigate} />
 
       <TweaksPanel title="Tweaks">
