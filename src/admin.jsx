@@ -438,6 +438,13 @@ function NewListing({ onExpire, onDone }) {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    apiCall('/api/admin-listings?source=all')
+      .then(d => setAllProducts(d.products || []))
+      .catch(() => {});
+  }, []);
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
@@ -446,6 +453,20 @@ function NewListing({ onExpire, onDone }) {
     if (!form.name) set('name', `The ${model}`);
     if (['Broadman', 'Wayfarer', 'Monarch'].includes(model)) set('type', 'guitar');
     else set('type', 'pickup');
+  };
+
+  const importProduct = (productId) => {
+    if (!productId) return;
+    const p = allProducts.find(p => p.id === productId);
+    if (!p) return;
+    setForm(f => ({
+      ...f,
+      name: p.name || f.name,
+      description: p.description || f.description,
+      images: p.images?.length ? p.images : f.images,
+      model: p.model || f.model,
+      type: p.type || f.type,
+    }));
   };
 
   const submit = async (e) => {
@@ -480,6 +501,22 @@ function NewListing({ onExpire, onDone }) {
 
       <form className="admin-form" onSubmit={submit}>
         {error && <div className="admin-error">{error}</div>}
+
+        {allProducts.length > 0 && (
+          <div className="admin-field admin-import-row">
+            <label className="admin-label">Import from existing product <span className="admin-label-opt">(optional)</span></label>
+            <select
+              className="admin-select"
+              defaultValue=""
+              onChange={e => importProduct(e.target.value)}
+            >
+              <option value="">— pick a product to pre-fill —</option>
+              {allProducts.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="admin-form-row">
           <div className="admin-field">
