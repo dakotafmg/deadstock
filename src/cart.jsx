@@ -13,7 +13,7 @@ export default function CartDrawer({ cart, onRemove, onClose, onNavigate }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: cart.map(i => ({ priceId: i.priceId, productId: i.id })),
+          items: cart.map(i => ({ priceId: i.priceId, productId: i.id, name: i.name })),
         }),
       });
       const data = await res.json();
