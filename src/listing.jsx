@@ -26,7 +26,7 @@ export default function ListingDetail({ id, onNavigate, cart = [], addToCart }) 
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId: listing.priceId, productId: listing.id }),
+        body: JSON.stringify({ priceId: listing.priceId, productId: listing.id, productName: listing.name }),
       });
       const data = await res.json();
       if (data.url) { window.location.href = data.url; }
