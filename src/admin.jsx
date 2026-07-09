@@ -7,6 +7,18 @@ import { PRODUCTS, PICKUPS } from './data';
 
 const MODEL_OPTIONS = ['Broadman', 'Wayfarer', 'Monarch', "'52 Tele Set", "'62 Strat Set", 'PAF Set'];
 
+// Format a specs object into plain text sections
+function formatSpecs(specs, type) {
+  const LABELS = {
+    body: 'BODY', neck: type === 'guitar' ? 'NECK & FINGERBOARD' : 'NECK PICKUP',
+    electronics: 'ELECTRONICS', hardware: 'HARDWARE',
+    bridge: 'BRIDGE PICKUP', middle: 'MIDDLE PICKUP',
+  };
+  return Object.entries(specs)
+    .map(([key, rows]) => `${LABELS[key] || key.toUpperCase()}\n${rows.map(r => `${r.k}: ${r.v}`).join('\n')}`)
+    .join('\n\n');
+}
+
 // Pre-built templates from the product pages in data.js
 const MODEL_TEMPLATES = [
   ...Object.values(PRODUCTS).map(p => ({
@@ -15,11 +27,8 @@ const MODEL_TEMPLATES = [
     model: p.name,
     type: 'guitar',
     name: `The ${p.name}`,
-    description: [
-      p.lede,
-      p.finish && `Finish: ${p.finish}.`,
-      p.pickups && `Pickups: ${p.pickups}.`,
-    ].filter(Boolean).join(' '),
+    lede: [p.lede, p.finish && `Finish: ${p.finish}.`, p.pickups && `Pickups: ${p.pickups}.`].filter(Boolean).join(' '),
+    specs: p.specs,
   })),
   ...Object.values(PICKUPS).map(p => ({
     id: p.id,
@@ -27,7 +36,8 @@ const MODEL_TEMPLATES = [
     model: p.name,
     type: 'pickup',
     name: p.name,
-    description: p.lede,
+    lede: p.lede,
+    specs: p.specs,
   })),
 ];
 const PAYMENT_METHODS = ['Cash', 'Check', 'Card', 'Bank Transfer', 'Affirm', 'Afterpay', 'Klarna', 'Trade', 'Other'];
@@ -477,12 +487,13 @@ function NewListing({ onExpire, onDone }) {
     if (!templateId) return;
     const t = MODEL_TEMPLATES.find(m => m.id === templateId);
     if (!t) return;
+    const description = [t.lede, t.specs ? formatSpecs(t.specs, t.type) : ''].filter(Boolean).join('\n\n');
     setForm(f => ({
       ...f,
       model: t.model,
       type: t.type,
       name: t.name,
-      description: t.description,
+      description,
     }));
   };
 

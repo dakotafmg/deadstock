@@ -157,6 +157,7 @@
   line-height: 1.7;
   color: var(--walnut);
   margin-bottom: 12px;
+  white-space: pre-wrap;
 }
 
 .listing-condition {
