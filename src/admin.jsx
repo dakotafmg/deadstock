@@ -43,6 +43,9 @@ export default function Admin({ onNavigate }) {
   });
   const [view, setView] = useState('overview');
   const [editTarget, setEditTarget] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const changeView = (v) => { setView(v); setSidebarOpen(false); };
 
   useEffect(() => {
     document.body.classList.add('admin-active');
@@ -67,14 +70,21 @@ export default function Admin({ onNavigate }) {
 
   return (
     <div className="admin-shell">
-      <AdminSidebar view={view} onView={setView} onLogout={logout} onNavigate={onNavigate} />
+      <div className="admin-mobile-header">
+        <button className="admin-hamburger" onClick={() => setSidebarOpen(o => !o)}>
+          <span /><span /><span />
+        </button>
+        <img src="assets/wordmark.svg" alt="Deadstock" className="admin-mobile-logo" />
+      </div>
+      {sidebarOpen && <div className="admin-sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
+      <AdminSidebar view={view} onView={changeView} onLogout={logout} onNavigate={onNavigate} open={sidebarOpen} />
       <div className="admin-main">
-        {view === 'overview'     && <Overview     onExpire={handleSessionExpired} onView={setView} />}
-        {view === 'listings'     && <Listings     onExpire={handleSessionExpired} onView={setView} onEdit={(l) => { setEditTarget(l); setView('edit-listing'); }} />}
-        {view === 'new-listing'  && <NewListing   onExpire={handleSessionExpired} onDone={() => setView('listings')} />}
-        {view === 'edit-listing' && editTarget && <EditListing listing={editTarget} onExpire={handleSessionExpired} onDone={() => { setEditTarget(null); setView('listings'); }} />}
+        {view === 'overview'     && <Overview     onExpire={handleSessionExpired} onView={changeView} />}
+        {view === 'listings'     && <Listings     onExpire={handleSessionExpired} onView={changeView} onEdit={(l) => { setEditTarget(l); changeView('edit-listing'); }} />}
+        {view === 'new-listing'  && <NewListing   onExpire={handleSessionExpired} onDone={() => changeView('listings')} />}
+        {view === 'edit-listing' && editTarget && <EditListing listing={editTarget} onExpire={handleSessionExpired} onDone={() => { setEditTarget(null); changeView('listings'); }} />}
         {view === 'sales'        && <Sales        onExpire={handleSessionExpired} />}
-        {view === 'log-sale'     && <LogSale      onExpire={handleSessionExpired} onDone={() => setView('sales')} />}
+        {view === 'log-sale'     && <LogSale      onExpire={handleSessionExpired} onDone={() => changeView('sales')} />}
       </div>
     </div>
   );
@@ -131,9 +141,9 @@ function AdminLogin({ onLogin }) {
 // ============================================================
 // SIDEBAR
 // ============================================================
-function AdminSidebar({ view, onView, onLogout, onNavigate }) {
+function AdminSidebar({ view, onView, onLogout, onNavigate, open }) {
   return (
-    <aside className="admin-sidebar">
+    <aside className={`admin-sidebar${open ? ' open' : ''}`}>
       <div className="admin-sidebar-logo">
         <img src="assets/wordmark.svg" alt="Deadstock" />
         <div className="admin-sidebar-label">Admin</div>
@@ -229,7 +239,7 @@ function Overview({ onExpire, onView }) {
         {recent.length === 0 ? (
           <p className="admin-empty-text">No sales yet.</p>
         ) : (
-          <table className="admin-table">
+          <div className="admin-table-wrap"><table className="admin-table">
             <thead>
               <tr>
                 <th>Date</th>
@@ -250,7 +260,7 @@ function Overview({ onExpire, onView }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>
@@ -938,7 +948,7 @@ function Sales({ onExpire }) {
         {visible.length === 0 ? (
           <p className="admin-empty-text" style={{ padding: '32px 24px' }}>No sales yet.</p>
         ) : (
-          <table className="admin-table">
+          <div className="admin-table-wrap"><table className="admin-table">
             <thead>
               <tr>
                 <th>Date</th>
@@ -975,7 +985,7 @@ function Sales({ onExpire }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
         )}
       </div>
     </div>
