@@ -66,6 +66,7 @@ export default async function handler(req, res) {
         name,
         description: description || '',
         images: (images || []).filter(Boolean).slice(0, 8),
+        tax_code: 'txcd_94020000',
         metadata: {
           deadstock: 'true',
           available: 'true',
@@ -80,6 +81,7 @@ export default async function handler(req, res) {
         product: product.id,
         unit_amount: Math.round(parseFloat(price) * 100),
         currency: 'usd',
+        tax_behavior: 'exclusive',
       });
 
       return res.status(201).json({
@@ -114,6 +116,7 @@ export default async function handler(req, res) {
           product: id,
           unit_amount: Math.round(parseFloat(price) * 100),
           currency: 'usd',
+          tax_behavior: 'exclusive',
         });
         priceId = newPrice.id;
         if (existing[0]) await stripe.prices.update(existing[0].id, { active: false });
