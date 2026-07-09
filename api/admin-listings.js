@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       const all = [...active, ...inactive].filter(p => p.metadata.deadstock === 'true');
 
       const listings = await Promise.all(all.map(async (p) => {
-        const { data: prices } = await stripe.prices.list({ product: p.id, limit: 1 });
+        const { data: prices } = await stripe.prices.list({ product: p.id, limit: 1, active: true });
         const price = prices[0];
         return {
           id: p.id,
@@ -73,18 +73,38 @@ export default async function handler(req, res) {
     }
 
     if (req.method === 'PATCH') {
-      const { id, available, active, name, description } = await parseBody(req);
+      const { id, available, active, name, description, images, model, serial, type, condition, price } = await parseBody(req);
 
       if (!id) return res.status(400).json({ error: 'id required' });
 
       const updates = {};
-      if (available !== undefined) updates.metadata = { available: String(available) };
-      if (active !== undefined) updates.active = active;
-      if (name) updates.name = name;
+      const meta = {};
+      if (name !== undefined) updates.name = name;
       if (description !== undefined) updates.description = description;
+      if (images !== undefined) updates.images = images.filter(Boolean).slice(0, 8);
+      if (active !== undefined) updates.active = active;
+      if (available !== undefined) meta.available = String(available);
+      if (model !== undefined) meta.model = model;
+      if (serial !== undefined) meta.serial = serial;
+      if (type !== undefined) meta.type = type;
+      if (condition !== undefined) meta.condition = condition;
+      if (Object.keys(meta).length) updates.metadata = meta;
 
       const product = await stripe.products.update(id, updates);
-      return res.status(200).json({ product });
+
+      let priceId = null;
+      if (price) {
+        const { data: existing } = await stripe.prices.list({ product: id, active: true, limit: 1 });
+        const newPrice = await stripe.prices.create({
+          product: id,
+          unit_amount: Math.round(parseFloat(price) * 100),
+          currency: 'usd',
+        });
+        priceId = newPrice.id;
+        if (existing[0]) await stripe.prices.update(existing[0].id, { active: false });
+      }
+
+      return res.status(200).json({ product, priceId });
     }
 
     res.status(405).end();
