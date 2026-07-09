@@ -43,13 +43,10 @@ const MODEL_TEMPLATES = [
 const PAYMENT_METHODS = ['Cash', 'Check', 'Card', 'Bank Transfer', 'Affirm', 'Afterpay', 'Klarna', 'Trade', 'Other'];
 
 async function apiCall(path, opts = {}) {
-  const token = sessionStorage.getItem('ds-admin-token');
   const res = await fetch(path, {
     method: opts.method || 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   if (res.status === 401) throw new Error('SESSION_EXPIRED');
@@ -73,9 +70,8 @@ function fmtDate(ts) {
 // TOP-LEVEL
 // ============================================================
 export default function Admin({ onNavigate }) {
-  const [token, setToken] = useState(() => {
-    try { return sessionStorage.getItem('ds-admin-token'); } catch { return null; }
-  });
+  // null = checking, true = logged in, false = not
+  const [authed, setAuthed] = useState(null);
   const [view, setView] = useState('overview');
   const [editTarget, setEditTarget] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -87,21 +83,30 @@ export default function Admin({ onNavigate }) {
     return () => document.body.classList.remove('admin-active');
   }, []);
 
-  const login = (t) => {
-    sessionStorage.setItem('ds-admin-token', t);
-    setToken(t);
-  };
+  useEffect(() => {
+    fetch('/api/admin-check', { credentials: 'include' })
+      .then(r => setAuthed(r.ok))
+      .catch(() => setAuthed(false));
+  }, []);
 
-  const logout = () => {
-    sessionStorage.removeItem('ds-admin-token');
-    setToken(null);
+  const login = () => setAuthed(true);
+
+  const logout = async () => {
+    await fetch('/api/admin-logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    setAuthed(false);
   };
 
   const handleSessionExpired = useCallback(() => {
     logout();
   }, []);
 
-  if (!token) return <AdminLogin onLogin={login} />;
+  if (authed === null) return (
+    <div className="admin-login-wrap">
+      <div style={{ color: '#555', fontFamily: 'inherit', fontSize: 13 }}>Checking session…</div>
+    </div>
+  );
+
+  if (!authed) return <AdminLogin onLogin={login} />;
 
   return (
     <div className="admin-shell">
@@ -129,7 +134,8 @@ export default function Admin({ onNavigate }) {
 // LOGIN
 // ============================================================
 function AdminLogin({ onLogin }) {
-  const [pw, setPw] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -138,10 +144,17 @@ function AdminLogin({ onLogin }) {
     setLoading(true);
     setError(null);
     try {
-      const { token } = await apiCall('/api/admin-login', { method: 'POST', body: { password: pw } });
-      onLogin(token);
-    } catch {
-      setError('Incorrect password.');
+      const res = await fetch('/api/admin-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Login failed');
+      onLogin();
+    } catch (err) {
+      setError(err.message || 'Login failed.');
       setLoading(false);
     }
   };
@@ -155,18 +168,30 @@ function AdminLogin({ onLogin }) {
         </div>
         {error && <div className="admin-error">{error}</div>}
         <div className="admin-field">
+          <label className="admin-label">Email</label>
+          <input
+            className="admin-input"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@deadstockguitars.com"
+            autoFocus
+            autoComplete="email"
+          />
+        </div>
+        <div className="admin-field">
           <label className="admin-label">Password</label>
           <input
             className="admin-input"
             type="password"
-            value={pw}
-            onChange={e => setPw(e.target.value)}
-            placeholder="Enter password"
-            autoFocus
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="••••••••••••"
+            autoComplete="current-password"
           />
         </div>
-        <button className="admin-btn admin-btn-primary" style={{ width: '100%' }} disabled={loading || !pw}>
-          {loading ? 'Signing in...' : 'Sign in'}
+        <button className="admin-btn admin-btn-primary" style={{ width: '100%' }} disabled={loading || !email || !password}>
+          {loading ? 'Signing in…' : 'Sign in →'}
         </button>
       </form>
     </div>
