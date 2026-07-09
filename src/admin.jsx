@@ -811,12 +811,73 @@ function EditListing({ listing, onExpire, onDone }) {
 // ============================================================
 // SALES
 // ============================================================
+function SaleDetail({ sale, onClose }) {
+  if (!sale) return null;
+  return (
+    <div className="admin-modal-overlay" onClick={onClose}>
+      <div className="admin-modal" onClick={e => e.stopPropagation()}>
+        <div className="admin-modal-head">
+          <div className="admin-modal-title">
+            <span>Sale Details</span>
+            <span className={`badge badge-${sale.channel}`}>{sale.channel}</span>
+          </div>
+          <button className="admin-modal-close" onClick={onClose}>✕</button>
+        </div>
+
+        <div className="admin-modal-amount">{fmt$$(sale.amount)}</div>
+        <div className="admin-modal-date">{fmtDate(sale.date)}</div>
+
+        <div className="admin-detail-grid">
+          {sale.productName || sale.productId ? (
+            <div className="admin-detail-row">
+              <span className="admin-detail-label">Product</span>
+              <span className="admin-detail-value">{sale.productName || sale.productId}</span>
+            </div>
+          ) : null}
+
+          <div className="admin-detail-row">
+            <span className="admin-detail-label">Payment</span>
+            <span className="admin-detail-value">{sale.paymentMethod || '—'}</span>
+          </div>
+
+          {sale.customer && sale.customer !== '—' ? (
+            <div className="admin-detail-row">
+              <span className="admin-detail-label">Buyer</span>
+              <span className="admin-detail-value">{sale.customer}</span>
+            </div>
+          ) : null}
+
+          {sale.email ? (
+            <div className="admin-detail-row">
+              <span className="admin-detail-label">Email</span>
+              <span className="admin-detail-value">{sale.email}</span>
+            </div>
+          ) : null}
+
+          {sale.notes ? (
+            <div className="admin-detail-row">
+              <span className="admin-detail-label">Notes</span>
+              <span className="admin-detail-value">{sale.notes}</span>
+            </div>
+          ) : null}
+
+          <div className="admin-detail-row">
+            <span className="admin-detail-label">ID</span>
+            <span className="admin-detail-value admin-mono" style={{ fontSize: 11, wordBreak: 'break-all' }}>{sale.id}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Sales({ onExpire }) {
   const [sales, setSales] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [deleting, setDeleting] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -851,6 +912,7 @@ function Sales({ onExpire }) {
 
   return (
     <div>
+      <SaleDetail sale={selected} onClose={() => setSelected(null)} />
       <h1 className="admin-page-title">All Sales</h1>
 
       {error && <div className="admin-error">{error}</div>}
@@ -886,7 +948,7 @@ function Sales({ onExpire }) {
             </thead>
             <tbody>
               {visible.map(s => (
-                <tr key={s.id}>
+                <tr key={s.id} className="admin-row-clickable" onClick={() => setSelected(s)}>
                   <td>{fmtDate(s.date)}</td>
                   <td className="admin-td-product">
                     {s.productName || (s.productId ? <span className="admin-mono">{s.productId.slice(0, 12)}…</span> : '—')}
@@ -895,7 +957,7 @@ function Sales({ onExpire }) {
                   <td><span className={`badge badge-${s.channel}`}>{s.channel}</span></td>
                   <td className="admin-muted">{s.paymentMethod || '—'}</td>
                   <td className="admin-muted">{s.customer || '—'}</td>
-                  <td>
+                  <td onClick={e => e.stopPropagation()}>
                     {s.channel === 'manual' && (
                       <button
                         className="admin-btn admin-btn-ghost admin-btn-sm admin-btn-danger"
