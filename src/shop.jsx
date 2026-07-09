@@ -74,6 +74,8 @@ function ShopCard({ listing, onNavigate }) {
     ? `$${(listing.price / 100).toLocaleString()}`
     : 'Price on request';
 
+  const lede = (listing.description || '').split('\n\n— SPECIFICATIONS —\n')[0].trim();
+
   return (
     <div className="shop-card shop-card-link" onClick={() => onNavigate('listing', listing.id)}>
       <div className="shop-card-img">
@@ -96,8 +98,8 @@ function ShopCard({ listing, onNavigate }) {
         {listing.serial && (
           <div className="shop-card-serial">S/N {listing.serial}</div>
         )}
-        {listing.description && (
-          <p className="shop-card-desc">{listing.description}</p>
+        {lede && (
+          <p className="shop-card-desc">{lede}</p>
         )}
 
         <div className="shop-card-footer">
