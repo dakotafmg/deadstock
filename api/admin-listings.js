@@ -66,7 +66,7 @@ export default async function handler(req, res) {
         name,
         description: description || '',
         images: (images || []).filter(Boolean).slice(0, 8),
-        tax_code: 'txcd_94020000',
+        tax_code: 'txcd_99999999',
         metadata: {
           deadstock: 'true',
           available: 'true',
