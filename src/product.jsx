@@ -312,7 +312,8 @@ function BuildTag({ p }) {
 // RELATED — single full-bleed spread to the other model
 // ------------------------------------------------------------
 function RelatedNav({ p, onNavigate }) {
-  const otherId = p.id === "broadman" ? "wayfarer" : "broadman";
+  const cycle = { broadman: "wayfarer", wayfarer: "monarch", monarch: "broadman" };
+  const otherId = cycle[p.id] || "broadman";
   const other = PRODUCTS[otherId];
   return (
     <section className="p-related">
