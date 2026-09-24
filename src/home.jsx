@@ -113,7 +113,7 @@ function Hero({ onNavigate }) {
           <Reveal delay={150}>
             <div className="hero-philo">
               Built by hand, honest in every joint. Ohio-milled wood,
-              nitrocellulose finish, handwound pickups <em>Future Vintage
+              nitrocellulose finish, Seymour Duncan pickups. <em>Future Vintage
               Instruments, Inspired by you!</em>
             </div>
           </Reveal>
@@ -148,7 +148,7 @@ function Manifesto() {
   const pillars = [
     { k: "Body",        v: "Ash + Alder, milled in Ohio" },
     { k: "Finish",      v: "Nitrocellulose, hand-rubbed" },
-    { k: "Electronics", v: "Handwound single coils" },
+    { k: "Electronics", v: "Seymour Duncan, USA" },
     { k: "Hardware",    v: "Aged in-house at the bench" },
   ];
   return (
@@ -169,7 +169,7 @@ function Manifesto() {
               <p>
                 A real instrument should outlive its first owner. We build
                 in small batches in Fortville, Indiana — nitro finish, bone
-                nut, handwound pickups, Ohio-milled wood.
+                nut, Seymour Duncan pickups, Ohio-milled wood.
               </p>
               <p>
                 These are not marketing points. They are the minimum spec we
@@ -280,7 +280,7 @@ function Lineup({ onNavigate, onNotify }) {
                           </div>
                           <div>
                             <div className="k">Pickups</div>
-                            <div className="v">Handwound humbuckers</div>
+                            <div className="v">SD Phat Cat + Antiquity HB</div>
                           </div>
                           <div>
                             <div className="k">Construction</div>
@@ -295,7 +295,7 @@ function Lineup({ onNavigate, onNotify }) {
                           </div>
                           <div>
                             <div className="k">Pickups</div>
-                            <div className="v">Handwound</div>
+                            <div className="v">{m.id === "broadman" ? "SD Antiquity Tele" : "Seymour Duncan"}</div>
                           </div>
                           <div>
                             <div className="k">Construction</div>
@@ -472,10 +472,10 @@ function Craftsmanship() {
     },
     {
       n: "03 — Pickups",
-      title: "Handwound.",
-      em: "By a person.",
+      title: "Seymour Duncan.",
+      em: "Hand-built in California.",
       body:
-        "Plain enamel and formvar, wound by hand.",
+        "Vintage-voiced, hand-built in Santa Barbara since 1976. Period-correct winds, calibrated by ear.",
     },
     {
       n: "04 — Hardware",
