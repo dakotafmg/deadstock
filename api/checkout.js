@@ -26,6 +26,7 @@ export default async function handler(req, res) {
       mode: 'payment',
       line_items: lineItems,
       automatic_tax: { enabled: true },
+      allow_promotion_codes: true,
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
       success_url: `${siteUrl}/shop?checkout=success`,
       cancel_url: `${siteUrl}/shop`,
