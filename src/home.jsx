@@ -73,7 +73,7 @@ function Hero({ onNavigate }) {
 
         <Reveal className="display">
           <h1 style={{ margin: 0 }}>
-            We build <em>premium</em> instruments —<br/>
+            We build <em>premium</em> instruments -<br/>
             but music belongs to <em>everyone.</em>
           </h1>
         </Reveal>

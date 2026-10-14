@@ -624,10 +624,10 @@ function NewListing({ onExpire, onDone }) {
               className="admin-input"
               type="number"
               min="1"
-              step="1"
+              step="0.01"
               value={form.price}
               onChange={e => set('price', e.target.value)}
-              placeholder="7000"
+              placeholder="0.00"
               required
             />
           </div>

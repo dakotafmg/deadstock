@@ -183,14 +183,13 @@
   color: var(--black);
 }
 
-.shop-card-payment-note {
-  margin-top: 12px;
+.shop-card-view {
   font-family: var(--display);
-  font-size: 9.5px;
+  font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--walnut);
-  opacity: 0.45;
+  color: var(--amber);
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
