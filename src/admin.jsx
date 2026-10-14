@@ -896,7 +896,7 @@ function EditListing({ listing, onExpire, onDone }) {
               className="admin-input"
               type="number"
               min="0"
-              step="0.00"
+              step="0.01"
               value={form.price}
               onChange={e => set('price', e.target.value)}
               required
