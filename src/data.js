@@ -87,7 +87,7 @@ export const PRODUCTS = {
     year: "MMXXVI",
     price: "$4,599",
     finish: "Nitro",
-    pickups: "Handwound A5 Single Coils",
+    pickups: "Seymour Duncan",
     lede: "Ergonomic, fluid, versatile. The road-tested partner built to disappear in your hands so the song doesn't.",
     swatches: [
       { name: "Sunburst",       hex: "#7A3B10" },
@@ -136,8 +136,8 @@ export const PRODUCTS = {
         { k: "Inlays",      v: "White fretboard + side marker dots" },
       ],
       electronics: [
-        { k: "Pickups",     v: "A5 magnets, wax potted, 42 AWG — 5.5-6.8 kΩ" },
-        { k: "Middle PU",   v: "Reverse-wound / reverse-polarity" },
+        { k: "Pickups",     v: "Seymour Duncan" },
+        { k: "Middle PU",   v: "Seymour Duncan" },
         { k: "Switching",   v: "Oak Grigsby 5-way blade" },
         { k: "Wiring",      v: "Vintage cloth, modern shielding — CTS 250k, 0.047µF Sprague Orange Drop" },
       ],
