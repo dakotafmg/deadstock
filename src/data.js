@@ -158,7 +158,7 @@ export const PRODUCTS = {
     id: "monarch",
     name: "Monarch",
     archetype: "OFFSET",
-    serial: "DS-MON-001",
+    serial: "DS26001",
     year: "MMXXVI",
     price: "$5,199",
     finish: "Nitro",
