@@ -35,29 +35,8 @@ export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
         </div>
 
         <nav className="nav-links">
-          {/* Guitars dropdown */}
-          <div className="nav-dropdown-wrap">
-            <span className={"nav-dropdown-trigger" + (isGuitarRoute ? " active" : "")}>
-              Guitars
-              <svg width="8" height="5" viewBox="0 0 8 5" fill="none" style={{ marginLeft: 3, flexShrink: 0 }}>
-                <path d="M1 1l3 3 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
-            <div className="nav-dropdown">
-              <a className={route === "broadman" ? "active" : ""} href="#" onClick={(e) => navigate("broadman", e)}>The Broadman</a>
-              <a className={route === "wayfarer" ? "active" : ""} href="#" onClick={(e) => navigate("wayfarer", e)}>The Wayfarer</a>
-              <a style={{ opacity: 0.4, cursor: "default" }} onClick={(e) => e.preventDefault()}>The Monarch · soon</a>
-            </div>
-          </div>
-
-          {/* Pickups */}
-          <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
-
           {/* Shop */}
           <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
-
-          {/* Dealers */}
-          <a className={route === "dealers" ? "active" : ""} href="#" onClick={(e) => navigate("dealers", e)}>Dealers</a>
 
           {/* Our Story */}
           <a className={route === "letter" ? "active" : ""} href="#" onClick={(e) => navigate("letter", e)}>Our Story</a>
@@ -82,15 +61,7 @@ export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
 
       {/* Mobile menu */}
       <div className="nav-mobile">
-        <div className="nav-mobile-label">Guitars</div>
-        <div className="nav-mobile-sub-links">
-          <a className={route === "broadman" ? "active" : ""} href="#" onClick={(e) => navigate("broadman", e)}>Broadman</a>
-          <a className={route === "wayfarer" ? "active" : ""} href="#" onClick={(e) => navigate("wayfarer", e)}>Wayfarer</a>
-          <a style={{ opacity: 0.38 }} href="#" onClick={(e) => e.preventDefault()}>Monarch · soon</a>
-        </div>
-        <a className={isPickupsRoute ? "active" : ""} href="#" onClick={(e) => navigate("pickups", e)}>Pickups</a>
         <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
-        <a className={route === "dealers" ? "active" : ""} href="#" onClick={(e) => navigate("dealers", e)}>Dealers</a>
         <a className={route === "letter" ? "active" : ""} href="#" onClick={(e) => navigate("letter", e)}>Our Story</a>
         <a className={route === "partners" ? "active" : ""} href="#" onClick={(e) => navigate("partners", e)}>Partners</a>
       </div>
@@ -129,25 +100,8 @@ export function Footer({ onNavigate }) {
           </div>
         </div>
         <div>
-          <h4>Guitars</h4>
-          <ul>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("broadman")}>The Broadman</a></li>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("wayfarer")}>The Wayfarer</a></li>
-            <li><a style={{ opacity: 0.5 }}>The Monarch · soon</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>Pickups</h4>
-          <ul>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("tele52")}>'52 Tele Set</a></li>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("strat62")}>'62 Strat Set</a></li>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("paf")}>PAF Set</a></li>
-          </ul>
-        </div>
-        <div>
           <h4>Company</h4>
           <ul>
-            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("dealers")}>Dealers</a></li>
             <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("partners")}>Partners</a></li>
             <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("letter")}>Our Story</a></li>
             <li><a href="mailto:dealers@deadstockguitars.com">Contact</a></li>

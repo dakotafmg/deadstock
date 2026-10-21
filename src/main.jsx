@@ -6,7 +6,6 @@ import App from './app';
 import './styles.css';
 import './home.css';
 import './product.css';
-import './pickups.css';
 import './shop.css';
 import './listing.css';
 import './cart.css';
