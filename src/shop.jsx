@@ -46,9 +46,6 @@ export default function Shop({ onNavigate }) {
           <div className="shop-empty">
             <p>Nothing in the shop right now.</p>
             <p>New builds drop in small batches — check back soon.</p>
-            <button className="btn btn-ghost" style={{ marginTop: 28 }} onClick={() => onNavigate('dealers')}>
-              Find a dealer instead →
-            </button>
           </div>
         )}
 
