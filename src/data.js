@@ -204,7 +204,7 @@ export const PRODUCTS = {
       ],
     },
     build: {
-      run: "Coming 2026 · Fortville, IN",
+      run: "Fortville, IN",
     }
   }
 };
@@ -250,7 +250,7 @@ export const LINEUP = [
     id: "monarch",
     name: "Monarch",
     archetype: "OFFSET / IN DEVELOPMENT",
-    serial: "DS-MON-001",
+    serial: "DSS26001",
     price: "$5,199",
     blurb: "A premium offset, in development. Carved top, bolt-on neck, Seymour Duncan Phat Cat neck and Antiquity Humbucker bridge.",
     swatches: ["#3B2A1E", "#D28400"],

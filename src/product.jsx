@@ -252,10 +252,6 @@ function BuildTag({ p }) {
 
               <div className="specs">
                 <div>
-                  <div className="k">Serial</div>
-                  <div className="v">{p.serial}</div>
-                </div>
-                <div>
                   <div className="k">Built</div>
                   <div className="v">{p.build.run}</div>
                 </div>
