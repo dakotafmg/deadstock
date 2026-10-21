@@ -165,7 +165,16 @@ export const PRODUCTS = {
     pickups: "Seymour Duncan Phat Cat (neck) / Antiquity Humbucker (bridge)",
     lede: "A premium offset with a Seymour Duncan Phat Cat in the neck and Antiquity Humbucker in the bridge, over a carved flamed maple top.",
     swatches: [],
-    images: [],
+    images: [
+      "/assets/monarch-1.jpg",
+      "/assets/monarch-2.jpg",
+      "/assets/monarch-3.jpg",
+      "/assets/monarch-4.jpg",
+      "/assets/monarch-5.jpg",
+      "/assets/monarch-6.jpg",
+      "/assets/monarch-7.jpg",
+      "/assets/monarch-8.jpg"
+    ],
     story: {
       heading: "Where rock meets jazz — and stays.",
       problem: "The offset world is full of guitars that can't decide what they are. Too bright for jazz, too polite for rock, too refined to really push. We wanted one that could hold its own in both rooms without compromising either.",
@@ -249,13 +258,13 @@ export const LINEUP = [
   {
     id: "monarch",
     name: "Monarch",
-    archetype: "OFFSET / IN DEVELOPMENT",
+    archetype: "OFFSET",
     serial: "DSS26001",
     price: "$5,199",
     blurb: "A premium offset, in development. Carved top, bolt-on neck, Seymour Duncan Phat Cat neck and Antiquity Humbucker bridge.",
     swatches: ["#3B2A1E", "#D28400"],
     status: "AVAILABLE",
-    image: null,
+    image: "/assets/monarch-1.jpg",
   },
 ];
 
