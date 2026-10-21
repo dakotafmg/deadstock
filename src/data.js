@@ -160,10 +160,10 @@ export const PRODUCTS = {
     archetype: "OFFSET",
     serial: "DS-MON-001",
     year: "MMXXVI",
-    price: "5,199",
+    price: "$5,199",
     finish: "Nitro",
     pickups: "Seymour Duncan Phat Cat (neck) / Antiquity Humbucker (bridge)",
-    lede: "A premium offset with a Seymour Duncan Phat Cat in the neck and Antiquity Humbucker in the bridge, over a carved flamed maple top. Coming 2026.",
+    lede: "A premium offset with a Seymour Duncan Phat Cat in the neck and Antiquity Humbucker in the bridge, over a carved flamed maple top.",
     swatches: [],
     images: [],
     story: {
