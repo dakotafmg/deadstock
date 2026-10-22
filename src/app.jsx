@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Nav, Footer } from './shared';
-import Home from './home';
-import Product from './product';
-import { Pickups, PickupProduct } from './pickups';
-import { FoundersLetter, Partners, DealersPage } from './pages';
-import Shop from './shop';
-import ListingDetail from './listing';
-import CartDrawer from './cart';
-import Admin from './admin';
-import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './tweaks-panel';
+import { Nav, Footer } from './components/shared';
+import Home from './site/home/home';
+import Product from './site/models/product';
+import { Pickups, PickupProduct } from './site/pickups/pickups';
+import { FoundersLetter, Partners, DealersPage } from './site/pages/pages';
+import Shop from './site/shop/shop';
+import ListingDetail from './site/shop/listing';
+import CartDrawer from './site/shop/cart';
+import Admin from './admin/admin';
+import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './components/tweaks-panel';
 
 // ============================================================
 // DEADSTOCK — App shell + router

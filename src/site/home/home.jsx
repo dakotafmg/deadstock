@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Reveal, PH, DrawLine } from './shared';
-import { LINEUP } from './data';
+import { Reveal, PH, DrawLine } from '../../components/shared';
+import { LINEUP } from '../../content/data';
 
 // Each slide has:
 //   src  — image path

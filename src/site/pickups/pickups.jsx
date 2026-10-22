@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
-import { Reveal, PH } from './shared';
-import { PICKUPS, PICKUP_LINEUP, PRODUCTS } from './data';
+import { Reveal, PH } from '../../components/shared';
+import { PICKUPS, PICKUP_LINEUP, PRODUCTS } from '../../content/data';
 
 // ============================================================
 // PICKUPS — Landing page + individual product pages

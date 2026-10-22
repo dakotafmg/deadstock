@@ -1,5 +1,5 @@
 import React from 'react';
-import { Reveal } from './shared';
+import { Reveal } from '../../components/shared';
 
 // ============================================================
 // FOUNDERS LETTER
