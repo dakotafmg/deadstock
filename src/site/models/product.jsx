@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Reveal, PH } from './shared';
-import { PRODUCTS } from './data';
+import { Reveal, PH } from '../../components/shared';
+import { PRODUCTS } from '../../content/data';
 
 // ============================================================
 // PRODUCT PAGE TEMPLATE — applied to Broadman & Wayfarer

@@ -1,4 +1,4 @@
-import { verifyToken, getToken } from './_auth.js';
+import { verifyToken, getToken } from './_lib/auth.js';
 
 export default async function handler(req, res) {
   if (verifyToken(getToken(req), process.env.JWT_SECRET)) {

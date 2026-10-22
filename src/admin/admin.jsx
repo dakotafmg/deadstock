@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { PRODUCTS, PICKUPS } from './data';
+import { PRODUCTS, PICKUPS } from '../content/data';
 
 // ============================================================
 // DEADSTOCK ADMIN — password-protected sales dashboard
