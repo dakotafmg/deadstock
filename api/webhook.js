@@ -1,5 +1,5 @@
 import Stripe from 'stripe';
-import { parseBody } from './_body.js';
+import { parseBody } from './_lib/body.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
