@@ -1,6 +1,6 @@
 import Stripe from 'stripe';
-import { verifyToken, getToken } from './_auth.js';
-import { parseBody } from './_body.js';
+import { verifyToken, getToken } from './_lib/auth.js';
+import { parseBody } from './_lib/body.js';
 
 export default async function handler(req, res) {
   if (!verifyToken(getToken(req), process.env.JWT_SECRET)) {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Reveal, PH } from './shared';
-import { PRODUCTS } from './data';
+import { Reveal, PH } from '../../components/shared';
+import { PRODUCTS } from '../../content/data';
 
 export default function Product({ id, onNavigate }) {
   const p = PRODUCTS[id];

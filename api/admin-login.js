@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
-import { createToken } from './_auth.js';
-import { parseBody } from './_body.js';
+import { createToken } from './_lib/auth.js';
+import { parseBody } from './_lib/body.js';
 
 // In-memory rate limiting — best-effort in serverless (resets on cold start)
 // but still catches rapid sequential attempts on warm instances.
