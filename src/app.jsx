@@ -15,7 +15,7 @@ import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakTogg
 // DEADSTOCK — App shell + router
 // ============================================================
 
-const VALID_ROUTES = ["home", "broadman", "wayfarer", "monarch", "tele52", "strat62", "paf", "letter", "partners", "dealers", "shop", "admin"];
+const VALID_ROUTES = ["home", "broadman", "wayfarer", "monarch", "letter", "partners", "shop", "admin"];
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -101,7 +101,6 @@ export default function App() {
       {route === "monarch"  && <Product id="monarch"  onNavigate={onNavigate} />}
       {route === "letter"   && <FoundersLetter onNavigate={onNavigate} />}
       {route === "partners" && <Partners onNavigate={onNavigate} />}
-      {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
       {route === "shop"     && <Shop onNavigate={onNavigate} />}
       {route === "listing"  && <ListingDetail id={listingId} onNavigate={onNavigate} cart={cart} addToCart={addToCart} />}
       <Footer onNavigate={onNavigate} />
@@ -147,8 +146,6 @@ export default function App() {
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("broadman")}>↳ The Broadman</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("wayfarer")}>↳ The Wayfarer</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("monarch")}>↳ The Monarch</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("tele52")}>↳ '52 Tele Set</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("paf")}>↳ PAF Set</button>
         </div>
       </TweaksPanel>
       <Analytics />
