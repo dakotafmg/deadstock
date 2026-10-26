@@ -38,7 +38,6 @@ export default function Home({ onNavigate }) {
       <Manifesto />
       <Lineup onNavigate={onNavigate} onNotify={() => setNotifyOpen(true)} />
       <Craftsmanship />
-      <DealerPitch />
       {notifyOpen && <NotifyModal onClose={() => setNotifyOpen(false)} />}
     </main>
   );
@@ -403,51 +402,6 @@ function NotifyModal({ onClose }) {
         )}
       </div>
     </div>
-  );
-}
-
-// ------------------------------------------------------------
-// DEALER PITCH
-// ------------------------------------------------------------
-function DealerPitch() {
-  return (
-    <section className="dealers" data-screen-label="dealer-pitch">
-      <div className="wrap">
-        <div className="dealers-head">
-          <div className="dealers-eyebrow">For dealers</div>
-          <h2>
-            Carry a guitar that gives<br/>your customer <i>a story.</i>
-          </h2>
-          <p className="dealers-lede">
-            Deadstock is a small-batch Indiana shop building working
-            instruments for players who can tell the difference. We're opening
-            the dealer book for 2026.
-          </p>
-        </div>
-
-        <div className="dealers-cta">
-          <div>
-            <div className="dealers-cta-k">Inquire</div>
-            <a
-              href="mailto:dealers@deadstockguitars.com"
-              className="dealers-cta-email"
-            >
-              dealers@deadstockguitars.com
-            </a>
-          </div>
-          <div>
-            <a
-              href="mailto:dealers@deadstockguitars.com?subject=Dealer%20Pack%20Request"
-              className="btn btn-amber"
-              style={{ marginTop: 4 }}
-            >
-              Request the dealer pack
-              <span className="arrow">→</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }
 
