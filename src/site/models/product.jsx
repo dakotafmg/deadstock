@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { Reveal, PH } from '../../components/shared';
 import { PRODUCTS } from '../../content/data';
 
-// ============================================================
-// PRODUCT PAGE TEMPLATE — applied to Broadman & Wayfarer
-// ============================================================
-
 export default function Product({ id, onNavigate }) {
   const p = PRODUCTS[id];
   if (!p) return null;
@@ -91,45 +87,13 @@ function ProductHero({ p, onNavigate }) {
 
               <Reveal delay={420}>
                 <div className="p-hero-dealer">
-                  <button className="btn btn-amber" onClick={() => onNavigate("dealers")}>
-                    Find a dealer <span className="arrow">→</span>
+                  <button className="btn btn-amber" onClick={() => onNavigate("shop")}>
+                    Check the Shop <span className="arrow">→</span>
                   </button>
-                  <span className="p-hero-dealer-note">Available through authorized dealers</span>
                 </div>
               </Reveal>
 
             </div>
-
-            {p.swatches.length > 0 && (
-              <Reveal delay={500}>
-                <div className="swatches">
-                  <span className="lbl">Available finishes</span>
-                  {p.swatches.map((s, i) => (
-                    <button
-                      key={i}
-                      className={"swatch " + (color && color.hex === s.hex ? "active" : "")}
-                      style={{ background: s.hex }}
-                      title={s.name}
-                      onClick={() => setColor(s)}
-                    ></button>
-                  ))}
-                  {color && (
-                    <span
-                      style={{
-                        marginLeft: "auto",
-                        fontFamily: "var(--mono)",
-                        fontSize: 10.5,
-                        letterSpacing: "0.16em",
-                        color: "var(--walnut)",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      ⏤ {color.name}
-                    </span>
-                  )}
-                </div>
-              </Reveal>
-            )}
           </div>
         </div>
       </div>
@@ -287,10 +251,6 @@ function BuildTag({ p }) {
               </p>
 
               <div className="specs">
-                <div>
-                  <div className="k">Serial</div>
-                  <div className="v">{p.serial}</div>
-                </div>
                 <div>
                   <div className="k">Built</div>
                   <div className="v">{p.build.run}</div>

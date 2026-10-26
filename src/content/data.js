@@ -87,7 +87,7 @@ export const PRODUCTS = {
     year: "MMXXVI",
     price: "$4,599",
     finish: "Nitro",
-    pickups: "Handwound A5 Single Coils",
+    pickups: "Seymour Duncan",
     lede: "Ergonomic, fluid, versatile. The road-tested partner built to disappear in your hands so the song doesn't.",
     swatches: [
       { name: "Sunburst",       hex: "#7A3B10" },
@@ -136,8 +136,8 @@ export const PRODUCTS = {
         { k: "Inlays",      v: "White fretboard + side marker dots" },
       ],
       electronics: [
-        { k: "Pickups",     v: "A5 magnets, wax potted, 42 AWG — 5.5-6.8 kΩ" },
-        { k: "Middle PU",   v: "Reverse-wound / reverse-polarity" },
+        { k: "Pickups",     v: "Seymour Duncan" },
+        { k: "Middle PU",   v: "Seymour Duncan" },
         { k: "Switching",   v: "Oak Grigsby 5-way blade" },
         { k: "Wiring",      v: "Vintage cloth, modern shielding — CTS 250k, 0.047µF Sprague Orange Drop" },
       ],
@@ -158,14 +158,23 @@ export const PRODUCTS = {
     id: "monarch",
     name: "Monarch",
     archetype: "OFFSET",
-    serial: "DS-MON-001",
+    serial: "DS26001",
     year: "MMXXVI",
-    price: "5,199",
+    price: "$5,199",
     finish: "Nitro",
     pickups: "Seymour Duncan Phat Cat (neck) / Antiquity Humbucker (bridge)",
-    lede: "A premium offset with a Seymour Duncan Phat Cat in the neck and Antiquity Humbucker in the bridge, over a carved flamed maple top. Coming 2026.",
+    lede: "A premium offset with a Seymour Duncan Phat Cat in the neck and Antiquity Humbucker in the bridge, over a carved flamed maple top.",
     swatches: [],
-    images: [],
+    images: [
+      "/assets/monarch-1.jpg",
+      "/assets/monarch-2.jpg",
+      "/assets/monarch-3.jpg",
+      "/assets/monarch-4.jpg",
+      "/assets/monarch-5.jpg",
+      "/assets/monarch-6.jpg",
+      "/assets/monarch-7.jpg",
+      "/assets/monarch-8.jpg"
+    ],
     story: {
       heading: "Where rock meets jazz — and stays.",
       problem: "The offset world is full of guitars that can't decide what they are. Too bright for jazz, too polite for rock, too refined to really push. We wanted one that could hold its own in both rooms without compromising either.",
@@ -204,7 +213,7 @@ export const PRODUCTS = {
       ],
     },
     build: {
-      run: "Coming 2026 · Fortville, IN",
+      run: "Fortville, IN",
     }
   }
 };
@@ -249,13 +258,13 @@ export const LINEUP = [
   {
     id: "monarch",
     name: "Monarch",
-    archetype: "OFFSET / IN DEVELOPMENT",
-    serial: "DS-MON-001",
+    archetype: "OFFSET",
+    serial: "DS26001",
     price: "$5,199",
     blurb: "A premium offset, in development. Carved top, bolt-on neck, Seymour Duncan Phat Cat neck and Antiquity Humbucker bridge.",
     swatches: ["#3B2A1E", "#D28400"],
     status: "AVAILABLE",
-    image: null,
+    image: "/assets/monarch-1.jpg",
   },
 ];
 

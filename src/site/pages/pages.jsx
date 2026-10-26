@@ -15,7 +15,7 @@ export function FoundersLetter({ onNavigate }) {
 
         <div className="letter-header">
           <div className="letter-eyebrow">A Letter from the Founder</div>
-          <h1 className="letter-title">To The Players,<br/>Builders,<br/><em>Dreamers.</em></h1>
+          <h1 className="letter-title">To The Players,<br />Builders,<br /><em>Dreamers.</em></h1>
         </div>
 
         <div className="letter-content">
@@ -52,7 +52,7 @@ export function FoundersLetter({ onNavigate }) {
 
           <p>Our necks are built alongside Musikraft, whose willingness to step into relationship with us has allowed Deadstock players to experience something deeply personal. Every carve, every spec and every detail matters. Their pursuit of excellence mirrors our own belief that instruments should feel like extensions of the player, not products off an assembly line.</p>
 
-          <p>Our pickups and winding systems are supported by Mojotone, whose passion for tone and pursuit of great pickup design has helped us chase sounds that feel inspiring, alive and unmistakably ours.</p>
+          <p>Our pickups are made possible by Seymour Duncan, whose passion for tone and dedication to exceptional craftsmanship help bring each instrument’s voice to life. Their pursuit of great sound aligns with our belief that every detail matters in creating an instrument that feels personal, expressive, and deeply connected to the player.</p>
 
           <p>Our hardware, lacquer, screws, bolts, plates, bridges and countless tiny details come through Allparts USA, people who have supported us from the beginning and helped make the impossible start to feel possible.</p>
 
@@ -120,11 +120,11 @@ const PARTNER_DATA = [
     url: "https://musikraft.com",
   },
   {
-    name: "Mojotone",
-    role: "Pickups & Winding",
-    logo: "/assets/partner-mojotone.jpg",
-    description: "Their passion for tone and pursuit of great pickup design has helped us chase sounds that feel inspiring, alive and unmistakably ours. Partners in the pursuit of the real thing.",
-    url: "https://mojotone.com",
+    name: "Seymour Duncan",
+    role: "Pickups",
+    logo: "/assets/partner-seymourduncan.png",
+    description: "Their passion for tone and dedication to exceptional pickup design help bring out the character and voice of every instrument. Partners in the pursuit of the real thing.",
+    url: "https://seymourduncan.com",
   },
   {
     name: "Allparts USA",
@@ -153,7 +153,7 @@ export function Partners({ onNavigate }) {
           <div className="letter-eyebrow">Built Together</div>
           <Reveal className="display">
             <h1 style={{ margin: "16px 0 0" }}>
-              The people<br/>behind the <em>instruments.</em>
+              The people<br />behind the <em>instruments.</em>
             </h1>
           </Reveal>
           <Reveal delay={150}>
@@ -188,87 +188,6 @@ export function Partners({ onNavigate }) {
               </div>
             </Reveal>
           ))}
-        </div>
-      </section>
-    </main>
-  );
-}
-
-// ============================================================
-// DEALERS PAGE
-// ============================================================
-
-const DEALER_LIST = [
-  {
-    name: "Tone Central Station",
-    city: "Nashville",
-    state: "TN",
-    type: "Authorized Dealer",
-    logo: "/assets/dealer-tonecentral.jpg",
-  },
-];
-
-export function DealersPage({ onNavigate }) {
-  return (
-    <main className="dealers-page">
-      <section className="dealers-page-hero">
-        <div className="wrap">
-          <div className="letter-nav">
-            <a onClick={() => onNavigate("home")} style={{ cursor: "pointer" }}>← Home</a>
-          </div>
-          <div className="letter-eyebrow">Authorized Dealers</div>
-          <Reveal className="display">
-            <h1 style={{ margin: "16px 0 0" }}>
-              Find a Deadstock<br/>near <em>you.</em>
-            </h1>
-          </Reveal>
-          <Reveal delay={150}>
-            <p className="partners-lede">
-              Our dealer network is growing. Every dealer listed here carries our
-              full lineup and shares our commitment to the player experience.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="dealers-list-section">
-        <div className="wrap">
-          <div className="dealers-list-head">
-            <div className="eyebrow">Current Dealers</div>
-          </div>
-          <div className="dealers-list">
-            {DEALER_LIST.map((d, i) => (
-              <Reveal key={i} className="dealer-row">
-                <div className="dealer-num">{String(i + 1).padStart(2, "0")}</div>
-                {d.logo && (
-                  <div className="dealer-logo-slot">
-                    <img src={d.logo} alt={d.name} className="dealer-logo-img" />
-                  </div>
-                )}
-                <div className="dealer-info">
-                  <div className="dealer-name">{d.name}</div>
-                  <div className="dealer-location">{d.city}, {d.state}</div>
-                </div>
-                <div className="dealer-type">{d.type}</div>
-              </Reveal>
-            ))}
-          </div>
-
-          <div className="dealers-become">
-            <div className="dealers-become-inner">
-              <div className="eyebrow" style={{ color: "var(--amber)", marginBottom: 16 }}>Carry Deadstock</div>
-              <h3>Interested in becoming<br/>an authorized dealer?</h3>
-              <p>We're opening the dealer book for 2026. Reach out to learn about margin, support, and what it means to carry a guitar your customers will talk about for years.</p>
-              <div className="dealers-become-cta">
-                <a
-                  href="mailto:dealers@deadstockguitars.com?subject=Dealer%20Inquiry"
-                  className="btn btn-amber"
-                >
-                  Email us <span className="arrow">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
     </main>
