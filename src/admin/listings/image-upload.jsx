@@ -6,7 +6,8 @@ import { apiCall } from '../api';
 // ============================================================
 const MAX_IMAGES = 8;
 
-async function compressAndUpload(file) {
+// Shrinks a photo in the browser, then stores it in Vercel Blob under `folder`.
+export async function compressAndUpload(file, folder = 'listings') {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
@@ -25,14 +26,17 @@ async function compressAndUpload(file) {
         try {
           const reader = new FileReader();
           reader.onload = async (e) => {
-            const base64 = e.target.result.split(',')[1];
-            const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-            const { url } = await apiCall('/api/upload', {
-              method: 'POST',
-              body: { filename: `listing-${uid}.jpg`, contentType: 'image/jpeg', data: base64 },
-            });
-            resolve(url);
+            try {
+              const base64 = e.target.result.split(',')[1];
+              const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+              const { url } = await apiCall('/api/upload', {
+                method: 'POST',
+                body: { filename: `${folder === 'repairs' ? 'repair' : 'listing'}-${uid}.jpg`, contentType: 'image/jpeg', data: base64, folder },
+              });
+              resolve(url);
+            } catch (err) { reject(err); }
           };
+          reader.onerror = reject;
           reader.readAsDataURL(blob);
         } catch (err) { reject(err); }
       }, 'image/jpeg', 0.82);
@@ -42,7 +46,7 @@ async function compressAndUpload(file) {
   });
 }
 
-export function ImageUpload({ urls = [], onChange }) {
+export function ImageUpload({ urls = [], onChange, folder = 'listings' }) {
   const [uploading, setUploading] = useState(false);
   const [pending, setPending] = useState(0);
   const [error, setError] = useState(null);
@@ -57,7 +61,7 @@ export function ImageUpload({ urls = [], onChange }) {
     setPending(toUpload.length);
     setError(null);
     try {
-      const newUrls = await Promise.all(toUpload.map(f => compressAndUpload(f)));
+      const newUrls = await Promise.all(toUpload.map(f => compressAndUpload(f, folder)));
       onChange([...urls, ...newUrls].slice(0, MAX_IMAGES));
     } catch {
       setError('One or more uploads failed — check connection and try again.');

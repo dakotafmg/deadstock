@@ -1,6 +1,13 @@
 import bcrypt from 'bcryptjs';
-import { createToken } from './_lib/auth.js';
+import { createToken, getStaff, legacyLoginEnabled } from './_lib/auth.js';
 import { parseBody } from './_lib/body.js';
+
+// One function for the admin session (replaces admin-check, admin-login and
+// admin-logout, which keeps the project under Vercel's function limit).
+//   GET    → who is signed in: { id, email, full_name, role, legacy }
+//   POST   → legacy email + password login (until LEGACY_ADMIN_LOGIN=off)
+//   DELETE → clear the legacy cookie
+// Supabase logins happen in the browser; this only reads their token.
 
 // In-memory rate limiting — best-effort in serverless (resets on cold start)
 // but still catches rapid sequential attempts on warm instances.
@@ -22,12 +29,28 @@ function recordFailure(ip) {
   attempts.set(ip, rec);
 }
 
-function clearAttempts(ip) {
-  attempts.delete(ip);
-}
-
 export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const staff = await getStaff(req);
+      if (!staff) return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(200).json({ staff });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Session check failed' });
+    }
+  }
+
+  if (req.method === 'DELETE') {
+    res.setHeader('Set-Cookie', 'ds_admin=; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=0');
+    return res.status(200).json({ ok: true });
+  }
+
   if (req.method !== 'POST') return res.status(405).end();
+
+  if (!legacyLoginEnabled()) {
+    return res.status(404).json({ error: 'Legacy login is turned off.' });
+  }
 
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
     || req.socket?.remoteAddress
@@ -39,10 +62,8 @@ export default async function handler(req, res) {
 
   const { email, password } = await parseBody(req);
 
-  const emailMatch = email && process.env.ADMIN_EMAIL
-    && email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
-
-  const passwordMatch = emailMatch && password && process.env.ADMIN_PASSWORD_HASH
+  const emailMatch = email && email.toLowerCase() === process.env.ADMIN_EMAIL.toLowerCase();
+  const passwordMatch = emailMatch && password
     ? await bcrypt.compare(password, process.env.ADMIN_PASSWORD_HASH)
     : false;
 
@@ -52,10 +73,9 @@ export default async function handler(req, res) {
     return res.status(401).json({ error: 'Invalid email or password.' });
   }
 
-  clearAttempts(ip);
+  attempts.delete(ip);
 
   const token = createToken(process.env.JWT_SECRET, email);
-
   res.setHeader('Set-Cookie',
     `ds_admin=${token}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=86400`
   );

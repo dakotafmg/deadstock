@@ -1,11 +1,11 @@
 import Stripe from 'stripe';
-import { verifyToken, getToken } from './_lib/auth.js';
+import { requireRole, logActivity, ROLES } from './_lib/auth.js';
 import { parseBody } from './_lib/body.js';
 
 export default async function handler(req, res) {
-  if (!verifyToken(getToken(req), process.env.JWT_SECRET)) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  // Everyone on staff can see listings; only owner and sales can change them.
+  const staff = await requireRole(req, res, req.method === 'GET' ? ROLES.STAFF : ROLES.SALES);
+  if (!staff) return;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -84,6 +84,7 @@ export default async function handler(req, res) {
         tax_behavior: 'exclusive',
       });
 
+      await logActivity(staff, 'listing.create', 'listing', product.id, { name, price });
       return res.status(201).json({
         listing: { ...product, priceId: stripePrice.id, price: stripePrice.unit_amount },
       });
@@ -122,6 +123,7 @@ export default async function handler(req, res) {
         if (existing[0]) await stripe.prices.update(existing[0].id, { active: false });
       }
 
+      await logActivity(staff, 'listing.update', 'listing', id, { ...updates, ...(price ? { price } : {}) });
       return res.status(200).json({ product, priceId });
     }
 
