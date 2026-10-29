@@ -22,6 +22,14 @@ export function AdminLogin({ onLogin }) {
       credentials: 'include',
       body: JSON.stringify({ email, password }),
     });
+    if (res.status === 404) {
+      const data = await res.json().catch(() => null);
+      // No JSON body means the api/ functions aren't running at all (plain `vite` dev server).
+      throw new Error(data?.error
+        ? 'The old admin login is off here. Check ADMIN_EMAIL, ADMIN_PASSWORD_HASH and JWT_SECRET are set for this environment.'
+        : "Can't reach the login service. Run the site with `vercel dev` instead of `npm run dev`.");
+    }
+    if (res.status === 429) throw new Error('Too many attempts. Try again in 15 minutes.');
     return res.ok;
   };
 
@@ -33,7 +41,8 @@ export function AdminLogin({ onLogin }) {
       if (supabase) {
         const { error: sbError } = await supabase.auth.signInWithPassword({ email, password });
         if (!sbError) { onLogin(); return; }
-        if (await legacyLogin()) { onLogin(); return; }
+        // Supabase said no; the legacy login is only a fallback, so its "not set up here" errors don't apply.
+        if (await legacyLogin().catch(() => false)) { onLogin(); return; }
         throw new Error('Invalid email or password.');
       }
       if (await legacyLogin()) { onLogin(); return; }
