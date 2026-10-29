@@ -1,5 +1,6 @@
 import Stripe from 'stripe';
 import { parseBody } from './_lib/body.js';
+import { getSupabase, supabaseConfigured, must } from './_lib/supabase.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -38,5 +39,45 @@ export default async function handler(req, res) {
     }
   }
 
+  // A repair invoice (sent from the repair board) was paid.
+  if (event.type === 'invoice.paid' && event.data.object.metadata?.repairJobId && supabaseConfigured()) {
+    try {
+      await markRepairPaid(event.data.object);
+    } catch (err) {
+      console.error('Failed to record repair payment:', err);
+      return res.status(500).json({ error: 'Failed to record repair payment' });
+    }
+  }
+
   res.status(200).json({ received: true });
+}
+
+// Records the payment as an order and links it to the job. Safe to run twice:
+// Stripe can deliver the same event more than once.
+async function markRepairPaid(invoice) {
+  const sb = getSupabase();
+  const job = must(await sb.from('repair_jobs').select('*').eq('id', invoice.metadata.repairJobId).maybeSingle());
+  if (!job || job.paid_at) return;
+
+  let order = must(await sb.from('orders').select('id').eq('stripe_invoice_id', invoice.id).maybeSingle());
+  if (!order) {
+    order = must(await sb.from('orders').insert({
+      channel: 'repair',
+      stripe_invoice_id: invoice.id,
+      customer_id: job.customer_id,
+      amount_cents: invoice.amount_paid,
+      currency: invoice.currency,
+      payment_method: 'card',
+    }).select('id').single());
+    must(await sb.from('order_items').insert({
+      order_id: order.id,
+      description: `Repair ${job.job_number}`,
+      amount_cents: invoice.amount_paid,
+    }));
+  }
+
+  must(await sb.from('repair_jobs').update({ order_id: order.id, paid_at: new Date().toISOString() }).eq('id', job.id));
+  must(await sb.from('repair_events').insert({
+    job_id: job.id, kind: 'note', body: 'Paid online', visible_to_customer: true,
+  }));
 }

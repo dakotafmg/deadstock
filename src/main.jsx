@@ -9,6 +9,7 @@ import './site/models/product.css';
 import './site/shop/shop.css';
 import './site/shop/listing.css';
 import './site/shop/cart.css';
+import './site/repairs/repairs.css';
 import './admin/admin.css';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
