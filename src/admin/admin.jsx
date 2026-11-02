@@ -15,6 +15,10 @@ import { RepairServices } from './repairs/services';
 import { Team } from './team/team';
 import { Activity } from './team/activity';
 import { Settings } from './team/settings';
+import { ContentModels } from './content/models';
+import { ModelEditor } from './content/model-editor';
+import { ContentHero } from './content/hero';
+import { ContentPartners } from './content/partners';
 
 // ============================================================
 // DEADSTOCK ADMIN — staff dashboard
@@ -28,6 +32,7 @@ const VIEW_ACCESS = {
   'repairs': can.repairs, 'repair': can.repairs,
   'new-repair': can.editRepairs, 'repair-services': can.editRepairs,
   'team': can.team, 'activity': can.team, 'settings': can.team,
+  'content-models': can.content, 'content-model': can.content, 'content-hero': can.content, 'content-partners': can.content,
 };
 
 // ============================================================
@@ -41,6 +46,7 @@ export default function Admin({ onNavigate }) {
   const [view, setView] = useState('overview');
   const [editTarget, setEditTarget] = useState(null);
   const [repairId, setRepairId] = useState(null);
+  const [modelId, setModelId] = useState(null); // null = new model
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const changeView = (v) => { setView(v); setSidebarOpen(false); };
@@ -139,6 +145,11 @@ export default function Admin({ onNavigate }) {
         {current === 'team'            && <Team {...common} />}
         {current === 'activity'        && <Activity {...common} />}
         {current === 'settings'        && <Settings {...common} />}
+        {current === 'content-models'  && <ContentModels {...common} onEdit={(id) => { setModelId(id); changeView('content-model'); }} />}
+        {current === 'content-model'   && <ModelEditor key={modelId || 'new'} {...common} id={modelId}
+          onDone={(newId) => { if (newId) setModelId(newId); else changeView('content-models'); }} />}
+        {current === 'content-hero'    && <ContentHero {...common} />}
+        {current === 'content-partners' && <ContentPartners {...common} />}
       </div>
     </div>
   );
@@ -148,7 +159,7 @@ export default function Admin({ onNavigate }) {
 // SIDEBAR — only shows what the signed-in role can use
 // ============================================================
 function AdminSidebar({ staff, view, onView, onLogout, onNavigate, open }) {
-  const active = view === 'repair' ? 'repairs' : view;
+  const active = view === 'repair' ? 'repairs' : view === 'content-model' ? 'content-models' : view;
   return (
     <aside className={`admin-sidebar${open ? ' open' : ''}`}>
       <div className="admin-sidebar-logo">
@@ -171,6 +182,12 @@ function AdminSidebar({ staff, view, onView, onLogout, onNavigate, open }) {
           <NavItem label="Repair Board" id="repairs" active={active} onView={onView} />
           {can.editRepairs(staff) && <NavItem label="Services & Prices" id="repair-services" active={active} onView={onView} />}
           {can.editRepairs(staff) && <NavItem label="+ New Repair" id="new-repair" active={active} onView={onView} accent />}
+        </>}
+        {can.content(staff) && <>
+          <div className="admin-nav-section">Site content</div>
+          <NavItem label="Models" id="content-models" active={active} onView={onView} />
+          <NavItem label="Homepage Photos" id="content-hero" active={active} onView={onView} />
+          <NavItem label="Partners" id="content-partners" active={active} onView={onView} />
         </>}
         {can.team(staff) && <>
           <div className="admin-nav-section">Team</div>

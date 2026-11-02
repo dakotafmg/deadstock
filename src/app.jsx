@@ -10,6 +10,7 @@ import ListingDetail from './site/shop/listing';
 import CartDrawer from './site/shop/cart';
 import Repairs from './site/repairs/repairs';
 import RepairStatus from './site/repairs/repair-status';
+import { useContent, isModelPage } from './content/use-content';
 import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './components/tweaks-panel';
 
 // The admin (and the Supabase sign-in library it uses) only loads on /admin.
@@ -19,7 +20,10 @@ const Admin = lazy(() => import('./admin/admin'));
 // DEADSTOCK — App shell + router
 // ============================================================
 
-const VALID_ROUTES = ["home", "broadman", "wayfarer", "monarch", "letter", "partners", "shop", "repairs", "admin"];
+// Fixed pages. Any other single path segment (/broadman) is looked up as a
+// model page once site content has loaded.
+const VALID_ROUTES = ["home", "letter", "partners", "shop", "repairs", "admin"];
+const SLUG = /^[a-z0-9-]+$/;
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -38,13 +42,15 @@ function parsePath() {
   const path = window.location.pathname;
   if (path.startsWith("/listing/")) return ["listing", path.slice(9)];
   if (path.startsWith("/repair/")) return ["repair-status", path.slice(8)];
-  const segment = path.slice(1) || "home";
-  return [VALID_ROUTES.includes(segment) ? segment : "home", null];
+  const segment = path.slice(1).replace(/\/$/, "") || "home";
+  if (VALID_ROUTES.includes(segment)) return [segment, null];
+  return SLUG.test(segment) ? ["model", segment] : ["home", null];
 }
 
 export default function App() {
   const [[route, listingId], setNav] = useState(parsePath);
   const [tw, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const { content, ready } = useContent();
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -57,6 +63,13 @@ export default function App() {
 
   const onNavigate = (id, param = null) => {
     if (id === "workshop") id = "home";
+    if (!VALID_ROUTES.includes(id) && id !== "listing" && id !== "repair-status") {
+      // A model page, e.g. onNavigate("broadman").
+      setNav(["model", id]);
+      history.pushState({}, "", "/" + id);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     if (id === "listing" || id === "repair-status") {
       setNav([id, param]);
       history.pushState({}, "", (id === "listing" ? "/listing/" : "/repair/") + param);
@@ -93,6 +106,10 @@ export default function App() {
     if (grainEl) grainEl.textContent = `body::before { opacity: ${tw.showGrain ? 0.35 : 0} !important; }`;
   }, [tw.accent, tw.displayFont, tw.showGrain, tw.darkMode]);
 
+  // Unknown model slugs wait for content, then fall back to the homepage.
+  const modelId = route === "model" && isModelPage(content, listingId) ? listingId : null;
+  const page = route === "model" ? (modelId ? "model" : ready ? "home" : "loading") : route;
+
   if (route === "admin") {
     return (
       <Suspense fallback={null}>
@@ -103,11 +120,10 @@ export default function App() {
 
   return (
     <>
-      <Nav route={route} onNavigate={onNavigate} cartCount={cart.length} onCartOpen={() => setCartOpen(true)} />
-      {route === "home"     && <Home onNavigate={onNavigate} />}
-      {route === "broadman" && <Product id="broadman" onNavigate={onNavigate} />}
-      {route === "wayfarer" && <Product id="wayfarer" onNavigate={onNavigate} />}
-      {route === "monarch"  && <Product id="monarch"  onNavigate={onNavigate} />}
+      <Nav route={page === "model" ? modelId : page} onNavigate={onNavigate} cartCount={cart.length} onCartOpen={() => setCartOpen(true)} />
+      {page === "home"     && <Home onNavigate={onNavigate} />}
+      {page === "loading"  && <main style={{ minHeight: "100vh" }} />}
+      {page === "model"    && <Product id={modelId} onNavigate={onNavigate} />}
       {route === "letter"   && <FoundersLetter onNavigate={onNavigate} />}
       {route === "partners" && <Partners onNavigate={onNavigate} />}
       {route === "shop"     && <Shop onNavigate={onNavigate} />}
@@ -154,9 +170,9 @@ export default function App() {
         <TweakSection label="Jump to" />
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("home")}>↳ Homepage</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("broadman")}>↳ The Broadman</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("wayfarer")}>↳ The Wayfarer</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("monarch")}>↳ The Monarch</button>
+          {content.lineup.filter(m => isModelPage(content, m.id)).map(m => (
+            <button key={m.id} className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate(m.id)}>↳ The {m.name}</button>
+          ))}
         </div>
       </TweaksPanel>
       <Analytics />
