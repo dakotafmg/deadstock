@@ -1,0 +1,221 @@
+/* ============================================================
+   REPAIRS — public page, request form, customer status page
+   ============================================================ */
+.repairs-page { background: var(--cream); min-height: 100vh; }
+
+.repairs-hero {
+  padding: 80px 0 72px;
+  border-bottom: 1px solid var(--rule);
+}
+.repairs-hero h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(48px, 6vw, 96px);
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  color: var(--black);
+  margin: 16px 0 0;
+}
+.repairs-hero h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--walnut); }
+.repairs-lede {
+  font-family: var(--display);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--walnut);
+  max-width: 540px;
+  margin: 28px 0 0;
+}
+.repairs-call { font-family: var(--display); font-size: 15px; color: var(--walnut); margin: 20px 0 0; }
+.repairs-call a { color: var(--black); font-weight: 600; border-bottom: 1px solid var(--amber); }
+
+.repairs-steps { padding: 64px 0; border-bottom: 1px solid var(--rule); }
+.repairs-steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+.repairs-step-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--tobacco); }
+.repairs-step h3 {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 12px 0 8px;
+  color: var(--black);
+}
+.repairs-step p { font-family: var(--display); font-size: 15px; line-height: 1.6; color: var(--walnut); margin: 0; }
+
+.repairs-services { padding: 64px 0; border-bottom: 1px solid var(--rule); }
+.repairs-service-list { margin-top: 24px; border-top: 1px solid var(--rule); }
+.repairs-service {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.repairs-service-name { font-family: var(--display); font-size: 18px; font-weight: 600; color: var(--black); }
+.repairs-service-desc { font-family: var(--display); font-size: 14px; color: var(--walnut); margin-top: 4px; max-width: 560px; }
+.repairs-service-price {
+  font-family: var(--display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--black);
+  text-align: right;
+  white-space: nowrap;
+}
+.repairs-service-price span { display: block; font-size: 12px; font-weight: 400; color: var(--steel-2); margin-top: 4px; }
+
+.repairs-request { padding: 72px 0 120px; }
+.repairs-form { max-width: 760px; }
+.repairs-form-head h2, .repairs-done h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(36px, 4vw, 56px);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--black);
+  margin: 14px 0 36px;
+}
+.repairs-form-head h2 em, .repairs-done h2 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--walnut); }
+
+.repairs-fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.repairs-field { display: flex; flex-direction: column; gap: 8px; border: 0; padding: 0; margin: 0; }
+.repairs-field-wide { margin-top: 24px; }
+.repairs-field > span {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--tobacco);
+}
+.repairs-field > span em { font-style: normal; font-weight: 400; letter-spacing: 0.06em; text-transform: none; color: var(--steel-2); }
+.repairs-field input, .repairs-field textarea {
+  font-family: var(--display);
+  font-size: 16px;
+  color: var(--black);
+  background: rgba(255,255,255,0.35);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 12px 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color .2s;
+}
+.repairs-field input:focus, .repairs-field textarea:focus { border-color: var(--amber); }
+.repairs-field textarea { resize: vertical; line-height: 1.5; }
+
+.repairs-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+.repairs-checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.repairs-check {
+  font-family: var(--display);
+  font-size: 13px;
+  padding: 8px 14px;
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--walnut);
+  user-select: none;
+}
+.repairs-check input { display: none; }
+.repairs-check.on { background: var(--black); border-color: var(--black); color: var(--cream); }
+
+.repairs-photos { display: flex; flex-wrap: wrap; gap: 10px; }
+.repairs-photo, .repairs-photo-add {
+  width: 96px;
+  height: 96px;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+.repairs-photo img { width: 100%; height: 100%; object-fit: cover; }
+.repairs-photo button {
+  position: absolute; top: 4px; right: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(18,18,18,0.7); color: var(--cream); font-size: 14px; line-height: 22px;
+}
+.repairs-photo-add {
+  display: flex; align-items: center; justify-content: center;
+  border: 1px dashed var(--rule);
+  font-family: var(--display); font-size: 13px; color: var(--walnut);
+  cursor: pointer;
+}
+.repairs-photo-add input { display: none; }
+
+.repairs-error { font-family: var(--display); font-size: 14px; color: #B03A2E; margin: 20px 0 0; }
+.repairs-error a { border-bottom: 1px solid currentColor; }
+.repairs-form > .btn { margin-top: 32px; }
+.repairs-form > .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.repairs-fine { font-family: var(--display); font-size: 12px; color: var(--steel-2); margin: 14px 0 0; }
+
+.repairs-done { max-width: 620px; }
+.repairs-done p { font-family: var(--display); font-size: 17px; line-height: 1.6; color: var(--walnut); margin: 0 0 32px; }
+
+/* ---------- Customer status page ---------- */
+.repairs-status { padding-top: 80px; padding-bottom: 120px; }
+.repairs-status-inner { max-width: 760px; }
+.repairs-status-title {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(40px, 5vw, 72px);
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: var(--black);
+  margin: 0;
+}
+.repairs-status-now { font-family: var(--serif); font-style: italic; font-size: 28px; color: var(--walnut); margin: 12px 0 40px; }
+
+.repairs-track { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.repairs-track li {
+  font-family: var(--display);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--steel-2);
+  padding-top: 12px;
+  border-top: 3px solid var(--rule);
+}
+.repairs-track li.done { border-top-color: var(--walnut); color: var(--walnut); }
+.repairs-track li.now { border-top-color: var(--amber); color: var(--black); font-weight: 600; }
+
+.repairs-quote {
+  background: var(--cream-2);
+  border: 1px solid var(--rule-soft);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+}
+.repairs-quote-amount { font-family: var(--display); font-size: 40px; font-weight: 600; letter-spacing: -0.03em; margin: 8px 0 12px; }
+.repairs-quote p { font-family: var(--display); font-size: 15px; line-height: 1.6; color: var(--walnut); white-space: pre-wrap; }
+.repairs-quote-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+.repairs-status-line { font-family: var(--display); font-size: 15px; color: var(--walnut); }
+
+.repairs-timeline { margin-top: 48px; border-top: 1px solid var(--rule); padding-top: 24px; }
+.repairs-timeline-item {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 16px;
+  font-family: var(--display);
+  font-size: 15px;
+  color: var(--walnut);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.repairs-timeline-item em { color: var(--steel-2); font-style: normal; }
+.repairs-timeline-date { font-family: var(--mono); font-size: 12px; color: var(--tobacco); padding-top: 2px; }
+
+.repairs-status-missing { padding: 120px 0; }
+.repairs-status-missing h1 { font-family: var(--display); font-size: 36px; letter-spacing: -0.03em; }
+.repairs-status-missing p { font-family: var(--display); color: var(--walnut); }
+.repairs-status-missing a { border-bottom: 1px solid currentColor; }
+
+@media (max-width: 860px) {
+  .repairs-steps-grid { grid-template-columns: 1fr; gap: 28px; }
+  .repairs-fields { grid-template-columns: 1fr 1fr; }
+  .repairs-track { grid-template-columns: 1fr; gap: 0; }
+  .repairs-track li { border-top: 0; border-left: 3px solid var(--rule); padding: 8px 0 8px 12px; }
+  .repairs-track li.done { border-left-color: var(--walnut); }
+  .repairs-track li.now { border-left-color: var(--amber); }
+}
+@media (max-width: 540px) {
+  .repairs-fields { grid-template-columns: 1fr; }
+  .repairs-service { flex-direction: column; gap: 6px; }
+  .repairs-service-price { text-align: left; }
+  .repairs-quote { padding: 22px 20px; }
+}
