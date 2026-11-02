@@ -134,8 +134,8 @@ export default function Admin({ onNavigate }) {
         {current === 'log-sale'        && <LogSale {...common} onDone={() => changeView('sales')} />}
         {current === 'repairs'         && <RepairBoard {...common} onOpen={openRepair} />}
         {current === 'repair' && repairId && <RepairDetail {...common} id={repairId} onBack={() => changeView('repairs')} />}
-        {current === 'new-repair'      && <NewRepair {...common} onDone={openRepair} />}
         {current === 'repair-services' && <RepairServices {...common} />}
+        {current === 'new-repair'      && <NewRepair {...common} onDone={openRepair} />}
         {current === 'team'            && <Team {...common} />}
         {current === 'activity'        && <Activity {...common} />}
         {current === 'settings'        && <Settings {...common} />}
@@ -169,8 +169,8 @@ function AdminSidebar({ staff, view, onView, onLogout, onNavigate, open }) {
         {can.repairs(staff) && <>
           <div className="admin-nav-section">Repairs</div>
           <NavItem label="Repair Board" id="repairs" active={active} onView={onView} />
-          {can.editRepairs(staff) && <NavItem label="+ New Repair" id="new-repair" active={active} onView={onView} accent />}
           {can.editRepairs(staff) && <NavItem label="Services & Prices" id="repair-services" active={active} onView={onView} />}
+          {can.editRepairs(staff) && <NavItem label="+ New Repair" id="new-repair" active={active} onView={onView} accent />}
         </>}
         {can.team(staff) && <>
           <div className="admin-nav-section">Team</div>
