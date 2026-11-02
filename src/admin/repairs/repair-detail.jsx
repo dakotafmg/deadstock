@@ -145,7 +145,8 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
               <span className="admin-detail-value">{job.assignee.full_name}</span>
             </div></div>
           )}
-          <InvoiceCard job={job} editable={editable} busy={busy} onSend={(amount_cents) => post({ action: 'invoice', amount_cents })} />
+          <InvoiceCard job={job} editable={editable} busy={busy} onSend={(amount_cents) => post({ action: 'invoice', amount_cents })}
+            onCancel={() => post({ action: 'cancel-invoice' })} />
           <Timeline events={events} editable={editable} busy={busy}
             onAdd={(body, toCustomer) => post({ action: 'note', body, toCustomer })} />
         </div>
@@ -273,7 +274,7 @@ function QuoteCard({ job, editable, busy, onSave }) {
   );
 }
 
-function InvoiceCard({ job, editable, busy, onSend }) {
+function InvoiceCard({ job, editable, busy, onSend, onCancel }) {
   const [amount, setAmount] = useState(centsToDollars(job.invoice_amount_cents ?? job.quote_cents));
   useEffect(() => { setAmount(centsToDollars(job.invoice_amount_cents ?? job.quote_cents)); }, [job.invoice_amount_cents, job.quote_cents]);
 
@@ -287,6 +288,9 @@ function InvoiceCard({ job, editable, busy, onSend }) {
       {job.invoice_url && !job.paid_at && (
         <p className="admin-empty-text" style={{ marginBottom: 12 }}>
           {fmt$$(job.invoice_amount_cents)} · <a className="admin-detail-link" href={job.invoice_url} target="_blank" rel="noopener noreferrer">Open invoice</a>
+          {editable && <> · <button type="button" className="admin-link-btn" disabled={busy}
+            onClick={() => { if (confirm(`Cancel the ${fmt$$(job.invoice_amount_cents)} invoice? The customer's payment link will stop working.`)) onCancel(); }}>
+            Cancel invoice</button></>}
         </p>
       )}
       {job.paid_at && <p className="admin-empty-text">{fmt$$(job.invoice_amount_cents)} paid online through Stripe.</p>}

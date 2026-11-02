@@ -15,6 +15,7 @@ import { changeStatus, cleanDropoff, findOrCreateCustomer, JOB_SELECT, STATUSES 
 //   POST  {action:'invoice'}      → create a Stripe invoice the customer pays online
 //   POST  {action:'service-save'} → add or edit a service
 //   PATCH {id, ...fields, status} → edit a job and/or move it to a new status
+//   POST  {action:'cancel-invoice', id} → void the unpaid Stripe invoice
 //   PATCH {id, ..., resendQuote}   → email the (updated) quote again while it's waiting on the customer
 
 const EDITABLE = ['instrument_brand', 'instrument_model', 'instrument_serial', 'issue',
@@ -158,6 +159,29 @@ export default async function handler(req, res) {
       }));
       await logActivity(staff, 'repair.invoice', 'repair_job', job.id, { amount_cents: amount, invoice: updated.stripe_invoice_id });
       return res.status(201).json({ ...(await loadJob(sb, job.id)), email });
+    }
+
+    if (body.action === 'cancel-invoice') {
+      const job = must(await sb.from('repair_jobs').select(JOB_SELECT).eq('id', body.id).maybeSingle());
+      if (!job) return res.status(404).json({ error: 'Job not found' });
+      if (job.paid_at) return res.status(409).json({ error: 'This job is already paid, so its invoice can\'t be cancelled. Refund it in Stripe instead.' });
+      if (!job.stripe_invoice_id) return res.status(409).json({ error: 'There is no invoice to cancel.' });
+
+      // Void it in Stripe so the customer's link stops working. A paid invoice
+      // (paid moments ago, before our webhook caught up) is left alone.
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      const invoice = await stripe.invoices.retrieve(job.stripe_invoice_id);
+      if (invoice.status === 'paid') return res.status(409).json({ error: 'The customer has just paid this invoice. Refresh the page.' });
+      if (invoice.status === 'open') await stripe.invoices.voidInvoice(invoice.id);
+      else if (invoice.status === 'draft') await stripe.invoices.del(invoice.id);
+
+      must(await sb.from('repair_jobs').update({ stripe_invoice_id: null, invoice_url: null, invoice_amount_cents: null }).eq('id', job.id));
+      must(await sb.from('repair_events').insert({
+        job_id: job.id, actor_id: staff.id, kind: 'note',
+        body: `Invoice for $${((job.invoice_amount_cents || 0) / 100).toFixed(2)} cancelled`, visible_to_customer: true,
+      }));
+      await logActivity(staff, 'repair.invoice_cancel', 'repair_job', job.id, { invoice: job.stripe_invoice_id });
+      return res.status(200).json(await loadJob(sb, job.id));
     }
 
     if (body.action === 'service-save') {

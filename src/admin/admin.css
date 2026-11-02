@@ -1138,3 +1138,7 @@ body.admin-active {
 
 /* Drop-off spot on board cards */
 .badge-garage { background: rgba(210,132,0,0.15); color: #D28400; }
+
+/* A button that reads as an inline link */
+.admin-link-btn { background: none; border: 0; padding: 0; font: inherit; color: #D28400; cursor: pointer; text-decoration: underline; }
+.admin-link-btn:disabled { opacity: 0.5; cursor: default; }
