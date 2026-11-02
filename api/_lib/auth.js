@@ -57,15 +57,21 @@ function bearer(req) {
 // Resolves the caller to { id, email, full_name, role, legacy } or null.
 export async function getStaff(req) {
   const token = bearer(req);
+  if (token && !supabaseConfigured()) {
+    console.error('Staff check: Supabase sign-in token received, but the server has no Supabase URL or service role key.');
+  }
   if (token && supabaseConfigured()) {
     const sb = getSupabase();
     const { data, error } = await sb.auth.getUser(token);
+    if (error) console.warn('Staff check: Supabase rejected the sign-in token:', error.message);
     if (!error && data?.user) {
-      const { data: profile } = await sb
+      const { data: profile, error: profileError } = await sb
         .from('profiles')
         .select('id, email, full_name, role, active')
         .eq('id', data.user.id)
         .maybeSingle();
+      if (profileError) console.error('Staff check: could not read profiles:', profileError.message);
+      else if (!profile) console.warn(`Staff check: no profile for ${data.user.email}`);
       if (profile?.active) {
         return { id: profile.id, email: profile.email, full_name: profile.full_name, role: profile.role, legacy: false };
       }
