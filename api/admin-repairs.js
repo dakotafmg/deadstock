@@ -16,7 +16,16 @@ import { changeStatus, cleanDropoff, findOrCreateCustomer, JOB_SELECT, STATUSES 
 //   POST  {action:'service-save'} → add or edit a service
 //   PATCH {id, ...fields, status} → edit a job and/or move it to a new status
 //   POST  {action:'cancel-invoice', id} → void the unpaid Stripe invoice
+//   POST  {action:'paid-in-person', id, amount_cents, method} → record a counter payment
 //   PATCH {id, ..., resendQuote}   → email the (updated) quote again while it's waiting on the customer
+
+// How a customer can pay at the counter → orders.payment_method.
+const IN_PERSON_METHODS = {
+  cash: { value: 'cash', label: 'Cash' },
+  card: { value: 'card', label: 'Card' },
+  check: { value: 'check', label: 'Check' },
+  other: { value: 'other', label: 'Other' },
+};
 
 const EDITABLE = ['instrument_brand', 'instrument_model', 'instrument_serial', 'issue',
   'quote_cents', 'quote_notes', 'promised_at', 'assigned_to', 'dropoff_location', 'tag_number'];
@@ -161,6 +170,51 @@ export default async function handler(req, res) {
       return res.status(201).json({ ...(await loadJob(sb, job.id)), email });
     }
 
+    if (body.action === 'paid-in-person') {
+      const job = must(await sb.from('repair_jobs').select(JOB_SELECT).eq('id', body.id).maybeSingle());
+      if (!job) return res.status(404).json({ error: 'Job not found' });
+      if (job.paid_at) return res.status(409).json({ error: 'This job is already paid.' });
+      const amount = Math.round(Number(body.amount_cents));
+      if (!amount || amount < 50) return res.status(400).json({ error: 'Enter the amount paid (at least $0.50).' });
+      const method = IN_PERSON_METHODS[body.method];
+      if (!method) return res.status(400).json({ error: 'Pick how they paid.' });
+
+      // Recorded in Stripe the same way as Log a Sale: an invoice marked paid
+      // outside Stripe. Reuses the open invoice when the amount matches,
+      // otherwise replaces it, so the customer's old pay link stops working.
+      const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+      let invoiceId = job.stripe_invoice_id;
+      if (invoiceId) {
+        const current = await stripe.invoices.retrieve(invoiceId);
+        if (current.status === 'paid') return res.status(409).json({ error: 'The customer has just paid this invoice online. Refresh the page.' });
+        if (current.status !== 'open' || current.amount_due !== amount) invoiceId = null;
+      }
+      if (!invoiceId) invoiceId = (await createRepairInvoice(sb, job, amount)).stripe_invoice_id;
+      await stripe.invoices.update(invoiceId, {
+        metadata: { repairJobId: job.id, jobNumber: job.job_number, paymentMethod: method.label },
+      });
+      await stripe.invoices.pay(invoiceId, { paid_out_of_band: true });
+
+      const order = must(await sb.from('orders').insert({
+        channel: 'repair',
+        stripe_invoice_id: invoiceId,
+        customer_id: job.customer_id,
+        amount_cents: amount,
+        payment_method: method.value,
+        notes: String(body.notes || '').trim() || null,
+      }).select('id').single());
+      must(await sb.from('order_items').insert({ order_id: order.id, description: `Repair ${job.job_number}`, amount_cents: amount }));
+      must(await sb.from('repair_jobs').update({
+        order_id: order.id, paid_at: new Date().toISOString(), invoice_amount_cents: amount,
+      }).eq('id', job.id));
+      must(await sb.from('repair_events').insert({
+        job_id: job.id, actor_id: staff.id, kind: 'note',
+        body: `Paid in person: $${(amount / 100).toFixed(2)} (${method.label.toLowerCase()})`, visible_to_customer: true,
+      }));
+      await logActivity(staff, 'repair.paid_in_person', 'repair_job', job.id, { amount_cents: amount, method: method.value, invoice: invoiceId });
+      return res.status(201).json(await loadJob(sb, job.id));
+    }
+
     if (body.action === 'cancel-invoice') {
       const job = must(await sb.from('repair_jobs').select(JOB_SELECT).eq('id', body.id).maybeSingle());
       if (!job) return res.status(404).json({ error: 'Job not found' });
@@ -211,7 +265,7 @@ export default async function handler(req, res) {
 
 async function loadJob(sb, id) {
   const [job, services, photos, events, staffList] = await Promise.all([
-    sb.from('repair_jobs').select('*, customer:customers(*), assignee:profiles(id, full_name)').eq('id', id).maybeSingle(),
+    sb.from('repair_jobs').select('*, customer:customers(*), assignee:profiles(id, full_name), order:orders(payment_method, amount_cents)').eq('id', id).maybeSingle(),
     sb.from('repair_job_services').select('price_cents, notes, service:repair_services(id, name)').eq('job_id', id),
     sb.from('repair_photos').select('*').eq('job_id', id).order('created_at'),
     sb.from('repair_events').select('*, actor:profiles(full_name)').eq('job_id', id).order('created_at'),

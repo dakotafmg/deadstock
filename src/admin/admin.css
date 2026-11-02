@@ -1142,3 +1142,40 @@ body.admin-active {
 /* A button that reads as an inline link */
 .admin-link-btn { background: none; border: 0; padding: 0; font: inherit; color: #D28400; cursor: pointer; text-decoration: underline; }
 .admin-link-btn:disabled { opacity: 0.5; cursor: default; }
+
+/* Counter payment on a repair's Payment card */
+.admin-counter-open { display: block; margin-top: 12px; font-size: 13px; }
+.admin-counter-pay { margin-top: 14px; padding-top: 14px; border-top: 1px solid #2a2a2a; }
+.admin-counter-pay .admin-item-add { margin: 8px 0 4px; }
+
+.admin-page-actions { display: flex; align-items: center; gap: 12px; }
+
+/* ---------- Printed repair ticket (repairs/ticket.jsx) ---------- */
+.repair-ticket { display: none; }
+@media print {
+  @page { size: letter; margin: 0.5in; }
+  body.admin-active { background: #fff !important; }
+  body.admin-active > *:not(.repair-ticket) { display: none !important; }
+  .repair-ticket {
+    display: block;
+    color: #000; background: #fff;
+    font-family: -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11pt; line-height: 1.4;
+  }
+  .rt-half { padding: 0 0 12pt; break-inside: avoid; }
+  .rt-top { display: flex; justify-content: space-between; font-size: 8.5pt; letter-spacing: 0.12em; text-transform: uppercase; border-bottom: 1.5pt solid #000; padding-bottom: 4pt; }
+  .rt-tagno { font-weight: 700; }
+  .rt-number { font-family: ui-monospace, Menlo, monospace; font-size: 40pt; font-weight: 700; letter-spacing: -0.02em; margin: 10pt 0 2pt; }
+  .rt-instrument { font-size: 15pt; font-weight: 600; margin-bottom: 10pt; }
+  .rt-instrument span { font-weight: 400; font-size: 11pt; }
+  .rt-grid { display: grid; grid-template-columns: 70pt 1fr 70pt 1fr; gap: 3pt 10pt; margin: 0 0 10pt; }
+  .rt-grid dt { font-size: 8pt; text-transform: uppercase; letter-spacing: 0.1em; color: #444; padding-top: 2pt; }
+  .rt-grid dd { margin: 0; }
+  .rt-label { font-size: 8pt; text-transform: uppercase; letter-spacing: 0.1em; color: #444; margin-top: 6pt; }
+  .rt-issue { margin: 2pt 0 6pt; max-height: 6.5em; overflow: hidden; white-space: pre-wrap; }
+  .rt-services { margin: 0 0 6pt; font-size: 10pt; }
+  .rt-lines div { display: flex; gap: 24pt; border-bottom: 0.75pt solid #000; height: 22pt; align-items: flex-end; font-size: 8pt; text-transform: uppercase; letter-spacing: 0.1em; color: #444; }
+  .rt-lines div span:last-child:not(:first-child) { margin-left: 40%; }
+  .rt-cut { border-top: 1pt dashed #000; margin: 10pt 0 14pt; padding-top: 3pt; font-size: 8pt; color: #444; text-align: center; }
+  .rt-claim p { margin: 4pt 0; }
+  .rt-url { font-family: ui-monospace, Menlo, monospace; font-size: 9.5pt; word-break: break-all; }
+}

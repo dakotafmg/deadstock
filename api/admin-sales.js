@@ -80,7 +80,7 @@ export default async function handler(req, res) {
           products: [],
           productName: `Repair ${inv.metadata.jobNumber || ''}`.trim(),
           productId: '',
-          paymentMethod: 'Stripe Invoice',
+          paymentMethod: inv.metadata?.paymentMethod || (inv.paid_out_of_band ? 'In person' : 'Stripe Invoice'),
           notes: inv.description || '',
         }));
 
