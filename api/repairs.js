@@ -79,8 +79,9 @@ export default async function handler(req, res) {
 
     if (body.action !== 'request') return res.status(400).json({ error: 'Unknown action' });
 
-    // Honeypot: real people never see or fill the "website" field.
-    if (body.website) return res.status(200).json({ ok: true });
+    // Honeypot: real people never see or fill the hidden hp_trap field. Bots get a
+    // fake success. (It used to be called "website", which browsers autofilled.)
+    if (body.hp_trap) return res.status(200).json({ ok: true });
 
     const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
     if (tooMany(ip)) return res.status(429).json({ error: 'Too many requests. Please call or email us instead.' });

@@ -127,7 +127,7 @@ export default function Repairs({ onNavigate }) {
 }
 
 function RequestForm({ services, contactEmail, onNavigate }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', brand: '', model: '', serial: '', issue: '', website: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', brand: '', model: '', serial: '', issue: '', hp_trap: '' });
   const [serviceIds, setServiceIds] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [status, setStatus] = useState('idle'); // idle | sending | done | error
@@ -198,8 +198,9 @@ function RequestForm({ services, contactEmail, onNavigate }) {
       </div>
 
       {/* Honeypot: hidden from people, filled in by bots. */}
-      <input className="repairs-hp" tabIndex={-1} autoComplete="off" value={form.website}
-        onChange={e => set('website', e.target.value)} aria-hidden="true" name="website" />
+      {/* A meaningless name on purpose: browsers autofill fields named like "website" or "url". */}
+      <input className="repairs-hp" tabIndex={-1} autoComplete="off" value={form.hp_trap}
+        onChange={e => set('hp_trap', e.target.value)} aria-hidden="true" name="hp_trap" />
 
       <div className="repairs-fields">
         <label className="repairs-field">
