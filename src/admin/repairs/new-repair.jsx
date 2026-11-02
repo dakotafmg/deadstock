@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiCall, fmt$$ } from '../api';
 import { ImageUpload } from '../listings/image-upload';
+import { DROPOFF_LABELS } from './statuses';
 
 // ============================================================
 // NEW REPAIR — check in an instrument at the counter
@@ -10,6 +11,7 @@ export function NewRepair({ onExpire, onDone }) {
   const [services, setServices] = useState([]);
   const [form, setForm] = useState({
     name: '', email: '', phone: '', brand: '', model: '', serial: '', issue: '', promised: '',
+    dropoff_location: 'shop', tag_number: '',
   });
   const [serviceIds, setServiceIds] = useState([]);
   const [photos, setPhotos] = useState([]);
@@ -51,10 +53,23 @@ export function NewRepair({ onExpire, onDone }) {
   return (
     <div>
       <h1 className="admin-page-title">New Repair</h1>
-      <p className="admin-page-sub">Check in an instrument at the counter. The customer gets an email with their status link if you add one.</p>
+      <p className="admin-page-sub">Check in an instrument at the shop, or enter a tag from Fortville Music Garage. The customer gets an email with their status link if you add one.</p>
 
       <form className="admin-form" onSubmit={submit}>
         {error && <div className="admin-error">{error}</div>}
+
+        <div className="admin-form-row">
+          <div className="admin-field">
+            <label className="admin-label">Dropped off at</label>
+            <select className="admin-select" value={form.dropoff_location} onChange={e => set('dropoff_location', e.target.value)}>
+              {Object.entries(DROPOFF_LABELS).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+            </select>
+          </div>
+          <div className="admin-field">
+            <label className="admin-label">Tag number <span className="admin-label-opt">(optional)</span></label>
+            <input className="admin-input" value={form.tag_number} onChange={e => set('tag_number', e.target.value)} placeholder="From the paper tag" />
+          </div>
+        </div>
 
         <div className="admin-label" style={{ marginBottom: 10 }}>Customer</div>
         <div className="admin-field">

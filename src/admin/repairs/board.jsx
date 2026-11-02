@@ -9,6 +9,7 @@ export function RepairBoard({ staff, onExpire, onView, onOpen }) {
   const [jobs, setJobs] = useState([]);
   const [showClosed, setShowClosed] = useState(false);
   const [mine, setMine] = useState(false);
+  const [garage, setGarage] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,7 +25,11 @@ export function RepairBoard({ staff, onExpire, onView, onOpen }) {
 
   useEffect(load, [load]);
 
-  const visible = mine && staff.id ? jobs.filter(j => j.assigned_to === staff.id) : jobs;
+  const visible = jobs
+    .filter(j => !mine || !staff.id || j.assigned_to === staff.id)
+    .filter(j => !garage || j.dropoff_location === 'music_garage');
+  // Requested at the Garage = sitting there waiting for us to collect it.
+  const toCollect = jobs.filter(j => j.dropoff_location === 'music_garage' && j.status === 'requested').length;
   const columns = showClosed ? [...OPEN_STATUSES, ...CLOSED_STATUSES] : OPEN_STATUSES;
 
   return (
@@ -39,6 +44,9 @@ export function RepairBoard({ staff, onExpire, onView, onOpen }) {
       <div className="admin-filters">
         <button className={`admin-filter${!mine ? ' active' : ''}`} onClick={() => setMine(false)}>All jobs</button>
         {staff.id && <button className={`admin-filter${mine ? ' active' : ''}`} onClick={() => setMine(true)}>Assigned to me</button>}
+        <button className={`admin-filter${garage ? ' active' : ''}`} onClick={() => setGarage(g => !g)}>
+          Music Garage{toCollect > 0 && ` · ${toCollect} to collect`}
+        </button>
         <button className={`admin-filter${showClosed ? ' active' : ''}`} onClick={() => setShowClosed(s => !s)}>
           {showClosed ? 'Hide closed' : 'Show closed'}
         </button>
@@ -72,12 +80,13 @@ function JobCard({ job, onOpen }) {
   return (
     <button className="admin-board-card" onClick={() => onOpen(job.id)}>
       <div className="admin-board-card-top">
-        <span className="admin-mono">{job.job_number}</span>
+        <span className="admin-mono">{job.job_number}{job.tag_number && <span className="admin-muted"> · tag {job.tag_number}</span>}</span>
         <span className="admin-board-age">{daysOpen(job)}d</span>
       </div>
       <div className="admin-board-card-title">{instrumentName(job)}</div>
       <div className="admin-board-card-meta">{job.customer?.name || '—'}</div>
       <div className="admin-board-card-foot">
+        {job.dropoff_location === 'music_garage' && <span className="badge badge-garage">Music Garage</span>}
         {job.assignee?.full_name && <span>{job.assignee.full_name}</span>}
         {job.quote_cents != null && <span>{fmt$$(job.quote_cents)}</span>}
         {job.paid_at && <span className="badge badge-available">Paid</span>}

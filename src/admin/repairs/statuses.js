@@ -13,6 +13,9 @@ export const STATUS_LABELS = {
   declined:    'Declined',
 };
 
+// Where an instrument was dropped off (repair_jobs.dropoff_location).
+export const DROPOFF_LABELS = { shop: 'Deadstock shop', music_garage: 'Fortville Music Garage' };
+
 // Board columns, left to right. Picked up and declined are "closed".
 export const OPEN_STATUSES = ['requested', 'received', 'quoted', 'approved', 'in_progress', 'ready'];
 export const CLOSED_STATUSES = ['picked_up', 'declined'];

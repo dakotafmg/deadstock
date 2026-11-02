@@ -14,6 +14,12 @@ const STEPS = [
   { k: '03', t: 'Pick it up', d: 'We let you know the moment it\'s ready. Pay online ahead of time or at pickup.' },
 ];
 
+const DROPOFF_CHOICES = [
+  ['shop', 'The Deadstock shop'],
+  ['music_garage', 'Fortville Music Garage'],
+  ['', 'Not sure yet'],
+];
+
 const money = (cents) => '$' + (cents / 100).toLocaleString('en-US', { maximumFractionDigits: 0 });
 
 // Shrinks a photo in the browser so five fit in one request.
@@ -127,7 +133,7 @@ export default function Repairs({ onNavigate }) {
 }
 
 function RequestForm({ services, contactEmail, onNavigate }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', brand: '', model: '', serial: '', issue: '', hp_trap: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', brand: '', model: '', serial: '', issue: '', dropoff: '', hp_trap: '' });
   const [serviceIds, setServiceIds] = useState([]);
   const [photos, setPhotos] = useState([]);
   const [status, setStatus] = useState('idle'); // idle | sending | done | error
@@ -234,6 +240,18 @@ function RequestForm({ services, contactEmail, onNavigate }) {
         <textarea required rows={5} value={form.issue} onChange={e => set('issue', e.target.value)}
           placeholder="Buzzing past the 7th fret on the low E, scratchy volume pot, wants a full setup with 10s…" />
       </label>
+
+      <fieldset className="repairs-field repairs-field-wide">
+        <span>Where will you drop it off?</span>
+        <div className="repairs-checks">
+          {DROPOFF_CHOICES.map(([k, label]) => (
+            <label key={k} className={`repairs-check${form.dropoff === k ? ' on' : ''}`}>
+              <input type="radio" name="dropoff" checked={form.dropoff === k} onChange={() => set('dropoff', k)} />
+              {label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
 
       {services.length > 0 && (
         <fieldset className="repairs-field repairs-field-wide">
