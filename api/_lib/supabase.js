@@ -22,9 +22,10 @@ export function getSupabase() {
   return client;
 }
 
-// The Vercel Marketplace integration has used both naming schemes.
+// Accepts the browser's VITE_ name too, so the URL only has to be set once.
+// The Vercel Marketplace integration has used the other two names.
 function supabaseUrl() {
-  return process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
 }
 
 function serviceKey() {
