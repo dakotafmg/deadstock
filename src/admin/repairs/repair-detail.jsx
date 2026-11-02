@@ -40,7 +40,7 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
   const post = (body) => act(() => apiCall('/api/admin-repairs', { method: 'POST', body: { id, ...body } }));
 
   if (!data) return error ? <div className="admin-error">{error}</div> : <div className="admin-loading">Loading...</div>;
-  const { job, services, photos, events, techs } = data;
+  const { job, services, photos, events, techs, email } = data;
 
   const setStatus = (to) => {
     if (EMAILS_CUSTOMER.includes(to) && job.customer?.email
@@ -58,6 +58,9 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
         </h1>
         <span className={`badge badge-repair-${job.status}`}>{STATUS_LABELS[job.status]}</span>
       </div>
+      {email && (email.sent
+        ? <div className="admin-notice">Emailed {email.to}.</div>
+        : <div className="admin-error">The customer was not emailed. {email.reason}</div>)}
 
       {error && <div className="admin-error">{error}</div>}
 
@@ -224,12 +227,17 @@ function QuoteCard({ job, editable, busy, onSave }) {
           <div className="admin-form-actions">
             <button className="admin-btn admin-btn-ghost admin-btn-sm" disabled={busy || !dirty}
               onClick={() => onSave({ quote_cents: dollarsToCents(amount), quote_notes: notes })}>Save quote</button>
-            {['requested', 'received'].includes(job.status) && (
+            {['requested', 'received', 'quoted', 'declined'].includes(job.status) && (
               <button className="admin-btn admin-btn-primary admin-btn-sm" disabled={busy || amount === ''}
                 onClick={() => {
                   if (job.customer?.email && !confirm(`Send this quote to ${job.customer.email}?`)) return;
-                  onSave({ quote_cents: dollarsToCents(amount), quote_notes: notes, status: 'quoted' });
-                }}>Save & send to customer</button>
+                  const fields = { quote_cents: dollarsToCents(amount), quote_notes: notes };
+                  // Already quoted: send it again. Otherwise (new, or a revised quote after a decline) move it to quoted.
+                  onSave(job.status === 'quoted' ? { ...fields, resendQuote: true } : { ...fields, status: 'quoted' });
+                }}>
+                {job.status === 'quoted' ? (dirty ? 'Save & resend quote' : 'Resend quote')
+                  : job.status === 'declined' ? 'Send revised quote' : 'Save & send to customer'}
+              </button>
             )}
           </div>
         </>

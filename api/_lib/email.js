@@ -67,11 +67,12 @@ function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-// kind: a key of TEMPLATES. Returns true when sent.
+// kind: a key of TEMPLATES. Returns { sent: true, to } or { sent: false, reason }
+// so the admin can show staff whether the customer was actually emailed.
 export async function sendRepairEmail(kind, job, customer, extra) {
-  if (!customer?.email) return false;
+  if (!customer?.email) return { sent: false, reason: 'This customer has no email address.' };
   const tpl = TEMPLATES[kind]?.(job, extra);
-  if (!tpl) return false;
+  if (!tpl) return { sent: false, reason: `No email template for "${kind}".` };
 
   const link = statusLink(job);
   const lines = tpl.lines.filter(Boolean);
@@ -82,7 +83,7 @@ export async function sendRepairEmail(kind, job, customer, extra) {
 
   if (!process.env.RESEND_API_KEY) {
     console.log(`[email skipped: no RESEND_API_KEY] ${kind} → ${customer.email}: ${tpl.subject}`);
-    return false;
+    return { sent: false, reason: 'Email isn\'t set up on this server (no RESEND_API_KEY).' };
   }
 
   try {
@@ -102,12 +103,15 @@ export async function sendRepairEmail(kind, job, customer, extra) {
       }),
     });
     if (!res.ok) {
-      console.error('Resend error:', res.status, await res.text());
-      return false;
+      const detail = await res.text();
+      console.error('Resend error:', res.status, detail);
+      let message = detail;
+      try { message = JSON.parse(detail).message || detail; } catch {}
+      return { sent: false, reason: `Resend refused it (${res.status}): ${message}` };
     }
-    return true;
+    return { sent: true, to: customer.email };
   } catch (err) {
     console.error('Email send failed:', err);
-    return false;
+    return { sent: false, reason: 'Could not reach Resend.' };
   }
 }

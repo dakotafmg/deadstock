@@ -15,6 +15,7 @@ import { changeStatus, findOrCreateCustomer, JOB_SELECT, STATUSES } from './_lib
 //   POST  {action:'invoice'}      → create a Stripe invoice the customer pays online
 //   POST  {action:'service-save'} → add or edit a service
 //   PATCH {id, ...fields, status} → edit a job and/or move it to a new status
+//   PATCH {id, ..., resendQuote}   → email the (updated) quote again while it's waiting on the customer
 
 const EDITABLE = ['instrument_brand', 'instrument_model', 'instrument_serial', 'issue',
   'quote_cents', 'quote_notes', 'promised_at', 'assigned_to'];
@@ -54,13 +55,25 @@ export default async function handler(req, res) {
         job = must(await sb.from('repair_jobs').update(patch).eq('id', job.id).select(JOB_SELECT).single());
       }
 
+      let email = null;
       if (body.status && body.status !== job.status) {
         if (!STATUSES.includes(body.status)) return res.status(400).json({ error: 'Unknown status' });
         job = await changeStatus(sb, job, body.status, { actorId: staff.id, note: body.note || null });
+        email = job.emailResult || null;
+      } else if (body.resendQuote) {
+        if (job.status !== 'quoted') return res.status(409).json({ error: 'Only a quote waiting on the customer can be resent.' });
+        if (job.quote_cents == null) return res.status(400).json({ error: 'Add a quote amount first.' });
+        must(await sb.from('repair_events').insert({
+          job_id: job.id, actor_id: staff.id, kind: 'note',
+          body: `Quote sent again: $${(job.quote_cents / 100).toFixed(2)}`, visible_to_customer: true,
+        }));
+        email = await sendRepairEmail('quoted', job, job.customer);
       }
 
-      await logActivity(staff, 'repair.update', 'repair_job', job.id, { ...patch, ...(body.status ? { status: body.status } : {}) });
-      return res.status(200).json(await loadJob(sb, job.id));
+      await logActivity(staff, 'repair.update', 'repair_job', job.id, {
+        ...patch, ...(body.status ? { status: body.status } : {}), ...(body.resendQuote ? { resendQuote: true } : {}),
+      });
+      return res.status(200).json({ ...(await loadJob(sb, job.id)), email });
     }
 
     if (req.method !== 'POST') return res.status(405).end();
@@ -98,9 +111,9 @@ export default async function handler(req, res) {
         job_id: job.id, actor_id: staff.id, kind: 'status', to_status: 'received',
         body: 'Checked in at the shop', visible_to_customer: true,
       }));
-      await sendRepairEmail('received', job, customer);
+      const email = await sendRepairEmail('received', job, customer);
       await logActivity(staff, 'repair.create', 'repair_job', job.id, { job_number: job.job_number });
-      return res.status(201).json(await loadJob(sb, job.id));
+      return res.status(201).json({ ...(await loadJob(sb, job.id)), email });
     }
 
     if (body.action === 'note') {
@@ -113,8 +126,8 @@ export default async function handler(req, res) {
         job_id: job.id, actor_id: staff.id, kind: toCustomer ? 'message' : 'note',
         body: text, visible_to_customer: toCustomer,
       }));
-      if (toCustomer) await sendRepairEmail('message', job, job.customer, { body: text });
-      return res.status(201).json(await loadJob(sb, job.id));
+      const email = toCustomer ? await sendRepairEmail('message', job, job.customer, { body: text }) : null;
+      return res.status(201).json({ ...(await loadJob(sb, job.id)), email });
     }
 
     if (body.action === 'photo') {
@@ -134,13 +147,13 @@ export default async function handler(req, res) {
       if (!amount || amount < 50) return res.status(400).json({ error: 'Set an invoice amount of at least $0.50' });
 
       const updated = await createRepairInvoice(sb, job, amount);
-      await sendRepairEmail('invoice', updated, updated.customer);
+      const email = await sendRepairEmail('invoice', updated, updated.customer);
       must(await sb.from('repair_events').insert({
         job_id: job.id, actor_id: staff.id, kind: 'note',
         body: `Invoice sent for $${(amount / 100).toFixed(2)}`, visible_to_customer: true,
       }));
       await logActivity(staff, 'repair.invoice', 'repair_job', job.id, { amount_cents: amount, invoice: updated.stripe_invoice_id });
-      return res.status(201).json(await loadJob(sb, job.id));
+      return res.status(201).json({ ...(await loadJob(sb, job.id)), email });
     }
 
     if (body.action === 'service-save') {
