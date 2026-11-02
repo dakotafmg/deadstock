@@ -158,8 +158,13 @@ function RequestForm({ services, contactEmail, onNavigate }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'request', ...form, serviceIds, photos: photos.map(p => ({ data: p.data })) }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+      const data = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(data?.error || `Something went wrong (error ${res.status}).`);
+      // A reply without a job number means the request never reached the repairs service.
+      if (!data?.job_number || !data?.status_url) {
+        console.error('Repair request: unexpected reply', res.status, res.headers.get('content-type'), data);
+        throw new Error(`Your request didn't go through (unexpected reply, ${res.status}).`);
+      }
       setResult(data);
       setStatus('done');
     } catch (err) {
