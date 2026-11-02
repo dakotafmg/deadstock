@@ -232,7 +232,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--black);
+  color: #fff;
   padding: 4px;
   position: relative;
   display: flex;
