@@ -56,6 +56,8 @@ export default async function handler(req, res) {
 // Stripe can deliver the same event more than once.
 async function markRepairPaid(invoice) {
   const sb = getSupabase();
+  // Counter payments are marked paid from the repair page, which records them itself.
+  if (invoice.paid_out_of_band) return;
   const job = must(await sb.from('repair_jobs').select('*').eq('id', invoice.metadata.repairJobId).maybeSingle());
   if (!job || job.paid_at) return;
 

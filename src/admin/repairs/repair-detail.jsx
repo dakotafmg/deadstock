@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { apiCall, fmt$$, fmtDate, fmtDateTime, can } from '../api';
 import { compressAndUpload } from '../listings/image-upload';
 import { STATUS_LABELS, ALL_STATUSES, EMAILS_CUSTOMER, instrumentName, DROPOFF_LABELS } from './statuses';
+import { RepairTicket } from './ticket';
 
 // Dates are stored at noon UTC so they show as the same day across US time zones.
 const toDateInput = (ts) => (ts ? ts.slice(0, 10) : '');
@@ -56,8 +57,12 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
           <span className="admin-mono" style={{ fontSize: 15, marginRight: 10 }}>{job.job_number}</span>
           {instrumentName(job)}
         </h1>
-        <span className={`badge badge-repair-${job.status}`}>{STATUS_LABELS[job.status]}</span>
+        <div className="admin-page-actions">
+          <button className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => window.print()}>Print ticket</button>
+          <span className={`badge badge-repair-${job.status}`}>{STATUS_LABELS[job.status]}</span>
+        </div>
       </div>
+      <RepairTicket job={job} services={services} />
       {email && (email.sent
         ? <div className="admin-notice">Emailed {email.to}.</div>
         : <div className="admin-error">The customer was not emailed. {email.reason}</div>)}
@@ -146,7 +151,9 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
             </div></div>
           )}
           <InvoiceCard job={job} editable={editable} busy={busy} onSend={(amount_cents) => post({ action: 'invoice', amount_cents })}
-            onCancel={() => post({ action: 'cancel-invoice' })} />
+            onCancel={() => post({ action: 'cancel-invoice' })}
+            paidInPerson={events.some(e => e.body?.startsWith('Paid in person'))}
+            onPaidInPerson={(amount_cents, method) => post({ action: 'paid-in-person', amount_cents, method })} />
           <Timeline events={events} editable={editable} busy={busy}
             onAdd={(body, toCustomer) => post({ action: 'note', body, toCustomer })} />
         </div>
@@ -274,8 +281,12 @@ function QuoteCard({ job, editable, busy, onSave }) {
   );
 }
 
-function InvoiceCard({ job, editable, busy, onSend, onCancel }) {
+const COUNTER_METHODS = [['cash', 'Cash'], ['card', 'Card'], ['check', 'Check'], ['other', 'Other']];
+
+function InvoiceCard({ job, paidInPerson, editable, busy, onSend, onCancel, onPaidInPerson }) {
   const [amount, setAmount] = useState(centsToDollars(job.invoice_amount_cents ?? job.quote_cents));
+  const [counter, setCounter] = useState(null); // { amount, method } while recording a counter payment
+  const paidHow = job.order?.payment_method;
   useEffect(() => { setAmount(centsToDollars(job.invoice_amount_cents ?? job.quote_cents)); }, [job.invoice_amount_cents, job.quote_cents]);
 
   return (
@@ -293,7 +304,12 @@ function InvoiceCard({ job, editable, busy, onSend, onCancel }) {
             Cancel invoice</button></>}
         </p>
       )}
-      {job.paid_at && <p className="admin-empty-text">{fmt$$(job.invoice_amount_cents)} paid online through Stripe.</p>}
+      {job.paid_at && (
+        <p className="admin-empty-text">
+          {fmt$$(job.order?.amount_cents ?? job.invoice_amount_cents)}{' '}
+          {paidInPerson ? `paid in person${paidHow ? ` (${paidHow})` : ''}.` : 'paid online through Stripe.'}
+        </p>
+      )}
       {editable && !job.paid_at && (
         <div className="admin-item-add">
           <input className="admin-input admin-item-amount-input" type="number" min="0" step="0.01" value={amount}
@@ -307,9 +323,28 @@ function InvoiceCard({ job, editable, busy, onSend, onCancel }) {
           </button>
         </div>
       )}
-      {editable && !job.paid_at && (
-        <p className="admin-hint">Paying in person instead? Use Log a Sale, then move the job to Picked up.</p>
-      )}
+      {editable && !job.paid_at && (counter ? (
+        <div className="admin-counter-pay">
+          <div className="admin-label">Paid at the counter</div>
+          <div className="admin-item-add">
+            <input className="admin-input admin-item-amount-input" type="number" min="0" step="0.01" value={counter.amount}
+              onChange={e => setCounter(c => ({ ...c, amount: e.target.value }))} placeholder="Amount" />
+            <select className="admin-select" value={counter.method} onChange={e => setCounter(c => ({ ...c, method: e.target.value }))}>
+              {COUNTER_METHODS.map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+            </select>
+          </div>
+          <div className="admin-form-actions">
+            <button className="admin-btn admin-btn-ghost admin-btn-sm" disabled={busy} onClick={() => setCounter(null)}>Never mind</button>
+            <button className="admin-btn admin-btn-primary admin-btn-sm" disabled={busy || !counter.amount}
+              onClick={() => onPaidInPerson(dollarsToCents(counter.amount), counter.method)}>Mark paid</button>
+          </div>
+        </div>
+      ) : (
+        <button className="admin-link-btn admin-counter-open" disabled={busy}
+          onClick={() => setCounter({ amount: amount || centsToDollars(job.quote_cents), method: 'cash' })}>
+          Paid in person? Mark it paid
+        </button>
+      ))}
     </div>
   );
 }
