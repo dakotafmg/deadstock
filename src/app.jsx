@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Nav, Footer } from './shared';
-import Home from './home';
-import Product from './product';
-import { Pickups, PickupProduct } from './pickups';
-import { FoundersLetter, Partners, DealersPage } from './pages';
-import Shop from './shop';
-import ListingDetail from './listing';
-import CartDrawer from './cart';
-import Admin from './admin';
-import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './tweaks-panel';
+import { Nav, Footer } from './components/shared';
+import Home from './site/home/home';
+import Product from './site/models/product';
+import { FoundersLetter, Partners } from './site/pages/pages';
+import Shop from './site/shop/shop';
+import ListingDetail from './site/shop/listing';
+import CartDrawer from './site/shop/cart';
+import Repairs from './site/repairs/repairs';
+import RepairStatus from './site/repairs/repair-status';
+import { useTweaks, TweaksPanel, TweakSection, TweakColor, TweakRadio, TweakToggle } from './components/tweaks-panel';
+
+// The admin (and the Supabase sign-in library it uses) only loads on /admin.
+const Admin = lazy(() => import('./admin/admin'));
 
 // ============================================================
 // DEADSTOCK — App shell + router
 // ============================================================
 
-const VALID_ROUTES = ["home", "broadman", "wayfarer", "monarch", "pickups", "tele52", "strat62", "paf", "letter", "partners", "dealers", "shop", "admin"];
+const VALID_ROUTES = ["home", "broadman", "wayfarer", "monarch", "letter", "partners", "shop", "repairs", "admin"];
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accent": "#D28400",
@@ -34,6 +37,7 @@ const FONT_OPTIONS = {
 function parsePath() {
   const path = window.location.pathname;
   if (path.startsWith("/listing/")) return ["listing", path.slice(9)];
+  if (path.startsWith("/repair/")) return ["repair-status", path.slice(8)];
   const segment = path.slice(1) || "home";
   return [VALID_ROUTES.includes(segment) ? segment : "home", null];
 }
@@ -53,9 +57,9 @@ export default function App() {
 
   const onNavigate = (id, param = null) => {
     if (id === "workshop") id = "home";
-    if (id === "listing") {
-      setNav(["listing", param]);
-      history.pushState({}, "", "/listing/" + param);
+    if (id === "listing" || id === "repair-status") {
+      setNav([id, param]);
+      history.pushState({}, "", (id === "listing" ? "/listing/" : "/repair/") + param);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -90,7 +94,11 @@ export default function App() {
   }, [tw.accent, tw.displayFont, tw.showGrain, tw.darkMode]);
 
   if (route === "admin") {
-    return <Admin onNavigate={onNavigate} />;
+    return (
+      <Suspense fallback={null}>
+        <Admin onNavigate={onNavigate} />
+      </Suspense>
+    );
   }
 
   return (
@@ -100,14 +108,11 @@ export default function App() {
       {route === "broadman" && <Product id="broadman" onNavigate={onNavigate} />}
       {route === "wayfarer" && <Product id="wayfarer" onNavigate={onNavigate} />}
       {route === "monarch"  && <Product id="monarch"  onNavigate={onNavigate} />}
-      {route === "pickups"  && <Pickups onNavigate={onNavigate} />}
-      {route === "tele52"   && <PickupProduct id="tele52"  onNavigate={onNavigate} />}
-      {route === "strat62"  && <PickupProduct id="strat62" onNavigate={onNavigate} />}
-      {route === "paf"      && <PickupProduct id="paf"     onNavigate={onNavigate} />}
       {route === "letter"   && <FoundersLetter onNavigate={onNavigate} />}
       {route === "partners" && <Partners onNavigate={onNavigate} />}
-      {route === "dealers"  && <DealersPage onNavigate={onNavigate} />}
       {route === "shop"     && <Shop onNavigate={onNavigate} />}
+      {route === "repairs"  && <Repairs onNavigate={onNavigate} />}
+      {route === "repair-status" && <RepairStatus token={listingId} onNavigate={onNavigate} />}
       {route === "listing"  && <ListingDetail id={listingId} onNavigate={onNavigate} cart={cart} addToCart={addToCart} />}
       <Footer onNavigate={onNavigate} />
       {cartOpen && (
@@ -152,9 +157,6 @@ export default function App() {
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("broadman")}>↳ The Broadman</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("wayfarer")}>↳ The Wayfarer</button>
           <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("monarch")}>↳ The Monarch</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("pickups")}>↳ Pickups</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("tele52")}>↳ '52 Tele Set</button>
-          <button className="btn btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }} onClick={() => onNavigate("paf")}>↳ PAF Set</button>
         </div>
       </TweaksPanel>
       <Analytics />
