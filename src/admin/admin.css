@@ -1178,4 +1178,7 @@ body.admin-active {
   .rt-cut { border-top: 1pt dashed #000; margin: 10pt 0 14pt; padding-top: 3pt; font-size: 8pt; color: #444; text-align: center; }
   .rt-claim p { margin: 4pt 0; }
   .rt-url { font-family: ui-monospace, Menlo, monospace; font-size: 9.5pt; word-break: break-all; }
+  .rt-follow { display: flex; gap: 14pt; align-items: center; margin: 8pt 0; }
+  .rt-qr { width: 1.2in; height: 1.2in; flex: none; }
+  .rt-qr svg { width: 100%; height: 100%; display: block; }
 }

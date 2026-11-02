@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import QRCode from 'qrcode';
 import { fmt$$, fmtDate } from '../api';
 import { instrumentName, DROPOFF_LABELS } from './statuses';
 
@@ -11,12 +12,16 @@ import { instrumentName, DROPOFF_LABELS } from './statuses';
 // ============================================================
 export function RepairTicket({ job, services }) {
   const [shop, setShop] = useState({ phone: null });
+  const [qr, setQr] = useState(null);
+  const statusUrl = `${window.location.origin}/repair/${job.public_token}`;
   useEffect(() => {
     fetch('/api/repairs?view=info').then(r => (r.ok ? r.json() : null)).then(d => d && setShop(d)).catch(() => {});
   }, []);
+  useEffect(() => {
+    QRCode.toString(statusUrl, { type: 'svg', margin: 0, errorCorrectionLevel: 'M' }).then(setQr).catch(() => setQr(null));
+  }, [statusUrl]);
 
   const c = job.customer || {};
-  const statusUrl = `${window.location.origin}/repair/${job.public_token}`;
   const received = job.received_at || job.created_at;
   const where = DROPOFF_LABELS[job.dropoff_location];
 
@@ -58,8 +63,15 @@ export function RepairTicket({ job, services }) {
         <div className="rt-number">{job.job_number}</div>
         <div className="rt-instrument">{instrumentName(job)}</div>
         <p>Thanks for trusting us with it. We'll send a quote before doing any work.</p>
-        <div className="rt-label">Follow your repair online</div>
-        <p className="rt-url">{statusUrl}</p>
+        <div className="rt-follow">
+          {/* SVG made by the qrcode package from our own URL, not user input. */}
+          {qr && <div className="rt-qr" dangerouslySetInnerHTML={{ __html: qr }} />}
+          <div>
+            <div className="rt-label">Follow your repair online</div>
+            <p>{qr ? 'Scan the code with your phone camera, or go to:' : 'Go to:'}</p>
+            <p className="rt-url">{statusUrl}</p>
+          </div>
+        </div>
         <p>{shop.phone ? `Questions? Call ${shop.phone}.` : 'Questions? Reply to any email from us.'} Bring this slip, or your job number, when you pick it up.</p>
       </section>
     </div>,
