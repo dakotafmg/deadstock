@@ -47,7 +47,8 @@ export async function changeStatus(sb, job, to, { actorId = null, note = null } 
     visible_to_customer: true,
   }));
 
-  if (EMAIL_ON[to]) await sendRepairEmail(EMAIL_ON[to], updated, updated.customer);
+  // Not a database column: lets the caller tell staff whether the email went.
+  if (EMAIL_ON[to]) updated.emailResult = await sendRepairEmail(EMAIL_ON[to], updated, updated.customer);
   return updated;
 }
 
