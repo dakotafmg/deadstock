@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Reveal, PH } from '../../components/shared';
-import { PRODUCTS } from '../../content/data';
+import { useContent } from '../../content/use-content';
 
 export default function Product({ id, onNavigate }) {
-  const p = PRODUCTS[id];
+  const { content } = useContent();
+  const p = content.models[id];
   if (!p) return null;
 
   return (
     <main className="product" data-screen-label={`product-${id}`}>
-      <ProductHero p={p} onNavigate={onNavigate} />
+      <ProductHero key={p.id} p={p} onNavigate={onNavigate} />
       <SonicStory p={p} />
       <SpecSheet p={p} />
       <BuildTag p={p} />
-      <RelatedNav p={p} onNavigate={onNavigate} />
+      <RelatedNav p={p} lineup={content.lineup} models={content.models} onNavigate={onNavigate} />
     </main>
   );
 }
@@ -21,7 +22,7 @@ export default function Product({ id, onNavigate }) {
 // HERO
 // ------------------------------------------------------------
 function ProductHero({ p, onNavigate }) {
-  const [color, setColor] = useState(p.swatches[0] || null);
+  const [color, setColor] = useState((p.swatches || [])[0] || null);
   const [imgIndex, setImgIndex] = useState(0);
   const images = p.images || [];
   const heroImage = images[imgIndex];
@@ -159,7 +160,7 @@ function SpecSheet({ p }) {
   ];
   const tabImageIndex = { body: 1, neck: 2, electronics: 3, hardware: 4 };
   const [tab, setTab] = useState("body");
-  const rows = p.specs[tab];
+  const rows = (p.specs || {})[tab] || [];
   const asideImage = p.images && p.images[tabImageIndex[tab]];
 
   return (
@@ -253,7 +254,7 @@ function BuildTag({ p }) {
               <div className="specs">
                 <div>
                   <div className="k">Built</div>
-                  <div className="v">{p.build.run}</div>
+                  <div className="v">{p.build?.run}</div>
                 </div>
                 <div>
                   <div className="k">Setup</div>
@@ -271,10 +272,14 @@ function BuildTag({ p }) {
 // ------------------------------------------------------------
 // RELATED — single full-bleed spread to the other model
 // ------------------------------------------------------------
-function RelatedNav({ p, onNavigate }) {
-  const cycle = { broadman: "wayfarer", wayfarer: "monarch", monarch: "broadman" };
-  const otherId = cycle[p.id] || "broadman";
-  const other = PRODUCTS[otherId];
+function RelatedNav({ p, lineup, models, onNavigate }) {
+  // The next model in the homepage lineup, wrapping around.
+  const ids = lineup.filter(m => m.status === "AVAILABLE" && models[m.id]).map(m => m.id);
+  const others = ids.filter(id => id !== p.id);
+  if (!others.length) return null;
+  const at = ids.indexOf(p.id);
+  const otherId = at === -1 ? others[0] : ids[(at + 1) % ids.length];
+  const other = models[otherId];
   return (
     <section className="p-related">
       <div className="wrap">

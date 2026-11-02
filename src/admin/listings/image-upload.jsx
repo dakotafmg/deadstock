@@ -8,6 +8,10 @@ const MAX_IMAGES = 8;
 
 // Shrinks a photo in the browser, then stores it in Vercel Blob under `folder`.
 export async function compressAndUpload(file, folder = 'listings') {
+  // Site logos keep PNG so transparent backgrounds stay transparent.
+  const png = folder === 'content' && file.type === 'image/png';
+  const type = png ? 'image/png' : 'image/jpeg';
+  const ext = png ? 'png' : 'jpg';
   return new Promise((resolve, reject) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(file);
@@ -31,7 +35,7 @@ export async function compressAndUpload(file, folder = 'listings') {
               const uid = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
               const { url } = await apiCall('/api/upload', {
                 method: 'POST',
-                body: { filename: `${folder === 'repairs' ? 'repair' : 'listing'}-${uid}.jpg`, contentType: 'image/jpeg', data: base64, folder },
+                body: { filename: `${{ repairs: 'repair', content: 'site' }[folder] || 'listing'}-${uid}.${ext}`, contentType: type, data: base64, folder },
               });
               resolve(url);
             } catch (err) { reject(err); }
@@ -39,7 +43,7 @@ export async function compressAndUpload(file, folder = 'listings') {
           reader.onerror = reject;
           reader.readAsDataURL(blob);
         } catch (err) { reject(err); }
-      }, 'image/jpeg', 0.82);
+      }, type, 0.82);
     };
     img.onerror = reject;
     img.src = objectUrl;

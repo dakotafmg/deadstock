@@ -1,28 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Reveal, PH, DrawLine } from '../../components/shared';
-import { LINEUP } from '../../content/data';
-
-// Each slide has:
-//   src  — image path
-//   pos  — CSS object-position focal point, e.g. "50% 30%" pushes crop up,
-//           "70% 50%" shifts right. Use percentages or keywords (top, bottom…)
-//   scale — zoom multiplier (1 = no zoom, 1.15 = 15% in, 1.3 = 30% in etc.)
-//           The zoom is anchored to the same focal point as `pos`.
-const HERO_SLIDES = [
-  { src: "/assets/hero-1.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-2.jpg",  pos: "50% 10%", scale: 1 },
-  { src: "/assets/hero-3.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-4.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-5.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-6.jpeg", pos: "50% 60%", scale: 1 },
-  { src: "/assets/hero-7.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-8.jpg",  pos: "50% 15%", scale: 1 },
-  { src: "/assets/hero-9.jpg",  pos: "center",  scale: 1 },
-  { src: "/assets/hero-10.jpg", pos: "center",  scale: 1 },
-  { src: "/assets/hero-11.jpg", pos: "center",  scale: 1 },
-  { src: "/assets/hero-12.jpg", pos: "50% 90%", scale: 1 },
-  { src: "/assets/hero-15.jpg", pos: "center",  scale: 1 },
-];
+import { useContent, splitEmphasis } from '../../content/use-content';
 
 const NOTIFY_ENDPOINT = "https://formspree.io/f/mvzylraj";
 
@@ -32,11 +10,12 @@ const NOTIFY_ENDPOINT = "https://formspree.io/f/mvzylraj";
 
 export default function Home({ onNavigate }) {
   const [notifyOpen, setNotifyOpen] = useState(false);
+  const { content } = useContent();
   return (
     <main className="home">
-      <Hero onNavigate={onNavigate} />
+      <Hero slides={content.hero} lineup={content.lineup} onNavigate={onNavigate} />
       <Manifesto />
-      <Lineup onNavigate={onNavigate} onNotify={() => setNotifyOpen(true)} />
+      <Lineup lineup={content.lineup} onNavigate={onNavigate} onNotify={() => setNotifyOpen(true)} />
       <Craftsmanship />
       {notifyOpen && <NotifyModal onClose={() => setNotifyOpen(false)} />}
     </main>
@@ -46,16 +25,20 @@ export default function Home({ onNavigate }) {
 // ------------------------------------------------------------
 // HERO SLIDESHOW
 // ------------------------------------------------------------
-function Hero({ onNavigate }) {
+function Hero({ slides, lineup, onNavigate }) {
+  const HERO_SLIDES = slides;
   const [current, setCurrent] = useState(0);
   const timerRef = useRef(null);
+  const count = HERO_SLIDES.length;
+  const featured = lineup.filter(m => m.status === "AVAILABLE").slice(0, 2);
 
-  const advance = () => setCurrent(i => (i + 1) % HERO_SLIDES.length);
+  const advance = () => setCurrent(i => (i + 1) % count);
 
   useEffect(() => {
+    if (current >= count) setCurrent(0);
     timerRef.current = setInterval(advance, 5000);
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [count]);
 
   const goTo = (idx) => {
     clearInterval(timerRef.current);
@@ -82,7 +65,7 @@ function Hero({ onNavigate }) {
             <div className="hero-slideshow">
               {HERO_SLIDES.map((slide, i) => (
                 <img
-                  key={slide.src}
+                  key={slide.src + i}
                   src={slide.src}
                   alt={`Slide ${i + 1}`}
                   className={"hero-product-img" + (i === current ? " active" : "")}
@@ -123,14 +106,12 @@ function Hero({ onNavigate }) {
                 Explore the lineup
               </div>
               <div className="hero-actions" style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-                <button className="btn btn-amber" onClick={() => onNavigate("broadman")}>
-                  The Broadman
-                  <span className="arrow">→</span>
-                </button>
-                <button className="btn btn-light" onClick={() => onNavigate("wayfarer")}>
-                  The Wayfarer
-                  <span className="arrow">→</span>
-                </button>
+                {featured.map((m, i) => (
+                  <button key={m.id} className={"btn " + (i === 0 ? "btn-amber" : "btn-light")} onClick={() => onNavigate(m.id)}>
+                    The {m.name}
+                    <span className="arrow">→</span>
+                  </button>
+                ))}
               </div>
             </div>
           </Reveal>
@@ -195,13 +176,17 @@ function Manifesto() {
 // ------------------------------------------------------------
 // LINEUP — full-bleed editorial chapters, not bordered cards
 // ------------------------------------------------------------
-function Lineup({ onNavigate, onNotify }) {
+const COUNT_WORDS = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"];
+const countWord = (n) => COUNT_WORDS[n] || String(n);
+
+function Lineup({ lineup, onNavigate, onNotify }) {
+  const LINEUP = lineup;
   return (
     <section className="lineup" data-screen-label="home-lineup">
       <div className="wrap">
         <div className="section-head">
           <div className="index">The Lineup · 2026</div>
-          <h2>Three instruments<br/>we'd put our name <i>on.</i></h2>
+          <h2>{countWord(LINEUP.length)} instrument{LINEUP.length === 1 ? "" : "s"}<br/>we'd put our name <i>on.</i></h2>
         </div>
       </div>
 
@@ -212,8 +197,8 @@ function Lineup({ onNavigate, onNotify }) {
             : m.image
               ? "dark"
               : i % 2 === 0 ? "dark" : "cream";
-        const labelArch = m.archetype.split(" / ")[0];
-        const labelSub  = m.archetype.split(" / ")[1] || "";
+        const labelArch = (m.archetype || "").split(" / ")[0];
+        const labelSub  = (m.archetype || "").split(" / ")[1] || "";
         const interactable = m.status === "AVAILABLE";
         const handleCTA = () => {
           if (m.status === "AVAILABLE") onNavigate(m.id);
@@ -229,11 +214,7 @@ function Lineup({ onNavigate, onNotify }) {
             >
               <div
                 className={"chapter-bg" + (m.image ? " has-image" : "")}
-                data-label={
-                  m.id === "monarch"
-                    ? "Monarch — in development"
-                    : `${m.name} — ${m.id === "broadman" ? "Shell Pink" : "Sunburst"}`
-                }
+                data-label={m.cardFinish ? `${m.name} — ${m.cardFinish}` : m.name}
                 style={
                   m.image
                     ? {
@@ -251,7 +232,7 @@ function Lineup({ onNavigate, onNotify }) {
                 </span>
                 <span className="r">
                   <span>{labelArch}</span>
-                  <span>{m.serial.split(" — ")[1] || m.serial}</span>
+                  <span>{(m.serial || "").split(" — ")[1] || m.serial}</span>
                   <span>{m.price}</span>
                 </span>
               </div>
@@ -260,9 +241,9 @@ function Lineup({ onNavigate, onNotify }) {
                 <div className="chapter-content">
                   <div className="chapter-headline">
                     <h3>
-                      {m.name === "Broadman" && <>The Broad<em>man.</em></>}
-                      {m.name === "Wayfarer" && <>The Way<em>farer.</em></>}
-                      {m.name === "Monarch"  && <>The <em>Monarch.</em></>}
+                      {splitEmphasis(m.headline || `The *${m.name}.*`).map((part, j) =>
+                        part.em ? <em key={j}>{part.em}</em> : <React.Fragment key={j}>{part.text}</React.Fragment>
+                      )}
                     </h3>
                     <div className="arch">{labelSub}</div>
                   </div>
@@ -279,26 +260,26 @@ function Lineup({ onNavigate, onNotify }) {
                           </div>
                           <div>
                             <div className="k">Pickups</div>
-                            <div className="v">SD Phat Cat + Antiquity HB</div>
+                            <div className="v">{m.cardPickups}</div>
                           </div>
                           <div>
                             <div className="k">Construction</div>
-                            <div className="v">Carved top, back bolt-on neck</div>
+                            <div className="v">{m.cardConstruction}</div>
                           </div>
                         </>
                       ) : (
                         <>
                           <div>
                             <div className="k">Finish</div>
-                            <div className="v"><em>{m.id === "broadman" ? "Shell Pink" : "Sunburst"}</em></div>
+                            <div className="v"><em>{m.cardFinish}</em></div>
                           </div>
                           <div>
                             <div className="k">Pickups</div>
-                            <div className="v">{m.id === "broadman" ? "SD Antiquity Tele" : "Seymour Duncan"}</div>
+                            <div className="v">{m.cardPickups}</div>
                           </div>
                           <div>
                             <div className="k">Construction</div>
-                            <div className="v">Bolt-on neck</div>
+                            <div className="v">{m.cardConstruction}</div>
                           </div>
                         </>
                       )}

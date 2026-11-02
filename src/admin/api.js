@@ -50,4 +50,5 @@ export const can = {
   repairs: (staff) => ['owner', 'sales', 'tech'].includes(staff?.role),
   editRepairs: (staff) => ['owner', 'tech'].includes(staff?.role),
   team:    (staff) => staff?.role === 'owner',
+  content: (staff) => staff?.role === 'owner',
 };
