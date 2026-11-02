@@ -1135,3 +1135,6 @@ body.admin-active {
   .admin-board { grid-auto-columns: minmax(220px, 80vw); }
   .admin-checks { grid-template-columns: 1fr; }
 }
+
+/* Drop-off spot on board cards */
+.badge-garage { background: rgba(210,132,0,0.15); color: #D28400; }

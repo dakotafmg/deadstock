@@ -9,6 +9,10 @@ export const STATUSES = [
   'in_progress', 'ready', 'picked_up', 'declined',
 ];
 
+// Where an instrument can be dropped off. Null means not decided yet.
+export const DROPOFF_LOCATIONS = ['shop', 'music_garage'];
+export const cleanDropoff = (v) => (DROPOFF_LOCATIONS.includes(v) ? v : null);
+
 // Status changes that email the customer.
 const EMAIL_ON = { received: 'received', quoted: 'quoted', ready: 'ready' };
 
@@ -61,6 +65,7 @@ export function publicJobView(job, events) {
     status: job.status,
     instrument: [job.instrument_brand, job.instrument_model].filter(Boolean).join(' '),
     issue: job.issue,
+    dropoff_location: job.dropoff_location,
     quote_cents: showQuote ? job.quote_cents : null,
     quote_notes: showQuote ? job.quote_notes : null,
     invoice_url: job.paid_at ? null : job.invoice_url,

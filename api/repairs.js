@@ -2,7 +2,7 @@ import { put } from '@vercel/blob';
 import { getSupabase, supabaseConfigured, must } from './_lib/supabase.js';
 import { parseBody } from './_lib/body.js';
 import { sendRepairEmail } from './_lib/email.js';
-import { changeStatus, findOrCreateCustomer, publicJobView, JOB_SELECT } from './_lib/repairs.js';
+import { changeStatus, cleanDropoff, findOrCreateCustomer, publicJobView, JOB_SELECT } from './_lib/repairs.js';
 
 // Public repairs API (no login).
 //   GET  ?view=info          → active services + shop phone/email for /repairs
@@ -110,6 +110,7 @@ export default async function handler(req, res) {
       instrument_model: clip(body.model, 120),
       instrument_serial: clip(body.serial, 80) || null,
       issue,
+      dropoff_location: cleanDropoff(body.dropoff),
     }).select('*').single());
 
     // Services the customer ticked, priced at today's starting price.

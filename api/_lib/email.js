@@ -25,7 +25,11 @@ export const TEMPLATES = {
     heading: 'We got your request.',
     lines: [
       `Thanks for reaching out about your ${instrument(job)}.`,
-      `We'll look over what you sent and get back to you about drop-off.`,
+      job.dropoff_location === 'music_garage'
+        ? `You can drop it off at Fortville Music Garage. Mention job ${job.job_number} and they'll tag it for us.`
+        : job.dropoff_location === 'shop'
+          ? `Bring it by the Deadstock shop whenever suits you, and mention job ${job.job_number}.`
+          : `We'll look over what you sent and get back to you about drop-off.`,
     ],
   }),
   received: (job) => ({

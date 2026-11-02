@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { apiCall, fmt$$, fmtDate, fmtDateTime, can } from '../api';
 import { compressAndUpload } from '../listings/image-upload';
-import { STATUS_LABELS, ALL_STATUSES, EMAILS_CUSTOMER, instrumentName } from './statuses';
+import { STATUS_LABELS, ALL_STATUSES, EMAILS_CUSTOMER, instrumentName, DROPOFF_LABELS } from './statuses';
 
 // Dates are stored at noon UTC so they show as the same day across US time zones.
 const toDateInput = (ts) => (ts ? ts.slice(0, 10) : '');
@@ -102,6 +102,22 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
           {editable && (
             <div className="admin-card">
               <div className="admin-card-head"><span>Bench</span></div>
+              <div className="admin-form-row">
+                <div className="admin-field">
+                  <label className="admin-label">Dropped off at</label>
+                  <select className="admin-select" value={job.dropoff_location || ''} disabled={busy}
+                    onChange={e => patch({ dropoff_location: e.target.value })}>
+                    <option value="">— Not yet</option>
+                    {Object.entries(DROPOFF_LABELS).map(([k, label]) => <option key={k} value={k}>{label}</option>)}
+                  </select>
+                </div>
+                <div className="admin-field">
+                  <label className="admin-label">Tag number</label>
+                  <input className="admin-input" defaultValue={job.tag_number || ''} key={job.tag_number || ''} disabled={busy}
+                    placeholder="From the paper tag"
+                    onBlur={e => { if (e.target.value.trim() !== (job.tag_number || '')) patch({ tag_number: e.target.value.trim() }); }} />
+                </div>
+              </div>
               <div className="admin-field">
                 <label className="admin-label">Assigned to</label>
                 <select className="admin-select" value={job.assigned_to || ''} disabled={busy}
@@ -116,6 +132,12 @@ export function RepairDetail({ staff, id, onExpire, onBack }) {
                   onChange={e => patch({ promised_at: fromDateInput(e.target.value) })} />
               </div>
             </div>
+          )}
+          {!editable && job.dropoff_location && (
+            <div className="admin-card"><div className="admin-detail-row">
+              <span className="admin-detail-label">Dropped off at</span>
+              <span className="admin-detail-value">{DROPOFF_LABELS[job.dropoff_location]}{job.tag_number && ` · tag ${job.tag_number}`}</span>
+            </div></div>
           )}
           {!editable && job.assignee && (
             <div className="admin-card"><div className="admin-detail-row">

@@ -3,7 +3,7 @@ import { requireRole, logActivity, ROLES } from './_lib/auth.js';
 import { getSupabase, must } from './_lib/supabase.js';
 import { parseBody } from './_lib/body.js';
 import { sendRepairEmail } from './_lib/email.js';
-import { changeStatus, findOrCreateCustomer, JOB_SELECT, STATUSES } from './_lib/repairs.js';
+import { changeStatus, cleanDropoff, findOrCreateCustomer, JOB_SELECT, STATUSES } from './_lib/repairs.js';
 
 // Repair board API. All staff can read; owner and tech can change things.
 //   GET   ?view=services          → every service, active or not
@@ -18,7 +18,7 @@ import { changeStatus, findOrCreateCustomer, JOB_SELECT, STATUSES } from './_lib
 //   PATCH {id, ..., resendQuote}   → email the (updated) quote again while it's waiting on the customer
 
 const EDITABLE = ['instrument_brand', 'instrument_model', 'instrument_serial', 'issue',
-  'quote_cents', 'quote_notes', 'promised_at', 'assigned_to'];
+  'quote_cents', 'quote_notes', 'promised_at', 'assigned_to', 'dropoff_location', 'tag_number'];
 
 export default async function handler(req, res) {
   const staff = await requireRole(req, res, req.method === 'GET' ? ROLES.STAFF : ROLES.TECH);
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       if (req.query?.id) return res.status(200).json(await loadJob(sb, req.query.id));
 
       let q = sb.from('repair_jobs')
-        .select('id, job_number, status, instrument_brand, instrument_model, issue, quote_cents, promised_at, created_at, updated_at, paid_at, assigned_to, customer:customers(name, email, phone), assignee:profiles(full_name)')
+        .select('id, job_number, tag_number, dropoff_location, status, instrument_brand, instrument_model, issue, quote_cents, promised_at, created_at, updated_at, paid_at, assigned_to, customer:customers(name, email, phone), assignee:profiles(full_name)')
         .order('created_at', { ascending: false })
         .limit(200);
       if (req.query?.scope !== 'all') q = q.not('status', 'in', '(picked_up,declined)');
@@ -51,6 +51,8 @@ export default async function handler(req, res) {
       for (const k of EDITABLE) if (body[k] !== undefined) patch[k] = body[k] === '' ? null : body[k];
       if (patch.quote_cents != null) patch.quote_cents = Math.round(Number(patch.quote_cents));
       if (Number.isNaN(patch.quote_cents)) return res.status(400).json({ error: 'Quote must be a number' });
+      if (patch.dropoff_location !== undefined) patch.dropoff_location = cleanDropoff(patch.dropoff_location);
+      if (patch.tag_number) patch.tag_number = String(patch.tag_number).trim().slice(0, 40) || null;
       if (Object.keys(patch).length) {
         job = must(await sb.from('repair_jobs').update(patch).eq('id', job.id).select(JOB_SELECT).single());
       }
@@ -89,6 +91,8 @@ export default async function handler(req, res) {
         instrument_model: body.model || '',
         instrument_serial: body.serial || null,
         issue: body.issue,
+        dropoff_location: cleanDropoff(body.dropoff_location) || 'shop',
+        tag_number: String(body.tag_number || '').trim().slice(0, 40) || null,
         status: 'received',
         received_at: now,
         promised_at: body.promised_at || null,
