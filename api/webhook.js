@@ -1,5 +1,7 @@
 import Stripe from 'stripe';
 import { parseBody } from './_lib/body.js';
+import { getSupabase, supabaseConfigured } from './_lib/supabase.js';
+import { recordInvoicePaid } from './_lib/repairs.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -35,6 +37,16 @@ export default async function handler(req, res) {
       } catch (err) {
         console.error(`Failed to mark product ${productId} sold:`, err);
       }
+    }
+  }
+
+  // A repair invoice (sent from the repair board) was paid.
+  if (event.type === 'invoice.paid' && event.data.object.metadata?.repairJobId && supabaseConfigured()) {
+    try {
+      await recordInvoicePaid(getSupabase(), event.data.object);
+    } catch (err) {
+      console.error('Failed to record repair payment:', err);
+      return res.status(500).json({ error: 'Failed to record repair payment' });
     }
   }
 

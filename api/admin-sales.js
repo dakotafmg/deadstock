@@ -1,11 +1,10 @@
 import Stripe from 'stripe';
-import { verifyToken, getToken } from './_lib/auth.js';
+import { requireRole, logActivity, ROLES } from './_lib/auth.js';
 import { parseBody } from './_lib/body.js';
 
 export default async function handler(req, res) {
-  if (!verifyToken(getToken(req), process.env.JWT_SECRET)) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
+  const staff = await requireRole(req, res, ROLES.SALES);
+  if (!staff) return;
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -67,7 +66,25 @@ export default async function handler(req, res) {
           };
         });
 
-      const sales = [...onlineSales, ...manualSales].sort((a, b) => b.date - a.date);
+      // Repair invoices paid by the customer (sent from the repair board).
+      const repairSales = invoices
+        .filter(inv => inv.metadata?.repairJobId && inv.status === 'paid' && inv.metadata?.deleted !== 'true')
+        .map(inv => ({
+          id: inv.id,
+          channel: 'repair',
+          amount: inv.amount_paid,
+          currency: inv.currency,
+          date: inv.status_transitions?.paid_at || inv.created,
+          customer: inv.customer_name || inv.customer_email || '—',
+          email: inv.customer_email || '',
+          products: [],
+          productName: `Repair ${inv.metadata.jobNumber || ''}`.trim(),
+          productId: '',
+          paymentMethod: inv.metadata?.paymentMethod || (inv.paid_out_of_band ? 'In person' : 'Stripe Invoice'),
+          notes: inv.description || '',
+        }));
+
+      const sales = [...onlineSales, ...manualSales, ...repairSales].sort((a, b) => b.date - a.date);
       return res.status(200).json({ sales });
     }
 
@@ -127,6 +144,7 @@ export default async function handler(req, res) {
         }
       }
 
+      await logActivity(staff, 'sale.log', 'sale', invoice.id, { buyerName, items, paymentMethod });
       return res.status(201).json({ success: true, invoiceId: invoice.id });
     }
 
@@ -146,6 +164,7 @@ export default async function handler(req, res) {
         await stripe.invoices.update(id, { metadata: { deleted: 'true' } });
       }
 
+      await logActivity(staff, 'sale.delete', 'sale', id);
       return res.status(200).json({ success: true });
     }
 

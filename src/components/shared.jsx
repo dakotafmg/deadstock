@@ -38,6 +38,9 @@ export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
           {/* Shop */}
           <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
 
+          {/* Repairs */}
+          <a className={["repairs", "repair-status"].includes(route) ? "active" : ""} href="#" onClick={(e) => navigate("repairs", e)}>Repairs</a>
+
           {/* Our Story */}
           <a className={route === "letter" ? "active" : ""} href="#" onClick={(e) => navigate("letter", e)}>Our Story</a>
 
@@ -62,6 +65,7 @@ export function Nav({ route, onNavigate, cartCount = 0, onCartOpen }) {
       {/* Mobile menu */}
       <div className="nav-mobile">
         <a className={route === "shop" ? "active" : ""} href="#" onClick={(e) => navigate("shop", e)}>Shop</a>
+        <a className={["repairs", "repair-status"].includes(route) ? "active" : ""} href="#" onClick={(e) => navigate("repairs", e)}>Repairs</a>
         <a className={route === "letter" ? "active" : ""} href="#" onClick={(e) => navigate("letter", e)}>Our Story</a>
         <a className={route === "partners" ? "active" : ""} href="#" onClick={(e) => navigate("partners", e)}>Partners</a>
       </div>
@@ -102,6 +106,7 @@ export function Footer({ onNavigate }) {
         <div>
           <h4>Company</h4>
           <ul>
+            <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("repairs")}>Repairs</a></li>
             <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("partners")}>Partners</a></li>
             <li><a style={{ cursor: "pointer" }} onClick={() => onNavigate("letter")}>Our Story</a></li>
             <li><a href="mailto:dealers@deadstockguitars.com">Contact</a></li>

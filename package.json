@@ -9,13 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/blob": "^2.4.0",
     "@vercel/speed-insights": "^2.0.0",
     "bcryptjs": "^3.0.3",
+    "node": "^26.12.1",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "stripe": "^22.3.0"
+    "stripe": "^22.3.0",
+    "supabase": "^2.122.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
