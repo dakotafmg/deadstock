@@ -3,7 +3,7 @@ import { requireRole, logActivity, ROLES } from './_lib/auth.js';
 import { getSupabase, must } from './_lib/supabase.js';
 import { parseBody } from './_lib/body.js';
 import { sendRepairEmail } from './_lib/email.js';
-import { changeStatus, cleanDropoff, findOrCreateCustomer, JOB_SELECT, STATUSES } from './_lib/repairs.js';
+import { changeStatus, cleanDropoff, findOrCreateCustomer, recordInvoicePaid, JOB_SELECT, STATUSES } from './_lib/repairs.js';
 
 // Repair board API. All staff can read; owner and tech can change things.
 //   GET   ?view=services          → every service, active or not
@@ -41,7 +41,10 @@ export default async function handler(req, res) {
       if (req.query?.view === 'services') {
         return res.status(200).json({ services: must(await sb.from('repair_services').select('*').order('sort_order')) });
       }
-      if (req.query?.id) return res.status(200).json(await loadJob(sb, req.query.id));
+      if (req.query?.id) {
+        await syncInvoicePayment(sb, req.query.id);
+        return res.status(200).json(await loadJob(sb, req.query.id));
+      }
 
       let q = sb.from('repair_jobs')
         .select('id, job_number, tag_number, dropoff_location, status, instrument_brand, instrument_model, issue, quote_cents, promised_at, created_at, updated_at, paid_at, assigned_to, customer:customers(name, email, phone), assignee:profiles(full_name)')
@@ -260,6 +263,21 @@ export default async function handler(req, res) {
   } catch (err) {
     if (err.status !== 400) console.error(err);
     return res.status(err.status || 500).json({ error: err.message });
+  }
+}
+
+// Backup for the Stripe webhook: when a job's invoice is still unpaid here,
+// ask Stripe directly and record the payment if it went through. Covers a
+// webhook that's missing the invoice.paid event, or local testing where
+// Stripe can't reach the site. Never blocks opening the job.
+async function syncInvoicePayment(sb, id) {
+  try {
+    const job = must(await sb.from('repair_jobs').select('stripe_invoice_id, paid_at').eq('id', id).maybeSingle());
+    if (!job?.stripe_invoice_id || job.paid_at) return;
+    const invoice = await new Stripe(process.env.STRIPE_SECRET_KEY).invoices.retrieve(job.stripe_invoice_id);
+    if (invoice.status === 'paid' && invoice.metadata?.repairJobId === id) await recordInvoicePaid(sb, invoice);
+  } catch (err) {
+    console.error('Invoice payment check failed:', err.message);
   }
 }
 

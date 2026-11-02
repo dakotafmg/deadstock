@@ -103,3 +103,35 @@ export async function findOrCreateCustomer(sb, { name, email, phone }) {
     phone: phone || null,
   }).select().single());
 }
+
+// A repair invoice was paid online: records it as an order and marks the job
+// paid. Called by the Stripe webhook, and by the repair page as a backup when
+// the webhook didn't arrive. Safe to run more than once.
+export async function recordInvoicePaid(sb, invoice) {
+  // Counter payments are marked paid from the repair page, which records them itself.
+  if (invoice.paid_out_of_band) return;
+  const job = must(await sb.from('repair_jobs').select('*').eq('id', invoice.metadata.repairJobId).maybeSingle());
+  if (!job || job.paid_at) return;
+
+  let order = must(await sb.from('orders').select('id').eq('stripe_invoice_id', invoice.id).maybeSingle());
+  if (!order) {
+    order = must(await sb.from('orders').insert({
+      channel: 'repair',
+      stripe_invoice_id: invoice.id,
+      customer_id: job.customer_id,
+      amount_cents: invoice.amount_paid,
+      currency: invoice.currency,
+      payment_method: 'card',
+    }).select('id').single());
+    must(await sb.from('order_items').insert({
+      order_id: order.id,
+      description: `Repair ${job.job_number}`,
+      amount_cents: invoice.amount_paid,
+    }));
+  }
+
+  must(await sb.from('repair_jobs').update({ order_id: order.id, paid_at: new Date().toISOString() }).eq('id', job.id));
+  must(await sb.from('repair_events').insert({
+    job_id: job.id, kind: 'note', body: 'Paid online', visible_to_customer: true,
+  }));
+}
