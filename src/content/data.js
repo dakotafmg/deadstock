@@ -242,6 +242,10 @@ export const LINEUP = [
     status: "AVAILABLE",
     image: "/assets/PinkBroadman-1.jpg",
     imagePos: "55% 50%",
+    headline: "The Broad*man.*",
+    cardFinish: "Shell Pink",
+    cardPickups: "SD Antiquity Tele",
+    cardConstruction: "Bolt-on neck",
   },
   {
     id: "wayfarer",
@@ -254,6 +258,10 @@ export const LINEUP = [
     status: "AVAILABLE",
     image: "/assets/Wayfarer-1.jpg",
     imagePos: "55% 55%",
+    headline: "The Way*farer.*",
+    cardFinish: "Sunburst",
+    cardPickups: "Seymour Duncan",
+    cardConstruction: "Bolt-on neck",
   },
   {
     id: "monarch",
@@ -265,7 +273,29 @@ export const LINEUP = [
     swatches: ["#3B2A1E", "#D28400"],
     status: "AVAILABLE",
     image: "/assets/monarch-1.jpg",
+    headline: "The *Monarch.*",
+    cardFinish: "Sunburst",
+    cardPickups: "Seymour Duncan",
+    cardConstruction: "Bolt-on neck",
   },
+];
+
+// Homepage slideshow. pos = CSS object-position focal point ("50% 30%"
+// pushes the crop up); scale = zoom (1 = none, 1.15 = 15% in).
+export const HERO_SLIDES = [
+  { src: "/assets/hero-1.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-2.jpg",  pos: "50% 10%", scale: 1 },
+  { src: "/assets/hero-3.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-4.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-5.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-6.jpeg", pos: "50% 60%", scale: 1 },
+  { src: "/assets/hero-7.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-8.jpg",  pos: "50% 15%", scale: 1 },
+  { src: "/assets/hero-9.jpg",  pos: "center",  scale: 1 },
+  { src: "/assets/hero-10.jpg", pos: "center",  scale: 1 },
+  { src: "/assets/hero-11.jpg", pos: "center",  scale: 1 },
+  { src: "/assets/hero-12.jpg", pos: "50% 90%", scale: 1 },
+  { src: "/assets/hero-15.jpg", pos: "center",  scale: 1 },
 ];
 
 // ============================================================
@@ -434,5 +464,44 @@ export const PICKUP_LINEUP = [
     magnet: "Alnico II",
     thumb: "/assets/PAF-1.jpg",
     foundIn: "monarch",
+  },
+];
+
+// Partners page
+export const PARTNERS = [
+  {
+    name: "Woodtech Routing",
+    role: "Bodies",
+    logo: "/assets/partner-woodtech.jpg",
+    description: "Built by tradesmen who spent years in sawmills and around lumber before betting on themselves. They hand select domestic lumber, kiln dry it locally, and CNC every body to our exact specifications. That's not supply chain — that's legacy.",
+    url: "https://woodtechrouting.com",
+  },
+  {
+    name: "Musikraft",
+    role: "Necks",
+    logo: "/assets/partner-musikraft.jpg",
+    description: "Their pursuit of excellence mirrors our own belief that instruments should feel like extensions of the player, not products off an assembly line. Every carve, every spec, every detail matters. Built in relationship, not transaction.",
+    url: "https://musikraft.com",
+  },
+  {
+    name: "Seymour Duncan",
+    role: "Pickups",
+    logo: "/assets/partner-seymourduncan.png",
+    description: "Their passion for tone and dedication to exceptional pickup design help bring out the character and voice of every instrument. Partners in the pursuit of the real thing.",
+    url: "https://seymourduncan.com",
+  },
+  {
+    name: "Allparts USA",
+    role: "Hardware & Components",
+    logo: "/assets/partner-allparts.jpg",
+    description: "Hardware, lacquer, screws, bolts, plates, bridges and countless tiny details. They've supported us from the beginning and helped make the impossible start to feel possible.",
+    url: "https://allparts.com",
+  },
+  {
+    name: "Crossrock Cases",
+    role: "Cases",
+    logo: "/assets/partner-crossrock.jpg",
+    description: "From the beginning we believed the experience should feel special before the guitar is ever played. Crossrock partnered with us to create an unboxing experience that feels intentional — unlike the standard-issue black box the industry settled for years ago.",
+    url: "https://crossrockcase.com/",
   },
 ];

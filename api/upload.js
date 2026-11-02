@@ -2,7 +2,7 @@ import { put } from '@vercel/blob';
 import { requireRole, ROLES } from './_lib/auth.js';
 import { parseBody } from './_lib/body.js';
 
-const FOLDERS = ['listings', 'repairs'];
+const FOLDERS = ['listings', 'repairs', 'content'];
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
