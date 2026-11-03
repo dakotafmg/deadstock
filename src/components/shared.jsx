@@ -79,7 +79,7 @@ export function Footer({ onNavigate }) {
       <div className="footer-inner">
         <div>
           <div className="brand">
-            <img src="assets/wordmark.svg" alt="Deadstock" style={{ width: 280, display: "block", filter: "brightness(0) invert(0.94) sepia(0.20) saturate(0.6)" }} />
+            <img src="/assets/wordmark.svg" alt="Deadstock" style={{ width: 280, display: "block", filter: "brightness(0) invert(0.94) sepia(0.20) saturate(0.6)" }} />
           </div>
           <p className="mini" style={{ marginTop: 28 }}>
             Deadstock Guitars are made in small batches at our shop in
